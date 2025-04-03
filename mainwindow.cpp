@@ -28,7 +28,6 @@ uint32_t CountPoints = 5000;
 /*Graph variables*/
 QVector<uint8_t> GLB_Graph_x, GLB_Graph_y;
 
-aboba
 /*File variables*/
 QString RepositoryURL;
 QString RepositoryNameFile[1] = {"config"};
