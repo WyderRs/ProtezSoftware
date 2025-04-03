@@ -691,7 +691,6 @@ void MainWindow::on_comboBox_textActivated(const QString &arg1)
             // SendToTerminal(ComPortInfo.availablePorts(), true, 0);
             // qDebug() << "Имя порта:" << ComPortInfo.;
 
-
             isConnectedComPort = true;
         }
     }
