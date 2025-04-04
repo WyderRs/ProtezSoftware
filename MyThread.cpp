@@ -74,9 +74,10 @@ void MyThread_1::ComPortRead()
                 dataRecvd++;
                 lastTime = QDateTime::currentMSecsSinceEpoch();
             }
+            break;
         }
-        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 2000) break;
-        QThread::msleep(12);
+        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 5000) break;
+        QThread::msleep(20);
     }
 
     GLB_Thread_Flag[0] = false;

@@ -154,7 +154,7 @@ void MainWindow::PaintGraph2()
 {
     double Step;
     QVector<double> NewGraph2_x, NewGraph2_y;
-    for(uint16_t i = 0; i < (GLB_Graph_y.size() / 2); i = i + 2)
+    for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
     {
         NewGraph2_y.append(_2ByteTo_1Byte(
             (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
@@ -182,7 +182,7 @@ void MainWindow::PaintGraph2()
     GLB_ui->widget_2->xAxis->setRange(min_val_x, max_val_x);
     GLB_ui->widget_2->yAxis->setRange(min_val_y, max_val_y);
     GLB_ui->widget_2->addGraph();
-    GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::blue));
+    GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
     GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
     GLB_ui->widget_2->replot();
 }

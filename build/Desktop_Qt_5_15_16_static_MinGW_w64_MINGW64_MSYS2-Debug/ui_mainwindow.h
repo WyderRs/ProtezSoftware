@@ -183,7 +183,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1301, 639);
+        MainWindow->resize(1391, 639);
         MainWindow->setInputMethodHints(Qt::ImhNone);
         actionAngle_control = new QAction(MainWindow);
         actionAngle_control->setObjectName(QString::fromUtf8("actionAngle_control"));
@@ -193,7 +193,7 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(0, 0, 1291, 591));
+        tabWidget->setGeometry(QRect(0, 0, 1381, 591));
         tabWidget->setTabPosition(QTabWidget::North);
         tabWidget->setTabShape(QTabWidget::Rounded);
         tabWidget->setElideMode(Qt::ElideNone);
@@ -443,7 +443,7 @@ public:
         line_5->setFrameShadow(QFrame::Sunken);
         widget = new QCustomPlot(tab);
         widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(750, 20, 531, 261));
+        widget->setGeometry(QRect(750, 20, 621, 261));
         widget->setStyleSheet(QString::fromUtf8("background-color: rgb(179, 179, 179);"));
         lineEdit_12 = new QLineEdit(tab);
         lineEdit_12->setObjectName(QString::fromUtf8("lineEdit_12"));
@@ -565,11 +565,11 @@ public:
         pushButton_34->setGeometry(QRect(670, 340, 71, 31));
         plainTextEdit_2 = new QPlainTextEdit(tab);
         plainTextEdit_2->setObjectName(QString::fromUtf8("plainTextEdit_2"));
-        plainTextEdit_2->setGeometry(QRect(750, 290, 531, 171));
+        plainTextEdit_2->setGeometry(QRect(750, 290, 621, 171));
         plainTextEdit_2->setReadOnly(true);
         pushButton_38 = new QPushButton(tab);
         pushButton_38->setObjectName(QString::fromUtf8("pushButton_38"));
-        pushButton_38->setGeometry(QRect(1230, 470, 51, 21));
+        pushButton_38->setGeometry(QRect(1320, 470, 51, 21));
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
@@ -732,11 +732,11 @@ public:
         line_16->setFrameShadow(QFrame::Sunken);
         widget_2 = new QCustomPlot(tab_2);
         widget_2->setObjectName(QString::fromUtf8("widget_2"));
-        widget_2->setGeometry(QRect(540, 10, 511, 231));
+        widget_2->setGeometry(QRect(540, 10, 821, 231));
         widget_2->setStyleSheet(QString::fromUtf8("background-color: rgb(179, 179, 179);"));
         widget_3 = new QCustomPlot(tab_2);
         widget_3->setObjectName(QString::fromUtf8("widget_3"));
-        widget_3->setGeometry(QRect(540, 250, 511, 231));
+        widget_3->setGeometry(QRect(540, 250, 821, 231));
         widget_3->setStyleSheet(QString::fromUtf8("background-color: rgb(179, 179, 179);"));
         pushButton_35 = new QPushButton(tab_2);
         pushButton_35->setObjectName(QString::fromUtf8("pushButton_35"));
@@ -827,7 +827,7 @@ public:
         MainWindow->setStatusBar(statusbar);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1301, 21));
+        menubar->setGeometry(QRect(0, 0, 1391, 21));
         menunual_operation = new QMenu(menubar);
         menunual_operation->setObjectName(QString::fromUtf8("menunual_operation"));
         menunual_operation->setGeometry(QRect(296, 101, 174, 50));
@@ -838,7 +838,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(2);
         pushButton->setDefault(false);
 
 
