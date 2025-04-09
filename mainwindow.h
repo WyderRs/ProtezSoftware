@@ -39,10 +39,13 @@ typedef struct GLB_WindowsObjects
     QSlider *GLB_WindowsSlider[20];
     QLineEdit *GLB_WindowsLineEdit[50];
     QCheckBox *GLB_WindowsCheckBox[20];
-    QComboBox *GLB_WindowsComboBox[1];
+    QComboBox *GLB_WindowsComboBox[2];
     QRadioButton *GLB_WindowsRadioButton[10];
     QCustomPlot *GLB_WindowsCustomPlot[5];
     QPlainTextEdit *GLB_WindowsPlainTextEdit[5];
+
+    QFrame *GLB_WindowsFrame[10];
+
 } GLB_WindowsObjects;
 
 
@@ -313,6 +316,10 @@ private slots:
     void on_pushButton_38_clicked();
 
     void on_pushButton_39_clicked();
+
+    void on_checkBox_9_toggled(bool checked);
+
+    void on_pushButton_11_clicked();
 
 public:
     Ui::MainWindow *ui;

@@ -63,6 +63,7 @@ void MyThread_1::run()
 void MyThread_1::ComPortRead()
 {
     uint32_t dataRecvd = 0;
+    bool flagHaveData = false;
     qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
     while (1)
     {
@@ -74,15 +75,20 @@ void MyThread_1::ComPortRead()
                 dataRecvd++;
                 lastTime = QDateTime::currentMSecsSinceEpoch();
             }
+            flagHaveData = true;
             break;
         }
-        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 5000) break;
+        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 5000)
+        {
+            flagHaveData = false;
+            break;
+        }
         QThread::msleep(20);
     }
 
     GLB_Thread_Flag[0] = false;
     GLB_Ports[0]->clear();
-    emit PaintGraph2_signal(); // Сигнал для обновления графика
+    if(flagHaveData) emit PaintGraph2_signal(); // Сигнал для обновления графика
 }
 
 

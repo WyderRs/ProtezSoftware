@@ -159,8 +159,6 @@ void MainWindow::PaintGraph2()
         NewGraph2_y.append(_2ByteTo_1Byte(
             (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
             ));
-
-        // NewGraph2_y.append(GLB_Graph_y[i]);
     }
 
     double max_val_x = 0.0;
@@ -260,11 +258,13 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsButton[35] = GLB_ui->pushButton_35;   // Tab 2 - Start Instruct
 
     GLB_WinObj.GLB_WindowsButton[36] = GLB_ui->pushButton_37;   // Tab 2 - Clear Terminal
+
+    GLB_WinObj.GLB_WindowsButton[37] = GLB_ui->pushButton_11;   // Tab 0 - Debug Mode Start motor
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsComboBox[0] = GLB_ui->comboBox;       // Tab 0 - Select Comport
+    GLB_WinObj.GLB_WindowsComboBox[1] = GLB_ui->comboBox_2;     // Tab 0 - Debug Mode select motor
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsCheckBox[0] = GLB_ui->checkBox_11;    // Tab 0 - Enable Receive ComPort 1
-
 
     GLB_WinObj.GLB_WindowsCheckBox[1] = GLB_ui->checkBox;       // Tab 1 - ADC_CH_0
     GLB_WinObj.GLB_WindowsCheckBox[2] = GLB_ui->checkBox_2;     // Tab 1 - ADC_CH_1
@@ -277,6 +277,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCheckBox[7] = GLB_ui->checkBox_6;     // Tab 2 - Enable Angle HalfMode
     GLB_WinObj.GLB_WindowsCheckBox[8] = GLB_ui->checkBox_7;     // Tab 2 - Enable Time HalfMode
     GLB_WinObj.GLB_WindowsCheckBox[9] = GLB_ui->checkBox_8;     // Tab 2 - Enable Speed HalfMode
+
+    GLB_WinObj.GLB_WindowsCheckBox[10] = GLB_ui->checkBox_9;    // Tab 0 - Debug Mode Enable
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLineEdit[0] = GLB_ui->lineEdit_20;    // Tab 0 - File Repository
 
@@ -325,6 +327,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLineEdit[36] = GLB_ui->lineEdit_42;   // Tab 2 - Delay 2 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[37] = GLB_ui->lineEdit_43;   // Tab 2 - Delay 3 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[38] = GLB_ui->lineEdit_40;   // Tab 2 - Delay 4 Line Edit
+
+    GLB_WinObj.GLB_WindowsLineEdit[39] = GLB_ui->lineEdit_16;   // Tab 0 - Debug Mode Time work
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsRadioButton[0] = GLB_ui->radioButton_4; // Tab 2 - FeedBack CH_0
     GLB_WinObj.GLB_WindowsRadioButton[1] = GLB_ui->radioButton_5; // Tab 2 - FeedBack CH_1
@@ -332,6 +336,9 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsRadioButton[3] = GLB_ui->radioButton_7; // Tab 2 - FeedBack CH_3
     GLB_WinObj.GLB_WindowsRadioButton[4] = GLB_ui->radioButton_8; // Tab 2 - FeedBack CH_4
     GLB_WinObj.GLB_WindowsRadioButton[5] = GLB_ui->radioButton;   // Tab 2 - FeedBack NONE
+
+    GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
+    GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsCustomPlot[0] = GLB_ui->widget;         // Tab 1 - FeedBack ADC_Graph
     GLB_WinObj.GLB_WindowsCustomPlot[1] = GLB_ui->widget_2;       // Tab 2 - FeedBack FeedBack_Graph
@@ -348,6 +355,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLabel[6] = GLB_ui->label_8;            // Tab 2 - Time work label
     GLB_WinObj.GLB_WindowsLabel[7] = GLB_ui->label_9;            // Tab 2 - Speed label
     GLB_WinObj.GLB_WindowsLabel[8] = GLB_ui->label_10;           // Tab 2 - Delay label
+
+    GLB_WinObj.GLB_WindowsLabel[9] = GLB_ui->label;              // Tab 0 - Debug Mode Title
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsSlider[0] = GLB_ui->horizontalSlider;            // Tab 1 - PWM 0 value Slider
     GLB_WinObj.GLB_WindowsSlider[1] = GLB_ui->horizontalSlider_2;          // Tab 1 - PWM 1 value Slider
@@ -361,6 +370,11 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsPlainTextEdit[1] = GLB_ui->plainTextEdit_2;      // Tab 1 - Terminal Line Edit
 
     GLB_WinObj.GLB_WindowsPlainTextEdit[2] = GLB_ui->plainTextEdit_3;      // Tab 2 - Terminal Line Edit
+    /****************************************************************************************/
+    GLB_WinObj.GLB_WindowsFrame[0] = GLB_ui->frame;                        // Tab 0 - Debug Mode frame
+    GLB_WinObj.GLB_WindowsFrame[1] = GLB_ui->frame_2;                      // Tab 0 - Debug Mode frame Motor check
+
+
     /*****************************************/
     /*Set validator for Line Edit*/
     QDoubleValidator *validator = new QDoubleValidator(0, 100, 2, GLB_mainwindowWidget);
@@ -373,6 +387,24 @@ void SetStartGUISettings()
     const QList<QPushButton*> PushButtons = GLB_mainwindowWidget->findChildren<QPushButton*>();
     for(QPushButton *pushbutton : PushButtons) pushbutton->setStyleSheet("background-color: rgb(207, 219, 213);");
     /*****************************************/
+    // Set motor def
+    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Thumb");
+    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Index");
+    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Middle");
+    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Ring");
+    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Pinkie");
+    /*****************************************/
+    GLB_WinObj.GLB_WindowsCheckBox[10]->setChecked(false);
+    GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(false);
+    /*  Можно удалить вместо него строчка выше
+    GLB_WinObj.GLB_WindowsCheckBox[10]->setChecked(false);
+    GLB_WinObj.GLB_WindowsComboBox[1]->setEnabled(false);
+    GLB_WinObj.GLB_WindowsLineEdit[39]->setEnabled(false);
+    GLB_WinObj.GLB_WindowsButton[37]->setEnabled(false);
+    GLB_WinObj.GLB_WindowsRadioButton[6]->setEnabled(false);
+    GLB_WinObj.GLB_WindowsRadioButton[7]->setEnabled(false);
+    GLB_WinObj.GLB_WindowsLabel[9]->setEnabled(false);
+    */
 }
 
 
@@ -2134,7 +2166,7 @@ void MainWindow::on_pushButton_36_clicked()
                 DataToSend[i][cnt[i]] = MotorInstr[i].CTRL_2_FeedBack;
                 cnt[i]++;
             }
-            DataToSend[i][cnt[i]] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ
+            DataToSend[i][cnt[i]] = 0xFF;           ///////////// БАЙТ - РАЗДЕЛИТЕЛЬ
             cnt[i]++;
             ComPortWrite(0, (unsigned char*)DataToSend[i], cnt[i]);
         }
@@ -2429,8 +2461,76 @@ void MainWindow::on_pushButton_37_clicked()
 {
     ClearTerminal(2);
 }
+/*Debug Mode*/
+void MainWindow::on_checkBox_9_toggled(bool checked)
+{
+    if (checked)
+    {
+        GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(true);
+    }
+    else
+    {
+        GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(false);
+    }
+}
+void MainWindow::on_pushButton_11_clicked()
+{
+    // CheckGlobalStateMotorVariables();
+
+    // for(uint8_t i = 0; i < 6; i++) memset(&MotorInstr[i].Flags, 0, sizeof(MotorInstr[i]));
+    // /**/
+    // uint8_t DataToSend[10] = {0, };
+    // uint8_t cnt = 0;
+    // uint16_t newConf = COM2_START_INSTR | COM_WORKMODE;
+    // DataToSend[cnt] = newConf & 0x00FF;
+    // cnt++;
+    // DataToSend[cnt] = (newConf & 0xFF00) >> 8;
+    // cnt++;
+    // DataToSend[cnt] = GLB_Command.ModeWorkByte;
+    // cnt++;
+
+    // if(MotorInstr[i].Flags.FL_SelMotByte)
+    // {
+    //     DataToSend[i][cnt[i]] = MotorInstr[i].SelMotor;
+    //     cnt[i]++;
+    // }
+    // if(MotorInstr[i].Flags.FL_TypeMoveByte)
+    // {
+    //     DataToSend[i][cnt[i]] = MotorInstr[i].TypeMove;
+    //     cnt[i]++;
+    // }
+    // if(MotorInstr[i].Flags.FL_PWMByte)
+    // {
+    //     DataToSend[i][cnt[i]] = MotorInstr[i].PWM;
+    //     cnt[i]++;
+    // }
+    // if(MotorInstr[i].Flags.FL_TimeWorkByte)
+    // {
+    //     DataToSend[i][cnt[i]] = MotorInstr[i].TimeWork & 0x00FF;
+    //     cnt[i]++;
+    //     DataToSend[i][cnt[i]] = (MotorInstr[i].TimeWork & 0xFF00) >> 8;
+    //     cnt[i]++;
+    // }
+    // if(MotorInstr[i].Flags.FL_DelayWorkByte)
+    // {
+    //     DataToSend[i][cnt[i]] = MotorInstr[i].DelayWork & 0x00FF;
+    //     cnt[i]++;
+    //     DataToSend[i][cnt[i]] = (MotorInstr[i].DelayWork & 0xFF00) >> 8;
+    //     cnt[i]++;
+    // }
+    // if(MotorInstr[i].Flags.FL_ADC_EnByte)
+    // {
+    //     DataToSend[i][cnt[i]] = MotorInstr[i].ADC_En;
+    //     cnt[i]++;
+    // }
+    // DataToSend[i][cnt[i]] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ
 
 
+    // DataToSend[cnt] = GLB_Command.StartInstruct;
+    // cnt++;
+    // DataToSend[cnt] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ / УКАЗАТЕЛЬ
+    // cnt++;
+    // ComPortWrite(0, (unsigned char*)DataToSend, cnt);
 
-
+}
 
