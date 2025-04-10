@@ -129,11 +129,11 @@ public:
     ~MainWindow();
 
 public slots:
-    void ComPortSearch(void);
+    QList<QString> ComPortSearch(void);
 
-    void ComPortOpen(uint8_t numDevice, QString portName, qint32 baudRate);
+    void ComPortOpen(QString portName, qint32 baudRate);
 
-    void ComPortClose(uint8_t num_device);
+    void ComPortClose();
 
     QString ComPortWrite(uint8_t numDevice, uint8_t *data, uint16_t cntPack);
 
@@ -320,6 +320,8 @@ private slots:
     void on_checkBox_9_toggled(bool checked);
 
     void on_pushButton_11_clicked();
+
+    void on_checkBox_10_toggled(bool checked);
 
 public:
     Ui::MainWindow *ui;

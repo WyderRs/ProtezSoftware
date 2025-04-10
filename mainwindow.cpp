@@ -279,6 +279,7 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCheckBox[9] = GLB_ui->checkBox_8;     // Tab 2 - Enable Speed HalfMode
 
     GLB_WinObj.GLB_WindowsCheckBox[10] = GLB_ui->checkBox_9;    // Tab 0 - Debug Mode Enable
+    GLB_WinObj.GLB_WindowsCheckBox[11] = GLB_ui->checkBox_12;    // Tab 0 - Debug Mode Reverse direction
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLineEdit[0] = GLB_ui->lineEdit_20;    // Tab 0 - File Repository
 
@@ -329,6 +330,7 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLineEdit[38] = GLB_ui->lineEdit_40;   // Tab 2 - Delay 4 Line Edit
 
     GLB_WinObj.GLB_WindowsLineEdit[39] = GLB_ui->lineEdit_16;   // Tab 0 - Debug Mode Time work
+    GLB_WinObj.GLB_WindowsLineEdit[40] = GLB_ui->lineEdit_17;   // Tab 0 - Baudrate lineEdit
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsRadioButton[0] = GLB_ui->radioButton_4; // Tab 2 - FeedBack CH_0
     GLB_WinObj.GLB_WindowsRadioButton[1] = GLB_ui->radioButton_5; // Tab 2 - FeedBack CH_1
@@ -357,6 +359,7 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLabel[8] = GLB_ui->label_10;           // Tab 2 - Delay label
 
     GLB_WinObj.GLB_WindowsLabel[9] = GLB_ui->label;              // Tab 0 - Debug Mode Title
+    GLB_WinObj.GLB_WindowsLabel[10] = GLB_ui->label_2;           // Tab 0 - Baudrate label
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsSlider[0] = GLB_ui->horizontalSlider;            // Tab 1 - PWM 0 value Slider
     GLB_WinObj.GLB_WindowsSlider[1] = GLB_ui->horizontalSlider_2;          // Tab 1 - PWM 1 value Slider
@@ -394,17 +397,9 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Ring");
     GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Pinkie");
     /*****************************************/
+    /*Enable Debug panel*/
     GLB_WinObj.GLB_WindowsCheckBox[10]->setChecked(false);
     GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(false);
-    /*  Можно удалить вместо него строчка выше
-    GLB_WinObj.GLB_WindowsCheckBox[10]->setChecked(false);
-    GLB_WinObj.GLB_WindowsComboBox[1]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsLineEdit[39]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsButton[37]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsRadioButton[6]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsRadioButton[7]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsLabel[9]->setEnabled(false);
-    */
 }
 
 
@@ -429,10 +424,11 @@ void SetStartVariables()
     }
 
 }
-void MainWindow::ComPortSearch(void)
+QList<QString> MainWindow::ComPortSearch(void)
 {
+    uint8_t ii = 0;
+    QList<QString> ComportList = {"", };
     GLB_ui->comboBox->clear();
-    GLB_ui->comboBox->addItem("No selected");
     for(uint8_t i = 1; i < 10; i++)
     {
         QString portName = QString("COM%1").arg(i);
@@ -442,52 +438,51 @@ void MainWindow::ComPortSearch(void)
         {
             SendToTerminal(portName + " is available.", true, 0);
             GLB_ui->comboBox->addItem(portName);
+            ComportList.append(portName);
+            ii++;
         }
         else SendToTerminal(portName + " is not available.", true, 0);
     }
+    return ComportList;
 }
 
-void MainWindow::ComPortOpen(uint8_t numDevice, QString portName, qint32 baudRate)
+void MainWindow::ComPortOpen(QString portName, qint32 baudRate)
 {
-    if(numDevice == 0)
+    ComPortClose();
+    serialDevice1->setPortName(portName);
+    serialDevice1->setBaudRate(baudRate);
+    serialDevice1->setParity(QSerialPort::NoParity);
+    serialDevice1->setDataBits(QSerialPort::Data8);
+    serialDevice1->setStopBits(QSerialPort::OneStop);
+    serialDevice1->setFlowControl(QSerialPort::NoFlowControl);
+
+    serialDevice1->open(QIODevice::ReadWrite);
+
+    if(serialDevice1->isOpen())
     {
-        ComPortClose(0);
-        serialDevice1->setPortName(portName);
-        serialDevice1->setBaudRate(baudRate);
-        serialDevice1->setParity(QSerialPort::NoParity);
-        serialDevice1->setDataBits(QSerialPort::Data8);
-        serialDevice1->setStopBits(QSerialPort::OneStop);
-        serialDevice1->setFlowControl(QSerialPort::NoFlowControl);
+        SendToTerminal(portName + "ComPort Connected.", true, 0);
 
-        serialDevice1->open(QIODevice::ReadWrite);
+        uint8_t index = GLB_ui->comboBox->findText(portName);
+        QStandardItemModel* model = (QStandardItemModel*) ui->comboBox->model();
+        model->item(index)->setEnabled(false);
 
-        if(serialDevice1->isOpen())
-        {
-            SendToTerminal(portName + "ComPort Connected.", true, 0);
-
-            uint8_t index = GLB_ui->comboBox->findText(portName);
-            QStandardItemModel* model = (QStandardItemModel*) ui->comboBox->model();
-            model->item(index)->setEnabled(false);
-
-            NowComBoxItem[0] = portName;
-        }
-        else SendToTerminal(portName + "ComPort is not connected.", true, 0);
+        NowComBoxItem[0] = portName;
     }
+    else SendToTerminal(portName + "ComPort is not connected.", true, 0);
 }
-void MainWindow::ComPortClose(uint8_t num_device)
+void MainWindow::ComPortClose()
 {   // COMPORT AVALIABLE СДЕЛАТЬ
-    if(num_device == 0)
+
+    if (serialDevice1->isOpen())
     {
-        if (serialDevice1->isOpen())
-        {
-            uint8_t index = GLB_ui->comboBox->findText(NowComBoxItem[0]);
-            QStandardItemModel* model = (QStandardItemModel*) ui->comboBox->model();
-            model->item(index)->setEnabled(true);
-            SendToTerminal(QString::number(index), true, 0);
-            serialDevice1->close();
-            SendToTerminal("Comport Closed.", true, 0);
-        }
+        uint8_t index = GLB_ui->comboBox->findText(NowComBoxItem[0]);
+        QStandardItemModel* model = (QStandardItemModel*) ui->comboBox->model();
+        model->item(index)->setEnabled(true);
+        SendToTerminal(QString::number(index), true, 0);
+        serialDevice1->close();
+        SendToTerminal("Comport Closed.", true, 0);
     }
+
 }
 
 QString MainWindow::ComPortWrite(uint8_t numDevice, uint8_t *data, uint16_t cntPack)
@@ -710,7 +705,7 @@ void MainWindow::on_comboBox_textActivated(const QString &arg1)
 {
     if(isConnectedComPort)
     {
-        ComPortClose(0);
+        ComPortClose();
         SendToTerminal("Comport Closed.", true, 0);
         isConnectedComPort = false;
     }
@@ -719,7 +714,7 @@ void MainWindow::on_comboBox_textActivated(const QString &arg1)
     {
         if(arg1 != "No selected")
         {
-            ComPortOpen(0, arg1, 115200);
+            ComPortOpen(arg1, std::stof(GLB_WinObj.GLB_WindowsLineEdit[40]->text().toStdString()));
             // SendToTerminal(ComPortInfo.availablePorts(), true, 0);
             // qDebug() << "Имя порта:" << ComPortInfo.;
 
@@ -2532,5 +2527,56 @@ void MainWindow::on_pushButton_11_clicked()
     // cnt++;
     // ComPortWrite(0, (unsigned char*)DataToSend, cnt);
 
+
+    // !!! CHECK CHECBOX   GLB_WinObj.GLB_WindowsCheckBox[11]
 }
 
+// Auto-Detect CheckBox
+void MainWindow::on_checkBox_10_toggled(bool checked)
+{
+    QList<QString> Comports;
+    bool FlagDeviceFound = false;
+
+    if(checked)
+    {
+        Comports = ComPortSearch();
+        for(uint8_t i = 0; i < Comports.length(); i++)
+        {
+            ComPortOpen(Comports[i], std::stof(GLB_WinObj.GLB_WindowsLineEdit[40]->text().toStdString()));
+            qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
+            QByteArray receivedData;
+            if(serialDevice1->isOpen())
+            {
+                receivedData.append(serialDevice1->readAll());
+                if(!receivedData.isEmpty())
+                {
+                    if (receivedData == QByteArray::fromHex("FFFFFF"))
+                    {
+                        FlagDeviceFound = true;
+                        SendToTerminal("Protez: " + Comports[i], true, 0);
+                        break;
+                    }
+                }
+
+                else if (QDateTime::currentMSecsSinceEpoch() - lastTime > 5000)
+                {
+                    SendToTerminal("No ack: " + Comports[i], true, 0);
+                    break;
+                }
+                if (FlagDeviceFound) break;
+                else
+                {
+                    ComPortClose();
+                    SendToTerminal("???: " + Comports[i], true, 0);
+                }
+            }
+        }
+    }
+    else
+    {
+
+
+
+
+    }
+}
