@@ -141,6 +141,8 @@ public slots:
 
     void PaintGraph2();
 
+    void ComportSelect(uint8_t NumCom, bool state);
+
 private slots:
 
 

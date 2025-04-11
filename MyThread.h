@@ -40,9 +40,16 @@ public:
 
 private:
     MainWindow* mainWindow;
+    QSerialPort *serialDevice1;  // Первый последовательный порт
 
 protected:
     void run() override;
+
+signals:
+    void ComportSelect_signal(uint8_t numcom, bool state);
+    void ComportOpenPort_signal(QString portName, qint32 baudRate);
+    void ComportClose_signal();
+    QList<QString> ComportSearch_signal();
 };
 
 #endif // MYTHREAD_H

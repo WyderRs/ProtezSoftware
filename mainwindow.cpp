@@ -24,6 +24,9 @@ CMD_Global GLB_Command;
 bool isConnectedComPort = false;
 uint32_t PackToRecv;
 uint32_t CountPoints = 5000;
+uint32_t GLB_I;
+QList<QString> GLB_Comports;
+
 
 /*Graph variables*/
 QVector<uint8_t> GLB_Graph_x, GLB_Graph_y;
@@ -52,6 +55,9 @@ MyThread_1 *thread_1;
 MyThread_2 *thread_2;
 bool GLB_Thread_Flag[2] = {false, };
 uint32_t dataRecvd2 = 0;
+
+/*Thread 2*/
+
 
 /*Angle Control variables*/
 RatioChannelsNumber RatioStateNow;
@@ -427,7 +433,7 @@ void SetStartVariables()
 QList<QString> MainWindow::ComPortSearch(void)
 {
     uint8_t ii = 0;
-    QList<QString> ComportList = {"", };
+    QList<QString> ComportList;
     GLB_ui->comboBox->clear();
     for(uint8_t i = 1; i < 10; i++)
     {
@@ -443,6 +449,9 @@ QList<QString> MainWindow::ComPortSearch(void)
         }
         else SendToTerminal(portName + " is not available.", true, 0);
     }
+    SendToTerminal("==============", true, 0);
+    GLB_Comports.clear();
+    GLB_Comports = ComportList;
     return ComportList;
 }
 
@@ -460,7 +469,7 @@ void MainWindow::ComPortOpen(QString portName, qint32 baudRate)
 
     if(serialDevice1->isOpen())
     {
-        SendToTerminal(portName + "ComPort Connected.", true, 0);
+        SendToTerminal(portName + " Connected.", true, 0);
 
         uint8_t index = GLB_ui->comboBox->findText(portName);
         QStandardItemModel* model = (QStandardItemModel*) ui->comboBox->model();
@@ -468,7 +477,7 @@ void MainWindow::ComPortOpen(QString portName, qint32 baudRate)
 
         NowComBoxItem[0] = portName;
     }
-    else SendToTerminal(portName + "ComPort is not connected.", true, 0);
+    else SendToTerminal(portName + " not connected.", true, 0);
 }
 void MainWindow::ComPortClose()
 {   // COMPORT AVALIABLE СДЕЛАТЬ
@@ -478,7 +487,7 @@ void MainWindow::ComPortClose()
         uint8_t index = GLB_ui->comboBox->findText(NowComBoxItem[0]);
         QStandardItemModel* model = (QStandardItemModel*) ui->comboBox->model();
         model->item(index)->setEnabled(true);
-        SendToTerminal(QString::number(index), true, 0);
+        // SendToTerminal(QString::number(index), true, 0);
         serialDevice1->close();
         SendToTerminal("Comport Closed.", true, 0);
     }
@@ -2534,49 +2543,20 @@ void MainWindow::on_pushButton_11_clicked()
 // Auto-Detect CheckBox
 void MainWindow::on_checkBox_10_toggled(bool checked)
 {
-    QList<QString> Comports;
-    bool FlagDeviceFound = false;
-
     if(checked)
     {
-        Comports = ComPortSearch();
-        for(uint8_t i = 0; i < Comports.length(); i++)
-        {
-            ComPortOpen(Comports[i], std::stof(GLB_WinObj.GLB_WindowsLineEdit[40]->text().toStdString()));
-            qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
-            QByteArray receivedData;
-            if(serialDevice1->isOpen())
-            {
-                receivedData.append(serialDevice1->readAll());
-                if(!receivedData.isEmpty())
-                {
-                    if (receivedData == QByteArray::fromHex("FFFFFF"))
-                    {
-                        FlagDeviceFound = true;
-                        SendToTerminal("Protez: " + Comports[i], true, 0);
-                        break;
-                    }
-                }
-
-                else if (QDateTime::currentMSecsSinceEpoch() - lastTime > 5000)
-                {
-                    SendToTerminal("No ack: " + Comports[i], true, 0);
-                    break;
-                }
-                if (FlagDeviceFound) break;
-                else
-                {
-                    ComPortClose();
-                    SendToTerminal("???: " + Comports[i], true, 0);
-                }
-            }
-        }
+        thread_2 = new MyThread_2(GLB_mainwindow);
+        connect(thread_2, &MyThread_2::ComportSelect_signal, this, &MainWindow::ComportSelect);
+        connect(thread_2, &MyThread_2::ComportOpenPort_signal, this, &MainWindow::ComPortOpen);
+        connect(thread_2, &MyThread_2::ComportSearch_signal, this, &MainWindow::ComPortSearch);
+        connect(thread_2, &MyThread_2::ComportClose_signal, this, &MainWindow::ComPortClose);
+        thread_2->start();
+        while(!thread_2->isRunning()) {}
+        GLB_Thread_Flag[1] = true;
+        SendToTerminal("Thread #2 is started!", true, 0);
     }
-    else
-    {
+}
+void MainWindow::ComportSelect(uint8_t NumCom, bool state)
+{
 
-
-
-
-    }
 }
