@@ -3,6 +3,11 @@
 
 #include <QThread>
 #include "mainwindow.h"
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QTimer>
+#include <QDateTime>
+
 
 
 /*Thread_1*/
@@ -19,11 +24,30 @@ private:
     QSerialPort *serialDevice1;  // Первый последовательный порт
 
 public slots:
-    void ComPortRead();
+    QVector<uint8_t> ComPortRead();
+    QList<QString> ComPortSearch();
+    QString ComPortFoundPort();
+    bool ComPortConnect();
+    void ComPortClose();
+    QString ComPortWrite(uint8_t *data, uint32_t cntdata);
+
 
 signals:
     void PaintGraph_signal();
     void PaintGraph2_signal();
+
+    void ComportDataUpdate_signal();
+    void ComportConnect_signal();
+    void ComportClose_signal();
+    void ComPortConnect_signal();
+    void ComportRead_signal();
+    void ComPortWrite_signal(QString back);
+
+
+    // void ComportSelect_signal(uint8_t numcom, bool state);
+    // void ComportOpenPort_signal(QString portName, qint32 baudRate);
+    // QList<QString> ComportSearch_signal();
+
 
 protected:
     void run() override;
@@ -40,16 +64,16 @@ public:
 
 private:
     MainWindow* mainWindow;
-    QSerialPort *serialDevice1;  // Первый последовательный порт
+    // QSerialPort *serialDevice1;  // Первый последовательный порт
 
 protected:
     void run() override;
 
 signals:
-    void ComportSelect_signal(uint8_t numcom, bool state);
-    void ComportOpenPort_signal(QString portName, qint32 baudRate);
-    void ComportClose_signal();
-    QList<QString> ComportSearch_signal();
+    // void ComportSelect_signal(uint8_t numcom, bool state);
+    // void ComportOpenPort_signal(QString portName, qint32 baudRate);
+    // void ComportClose_signal();
+    // QList<QString> ComportSearch_signal();
 };
 
 #endif // MYTHREAD_H

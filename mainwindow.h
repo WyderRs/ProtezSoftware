@@ -6,28 +6,43 @@
 #include "iostream"
 #include <string.h>
 #include <QTimer>
-#include <QSerialPort>
+
 #include <QDebug>
 
-#define COM_WORKMODE    0x0001
-#define COM_STATUS      0x0002
+/*Common com mask*/
+#define MASK_COM_SIDEPLATE    0x0001
+#define MASK_COM_WORKMODE     0x0002
+#define MASK_COM_START_INSTR  0x0100
+/*COM1 mask*/
+#define MASK_COM1_SELMOTOR    0x0004
+#define MASK_COM1_TYPEMOVE    0x0008
+#define MASK_COM1_PWM         0x0010
+#define MASK_COM1_TIMEWORK    0x0020
+#define MASK_COM1_DELAY       0x0040
+#define MASK_COM1_ADC         0x0080
+/*COM2 mask*/
+// #define MASK_COM2_ANGLE       0x0010
+// #define MASK_COM2_TIME        0x0020
+// #define MASK_COM2_SPEED       0x0040
+// #define MASK_COM2_DELAY       0x0080
+// #define MASK_COM2_FEEDBACK    0x0100
+/*COM3 mask*/
+// #define MASK_COM2_ANGLE       0x0010
+// #define MASK_COM2_TIME        0x0020
+// #define MASK_COM2_SPEED       0x0040
+// #define MASK_COM2_DELAY       0x0080
+// #define MASK_COM2_FEEDBACK    0x0100
 
-#define COM1_SETMOTOR    0x0004
-#define COM1_TYPEMOVE    0x0008
-#define COM1_PWM         0x0010
-#define COM1_TIMEWORK    0x0020
-#define COM1_DELAY       0x0040
-#define COM1_ADC         0x0080
+typedef struct CommandStruct
+{
+    /*Common com bytes*/
+    // uint8_t COM0_Config_1;
+    // uint8_t COM0_Config_2;
+    uint8_t COM0_StartInstruct;
 
-#define COM1_START_INSTR 0x0100
+} CommandStruct;
 
-#define COM2_ANGLE       0x0010
-#define COM2_TIME        0x0020
-#define COM2_SPEED       0x0040
-#define COM2_DELAY       0x0080
-#define COM2_FEEDBACK    0x0100
 
-#define COM2_START_INSTR 0x0200
 
 /******************************************************/
     //Windows Definitions
@@ -44,6 +59,8 @@ typedef struct GLB_WindowsObjects
     QCustomPlot *GLB_WindowsCustomPlot[5];
     QPlainTextEdit *GLB_WindowsPlainTextEdit[5];
 
+    QTabWidget *GLB_WindowsTab[5];
+    QWidget *GLB_WindowsTabWidget[5];
     QFrame *GLB_WindowsFrame[10];
 
 } GLB_WindowsObjects;
@@ -58,6 +75,12 @@ typedef enum MoveType
     HOLD,
     ANGLE_MODE,
 } MoveType;
+typedef enum NumPlate
+{
+    INTERN_PLATE = 0x00,
+    EXTERN_PLATE = 0x01,
+} NumPlate;
+
 typedef struct CMD_IntFlags
 {
     bool FL_StatusByte;
@@ -113,6 +136,47 @@ typedef enum RatioChannelsNumber
     Ratio_CH_None,
 } RatioChannelsNumber;
 
+typedef enum WorkModeEnum
+{
+    WRM_None = 0,
+    WRM_PWM_MODE = 0x01,
+    WRM_ANGLE_MODE = 0x02,
+} WorkModeEnum;
+
+typedef struct MotorDef
+{
+    QPushButton *TAB1_ComporessButton;
+    QPushButton *TAB1_DecompressButton;
+    QPushButton *TAB1_HoldButton;
+    QPushButton *TAB1_FreeButton;
+    QLineEdit   *TAB1_LineEditPWM;
+    QSlider     *TAB1_SliderPWM;
+    QLineEdit   *TAB1_LineEditWorkTime;
+    QLineEdit   *TAB1_LineEditDelayTime;
+    QCheckBox   *TAB1_CheckBoxADC;
+    QCheckBox   *TAB1_CheckBoxBackSide;
+
+
+    /*Main com0 bytes*/
+    uint8_t     MD_Config_1;
+    uint8_t     MD_Config_2;
+    WorkModeEnum MD_WorkMode;
+    NumPlate     MD_SidePlate;
+    /*Individual com2 bytes - PWM Mode*/
+    uint8_t     MD_SelMotor;
+    MoveType    MD_MoveType;
+    uint16_t    MD_PWM;
+    uint16_t    MD_TimeWork;
+    uint16_t    MD_TimeDelay;
+    uint8_t     MD_ADC_CH;
+    /*Individual com1 bytes - Status Mode*/
+
+    /*Individual com3 bytes - Angle Mode*/
+
+} MotorDef;
+
+
+
 //
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -129,19 +193,22 @@ public:
     ~MainWindow();
 
 public slots:
-    QList<QString> ComPortSearch(void);
+    void ComPortSearch(uint32_t boudrate);
+    void ComportDataUpdate_slot();
 
-    void ComPortOpen(QString portName, qint32 baudRate);
+    void ComPortOpen(QString com, uint32_t boudrate);
+    void ComportConnect_slot();
 
-    void ComPortClose();
+    void ComportClose_slot();
 
-    QString ComPortWrite(uint8_t numDevice, uint8_t *data, uint16_t cntPack);
+    void ComportRead_slot();
+    void ComPortRead();
+
+    void ComPortWrite(uint8_t *datatosend, uint32_t cntdata);
+    void ComportWrite_slot(QString back);
 
     void PaintGraph();
-
     void PaintGraph2();
-
-    void ComportSelect(uint8_t NumCom, bool state);
 
 private slots:
 
@@ -328,8 +395,14 @@ private slots:
 public:
     Ui::MainWindow *ui;
 private:
+    // QSerialPort *serialDevice1;  // Первый последовательный порт
+signals:
+    void ComportSearch_signal();
+    void ComportConnect_signal();
+    void ComportClose_signal();
 
-    QSerialPort *serialDevice1;  // Первый последовательный порт
+
+
 };
 
 #endif // MAINWINDOW_H

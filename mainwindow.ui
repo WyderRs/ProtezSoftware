@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1391</width>
-    <height>639</height>
+    <width>1402</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <property name="inputMethodHints">
    <set>Qt::ImhNone</set>
@@ -20,11 +23,14 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
+      <x>10</x>
+      <y>10</y>
       <width>1381</width>
-      <height>591</height>
+      <height>621</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="tabPosition">
      <enum>QTabWidget::North</enum>
@@ -149,7 +155,7 @@
         <x>450</x>
         <y>0</y>
         <width>20</width>
-        <height>561</height>
+        <height>461</height>
        </rect>
       </property>
       <property name="orientation">
@@ -186,10 +192,13 @@
       <property name="geometry">
        <rect>
         <x>470</x>
-        <y>260</y>
+        <y>80</y>
         <width>561</width>
         <height>291</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
@@ -375,7 +384,7 @@
        <string>115200</string>
       </property>
       <property name="maxLength">
-       <number>-1</number>
+       <number>32767</number>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1609,6 +1618,32 @@
        <string>Clear</string>
       </property>
      </widget>
+     <widget class="QCheckBox" name="checkBox_14">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>The back of the hand</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_15">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>380</y>
+        <width>291</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enable auto currect PWM for the back of the hand</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -2516,7 +2551,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1391</width>
+     <width>1402</width>
      <height>21</height>
     </rect>
    </property>
