@@ -60,7 +60,6 @@ bool GlobalFlagsMotor[10] = {0, }; // [0] FLAGS_ENABLE_ADC_CHANNEL > 0, [1] FLAG
 /*Thread variables*/
 MyThread_1 *thread_1;
 MyThread_2 *thread_2;
-bool GLB_Thread_Flag[2] = {false, };
 uint32_t dataRecvd2 = 0;
 uint8_t TypeThreadInterrupt;    // 0 - Graph, 1 - Search
 bool ThreadAutoConnectState;
@@ -251,6 +250,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsButton[36] = GLB_ui->pushButton_37;   // Tab 2 - Clear Terminal
 
     GLB_WinObj.GLB_WindowsButton[37] = GLB_ui->pushButton_11;   // Tab 0 - Debug Mode Start motor
+
+    GLB_WinObj.GLB_WindowsButton[38] = GLB_ui->pushButton_40;   // Tab 2 - Hand rotate
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsComboBox[0] = GLB_ui->comboBox;       // Tab 0 - Select Comport
     GLB_WinObj.GLB_WindowsComboBox[1] = GLB_ui->comboBox_2;     // Tab 0 - Debug Mode select motor
@@ -326,6 +327,11 @@ void SetStartGUISettings()
 
     GLB_WinObj.GLB_WindowsLineEdit[39] = GLB_ui->lineEdit_16;   // Tab 0 - Debug Mode Time work
     GLB_WinObj.GLB_WindowsLineEdit[40] = GLB_ui->lineEdit_17;   // Tab 0 - Baudrate lineEdit
+
+    GLB_WinObj.GLB_WindowsLineEdit[41] = GLB_ui->lineEdit_47;   // Tab 2 - Angle 5 Line Edit
+    GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
+    GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
+    GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsRadioButton[0] = GLB_ui->radioButton_4; // Tab 2 - FeedBack CH_0
     GLB_WinObj.GLB_WindowsRadioButton[1] = GLB_ui->radioButton_5; // Tab 2 - FeedBack CH_1
@@ -336,6 +342,8 @@ void SetStartGUISettings()
 
     GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
     GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
+
+    GLB_WinObj.GLB_WindowsRadioButton[8] = GLB_ui->radioButton_9; // Tab 2 - FeedBack CH_5
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsCustomPlot[0] = GLB_ui->widget;         // Tab 1 - FeedBack ADC_Graph
     GLB_WinObj.GLB_WindowsCustomPlot[1] = GLB_ui->widget_2;       // Tab 2 - FeedBack FeedBack_Graph
@@ -380,6 +388,8 @@ void SetStartGUISettings()
     /****************************************************************************************/
 
 
+
+
     /*****************************************/
     MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
     MotorDefStruct[0].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[20];
@@ -392,6 +402,14 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[0];
     MotorDefStruct[0].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[1];
     MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+
+    MotorDefStruct[0].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[29];
+    MotorDefStruct[0].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[19];
+    MotorDefStruct[0].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[24];
+    MotorDefStruct[0].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[29];
+    MotorDefStruct[0].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[34];
+    MotorDefStruct[0].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[0];
+
     /*****************************************/
     MotorDefStruct[1].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[3];
     MotorDefStruct[1].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[21];
@@ -404,6 +422,13 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[1];
     MotorDefStruct[1].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[2];
     MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+
+    MotorDefStruct[1].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[30];
+    MotorDefStruct[1].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[20];
+    MotorDefStruct[1].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[25];
+    MotorDefStruct[1].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[30];
+    MotorDefStruct[1].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[35];
+    MotorDefStruct[1].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[1];
     /*****************************************/
     MotorDefStruct[2].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[4];
     MotorDefStruct[2].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[22];
@@ -417,6 +442,13 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[2];
     MotorDefStruct[2].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[3];
     MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+
+    MotorDefStruct[2].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[31];
+    MotorDefStruct[2].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[21];
+    MotorDefStruct[2].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[26];
+    MotorDefStruct[2].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[31];
+    MotorDefStruct[2].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[36];
+    MotorDefStruct[2].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[2];
     /*****************************************/
     MotorDefStruct[3].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[5];
     MotorDefStruct[3].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[23];
@@ -430,6 +462,13 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[3];
     MotorDefStruct[3].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[4];
     MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+
+    MotorDefStruct[3].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[32];
+    MotorDefStruct[3].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[22];
+    MotorDefStruct[3].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[27];
+    MotorDefStruct[3].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[32];
+    MotorDefStruct[3].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[37];
+    MotorDefStruct[3].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[3];
     /*****************************************/
     MotorDefStruct[4].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[6];
     MotorDefStruct[4].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[24];
@@ -442,6 +481,13 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[4];
     MotorDefStruct[4].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[5];
     MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+
+    MotorDefStruct[4].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[33];
+    MotorDefStruct[4].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[23];
+    MotorDefStruct[4].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[28];
+    MotorDefStruct[4].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[33];
+    MotorDefStruct[4].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[38];
+    MotorDefStruct[4].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[4];
     /*****************************************/
     MotorDefStruct[5].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[7];
     MotorDefStruct[5].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[25];
@@ -454,7 +500,16 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[5];
     MotorDefStruct[5].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[6];
     MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+
+    MotorDefStruct[5].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[38];
+    MotorDefStruct[5].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[41];
+    MotorDefStruct[5].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[42];
+    MotorDefStruct[5].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[43];
+    MotorDefStruct[5].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[44];
+    MotorDefStruct[5].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[8];
     /*****************************************/
+
+
 
     /****************************************************************************************/
     /*****************************************/
@@ -516,8 +571,8 @@ void MainWindow::ComPortSearch(uint32_t boudrate)
     else ThreadAutoConnectState = false;
     CurrentBoundRate = boudrate;
 
-    thread_1->start();
-    while(!thread_1->isRunning()) {}
+    // thread_1->start();
+    // while(!thread_1->isRunning()) {}
     if(!ThreadAutoConnectState) SendToTerminal("Thread#1: search.", true, 0);
     else if(ThreadAutoConnectState) SendToTerminal("Thread#1: search with auto-connect.", true, 0);
 
@@ -532,8 +587,8 @@ void MainWindow::ComPortOpen(QString com, uint32_t boudrate)
     CurrentBoundRate = boudrate;
 
     TypeThreadInterrupt = 2;
-    thread_1->start();
-    while(!thread_1->isRunning()) {}
+    // thread_1->start();
+    // while(!thread_1->isRunning()) {}
 }
 void MainWindow::ComPortWrite(uint8_t *datatosend, uint32_t cntdata)
 {
@@ -545,17 +600,16 @@ void MainWindow::ComPortWrite(uint8_t *datatosend, uint32_t cntdata)
     }
     ComportCountDataToSend = cntdata;
 
-    thread_1->start();
-    while(!thread_1->isRunning()) {}
+    // thread_1->start();
+    // while(!thread_1->isRunning()) {}
     SendToTerminal("Thread#1: sending...", true, 1);
 }
 void MainWindow::ComPortRead()
 {
-    TypeThreadInterrupt = 0;
+    TypeThreadInterrupt = 5;
 
-    thread_1->start();
-    while(!thread_1->isRunning()) {}
-    GLB_Thread_Flag[0] = true;
+    // thread_1->start();
+    // while(!thread_1->isRunning()) {}
     SendToTerminal("Thread#1: reading...", true, 0);
 }
 
@@ -626,6 +680,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(thread_1, &MyThread_1::ComportClose_signal, this, &MainWindow::ComportClose_slot);
     connect(thread_1, &MyThread_1::ComportRead_signal, this, &MainWindow::ComportRead_slot);
     connect(thread_1, &MyThread_1::ComPortWrite_signal, this, &MainWindow::ComportWrite_slot);
+
+    thread_1->start();
+    while(!thread_1->isRunning()) {}
 
     SetStartGUISettings();
     SetStartVariables();
@@ -976,7 +1033,6 @@ void MainWindow::on_checkBox_11_toggled(bool checked)
 {
     if(checked)
     {
-        GLB_Thread_Flag[0] = true;
         // thread_1 = new MyThread_1(GLB_mainwindow);
         // thread_1->start();
         // while(!thread_1->isRunning()) {}
@@ -984,7 +1040,6 @@ void MainWindow::on_checkBox_11_toggled(bool checked)
     }
     else if(!checked)
     {
-        GLB_Thread_Flag[0] = false;
         SendToTerminal("Thread #1 disable.", true, 0);
     }
 }
@@ -1021,7 +1076,7 @@ void MainWindow::on_pushButton_clicked()
     GLB_ui->pushButton_21->setChecked(false);
     GLB_ui->pushButton_27->setChecked(false);
 
-    MotorDefStruct[0].MD_MoveType = LEFT;
+    MotorDefStruct[0].MD1_MoveType = LEFT;
 
 }
 void MainWindow::on_pushButton_2_clicked()
@@ -1031,7 +1086,7 @@ void MainWindow::on_pushButton_2_clicked()
     GLB_ui->pushButton_21->setChecked(false);
     GLB_ui->pushButton_27->setChecked(false);
 
-    MotorDefStruct[0].MD_MoveType = RIGHT;
+    MotorDefStruct[0].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_21_clicked()
 {
@@ -1040,7 +1095,7 @@ void MainWindow::on_pushButton_21_clicked()
     GLB_ui->pushButton_2->setChecked(false);
     GLB_ui->pushButton_27->setChecked(false);
 
-    MotorDefStruct[0].MD_MoveType = HOLD;
+    MotorDefStruct[0].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_27_clicked()
 {
@@ -1049,7 +1104,7 @@ void MainWindow::on_pushButton_27_clicked()
     GLB_ui->pushButton_2->setChecked(false);
     GLB_ui->pushButton_21->setChecked(false);
 
-    MotorDefStruct[0].MD_MoveType = FREE;
+    MotorDefStruct[0].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
@@ -1075,7 +1130,7 @@ void MainWindow::on_pushButton_3_clicked()
     GLB_ui->pushButton_4->setChecked(false);
     GLB_ui->pushButton_28->setChecked(false);
 
-    MotorDefStruct[1].MD_MoveType = LEFT;
+    MotorDefStruct[1].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_4_clicked()
 {
@@ -1083,7 +1138,7 @@ void MainWindow::on_pushButton_4_clicked()
     GLB_ui->pushButton_3->setChecked(false);
     GLB_ui->pushButton_28->setChecked(false);
 
-    MotorDefStruct[1].MD_MoveType = RIGHT;
+    MotorDefStruct[1].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_23_clicked()
 {
@@ -1092,7 +1147,7 @@ void MainWindow::on_pushButton_23_clicked()
     GLB_ui->pushButton_4->setChecked(false);
     GLB_ui->pushButton_28->setChecked(false);
 
-    MotorDefStruct[1].MD_MoveType = HOLD;
+    MotorDefStruct[1].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_28_clicked()
 {
@@ -1100,7 +1155,7 @@ void MainWindow::on_pushButton_28_clicked()
     GLB_ui->pushButton_4->setChecked(false);
     GLB_ui->pushButton_3->setChecked(false);
 
-    MotorDefStruct[1].MD_MoveType = FREE;
+    MotorDefStruct[1].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_2_valueChanged(int value)
 {
@@ -1120,7 +1175,7 @@ void MainWindow::on_pushButton_5_clicked()
     GLB_ui->pushButton_19->setChecked(false);
     GLB_ui->pushButton_26->setChecked(false);
 
-    MotorDefStruct[2].MD_MoveType = LEFT;
+    MotorDefStruct[2].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_6_clicked()
 {
@@ -1128,7 +1183,7 @@ void MainWindow::on_pushButton_6_clicked()
     GLB_ui->pushButton_19->setChecked(false);
     GLB_ui->pushButton_26->setChecked(false);
 
-    MotorDefStruct[2].MD_MoveType = RIGHT;
+    MotorDefStruct[2].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_19_clicked()
 {
@@ -1137,7 +1192,7 @@ void MainWindow::on_pushButton_19_clicked()
     GLB_ui->pushButton_6->setChecked(false);
     GLB_ui->pushButton_26->setChecked(false);
 
-    MotorDefStruct[2].MD_MoveType = HOLD;
+    MotorDefStruct[2].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_26_clicked()
 {
@@ -1145,7 +1200,7 @@ void MainWindow::on_pushButton_26_clicked()
     GLB_ui->pushButton_6->setChecked(false);
     GLB_ui->pushButton_19->setChecked(false);
 
-    MotorDefStruct[2].MD_MoveType = FREE;
+    MotorDefStruct[2].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
 {
@@ -1167,7 +1222,7 @@ void MainWindow::on_pushButton_7_clicked()
     GLB_ui->pushButton_24->setChecked(false);
     GLB_ui->pushButton_8->setChecked(false);
 
-    MotorDefStruct[3].MD_MoveType = LEFT;
+    MotorDefStruct[3].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_8_clicked()
 {
@@ -1176,7 +1231,7 @@ void MainWindow::on_pushButton_8_clicked()
     GLB_ui->pushButton_24->setChecked(false);
     GLB_ui->pushButton_7->setChecked(false);
 
-    MotorDefStruct[3].MD_MoveType = RIGHT;
+    MotorDefStruct[3].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_22_clicked()
 {
@@ -1185,7 +1240,7 @@ void MainWindow::on_pushButton_22_clicked()
     GLB_ui->pushButton_24->setChecked(false);
     GLB_ui->pushButton_7->setChecked(false);
 
-    MotorDefStruct[3].MD_MoveType = HOLD;
+    MotorDefStruct[3].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_24_clicked()
 {
@@ -1194,7 +1249,7 @@ void MainWindow::on_pushButton_24_clicked()
     GLB_ui->pushButton_22->setChecked(false);
     GLB_ui->pushButton_7->setChecked(false);
 
-    MotorDefStruct[3].MD_MoveType = FREE;
+    MotorDefStruct[3].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_4_valueChanged(int value)
 {
@@ -1215,7 +1270,7 @@ void MainWindow::on_pushButton_9_clicked()
     GLB_ui->pushButton_20->setChecked(false);
     GLB_ui->pushButton_25->setChecked(false);
 
-    MotorDefStruct[4].MD_MoveType = LEFT;
+    MotorDefStruct[4].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_10_clicked()
 {
@@ -1223,7 +1278,7 @@ void MainWindow::on_pushButton_10_clicked()
     GLB_ui->pushButton_20->setChecked(false);
     GLB_ui->pushButton_25->setChecked(false);
 
-    MotorDefStruct[4].MD_MoveType = RIGHT;
+    MotorDefStruct[4].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_20_clicked()
 {
@@ -1232,7 +1287,7 @@ void MainWindow::on_pushButton_20_clicked()
     GLB_ui->pushButton_10->setChecked(false);
     GLB_ui->pushButton_25->setChecked(false);
 
-    MotorDefStruct[4].MD_MoveType = HOLD;
+    MotorDefStruct[4].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_25_clicked()
 {
@@ -1241,7 +1296,7 @@ void MainWindow::on_pushButton_25_clicked()
     GLB_ui->pushButton_10->setChecked(false);
     GLB_ui->pushButton_20->setChecked(false);
 
-    MotorDefStruct[4].MD_MoveType = FREE;
+    MotorDefStruct[4].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_5_valueChanged(int value)
 {
@@ -1262,7 +1317,7 @@ void MainWindow::on_pushButton_30_clicked()
     GLB_ui->pushButton_32->setChecked(false);
     GLB_ui->pushButton_33->setChecked(false);
 
-    MotorDefStruct[5].MD_MoveType = LEFT;
+    MotorDefStruct[5].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_31_clicked()
 {
@@ -1271,7 +1326,7 @@ void MainWindow::on_pushButton_31_clicked()
     GLB_ui->pushButton_32->setChecked(false);
     GLB_ui->pushButton_33->setChecked(false);
 
-    MotorDefStruct[5].MD_MoveType = RIGHT;
+    MotorDefStruct[5].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_32_clicked()
 {
@@ -1280,7 +1335,7 @@ void MainWindow::on_pushButton_32_clicked()
     GLB_ui->pushButton_31->setChecked(false);
     GLB_ui->pushButton_33->setChecked(false);
 
-    MotorDefStruct[5].MD_MoveType = HOLD;
+    MotorDefStruct[5].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_33_clicked()
 {
@@ -1289,7 +1344,7 @@ void MainWindow::on_pushButton_33_clicked()
     GLB_ui->pushButton_31->setChecked(false);
     GLB_ui->pushButton_32->setChecked(false);
 
-    MotorDefStruct[5].MD_MoveType = FREE;
+    MotorDefStruct[5].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_6_valueChanged(int value)
 {
@@ -1324,7 +1379,7 @@ void MainWindow::on_pushButton_29_clicked()
         MotorDefStruct[i].MD_WorkMode = WRM_PWM_MODE;
         MotorDefStruct[i].MD_Config_1 |= MASK_COM_WORKMODE;
 
-        MotorDefStruct[i].MD_SelMotor = i;
+        MotorDefStruct[i].MD1_SelMotor = i;
         // if(MotorDefStruct[i].MD_SelMotor > 0)
         // {
             MotorDefStruct[i].MD_Config_1 |= MASK_COM1_SELMOTOR;
@@ -1337,7 +1392,7 @@ void MainWindow::on_pushButton_29_clicked()
                 (!MotorDefStruct[i].TAB1_HoldButton->isChecked())) flags_Enable[i] = false;
         else
         {
-            MotorDefStruct[i].MD_MoveType;
+            MotorDefStruct[i].MD1_MoveType;
             flags_Enable[i] = true;
         }
         // if(MotorDefStruct[i].MD_MoveType > 0)
@@ -1346,27 +1401,27 @@ void MainWindow::on_pushButton_29_clicked()
 
         // }
 
-        MotorDefStruct[i].MD_PWM = std::stof(MotorDefStruct[i].TAB1_LineEditPWM->text().toStdString());
+        MotorDefStruct[i].MD1_PWM = std::stof(MotorDefStruct[i].TAB1_LineEditPWM->text().toStdString());
         // if(MotorDefStruct[i].MD_PWM > 0)
         // {
             MotorDefStruct[i].MD_Config_1 |= MASK_COM1_PWM;
 
         // }
 
-        MotorDefStruct[i].MD_TimeWork = std::stof(MotorDefStruct[i].TAB1_LineEditWorkTime->text().toStdString()) * 100;
+        MotorDefStruct[i].MD1_TimeWork = std::stof(MotorDefStruct[i].TAB1_LineEditWorkTime->text().toStdString()) * 100;
         // if(MotorDefStruct[i].MD_TimeWork > 0)
         // {
             MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TIMEWORK;
 
         // }
 
-        MotorDefStruct[i].MD_TimeDelay = std::stof(MotorDefStruct[i].TAB1_LineEditDelayTime->text().toStdString()) * 100;
+        MotorDefStruct[i].MD1_TimeDelay = std::stof(MotorDefStruct[i].TAB1_LineEditDelayTime->text().toStdString()) * 100;
         // if(MotorDefStruct[i].MD_TimeDelay > 0)
         // {
             MotorDefStruct[i].MD_Config_1 |= MASK_COM1_DELAY;
         // }
 
-        MotorDefStruct[i].MD_ADC_CH = MotorDefStruct[i].TAB1_CheckBoxADC->isChecked();
+        MotorDefStruct[i].MD1_ADC_CH = MotorDefStruct[i].TAB1_CheckBoxADC->isChecked();
         // if(MotorDefStruct[i].MD_ADC_CH > 0)
         // {
             MotorDefStruct[i].MD_Config_1 |= MASK_COM1_ADC;
@@ -1385,21 +1440,21 @@ void MainWindow::on_pushButton_29_clicked()
         nowCnt++;
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD_WorkMode;
         nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_SelMotor;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_SelMotor;
         nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_MoveType;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_MoveType;
         nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_PWM;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_PWM;
         nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_TimeWork & 0x00FF;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_TimeWork & 0x00FF;
         nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD_TimeWork & 0xFF00) >> 8;
+        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD1_TimeWork & 0xFF00) >> 8;
         nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_TimeDelay & 0x00FF;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_TimeDelay & 0x00FF;
         nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD_TimeDelay & 0xFF00) >> 8;
+        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD1_TimeDelay & 0xFF00) >> 8;
         nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_ADC_CH;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_ADC_CH;
         nowCnt++;
 
         DataToSend[i][nowCnt] = 0xFF;
@@ -1449,45 +1504,14 @@ void MainWindow::on_pushButton_34_clicked()
 
     ComPortWrite(DataToSendALL, nowCnt);
 
-
-
-
-
-    // /*Start Received ADC channel*/
-    // if(GLB_ui->checkBox->isChecked()) PackToRecv = std::stof(GLB_ui->lineEdit_6->text().toStdString()) * CountPoints;
-    // else if(GLB_ui->checkBox_2->isChecked()) PackToRecv = std::stof(GLB_ui->lineEdit_7->text().toStdString()) * CountPoints;
-    // else if(GLB_ui->checkBox_3->isChecked()) PackToRecv = std::stof(GLB_ui->lineEdit_10->text().toStdString()) * CountPoints;
-    // else if(GLB_ui->checkBox_4->isChecked()) PackToRecv = std::stof(GLB_ui->lineEdit_9->text().toStdString()) * CountPoints;
-    // else if(GLB_ui->checkBox_5->isChecked()) PackToRecv = std::stof(GLB_ui->lineEdit_8->text().toStdString()) * CountPoints;
-    // else if(GLB_ui->checkBox_13->isChecked()) PackToRecv = std::stof(GLB_ui->lineEdit_37->text().toStdString()) * CountPoints;
-
-    // if(GLB_ui->checkBox_11->isChecked() && (GlobalFlagsMotor[0])/* && GLB_Thread_Flag[0]*/)
-    // {
-    //     // thread_1 = new MyThread_1(GLB_mainwindow);
-    //     connect(thread_1, &MyThread_1::PaintGraph_signal, this, &MainWindow::PaintGraph);
-    //     thread_1->start();
-    //     while(!thread_1->isRunning()) {}
-    //     GLB_Thread_Flag[0] = true;
-    //     SendToTerminal("Thread #1 is started!", true, 0);
-    // }
-    // // Flags clearing after checking
-    // for(uint8_t i = 0; i < 6; i++) memset(&MotorInstr[i].Flags, 0, sizeof(MotorInstr[i]));
-    // /**/
-
-    // uint8_t DataToSend[10] = {0, };
-    // uint8_t cnt = 0;
-    // uint16_t newConf = COM1_START_INSTR | COM_WORKMODE;
-    // DataToSend[cnt] = newConf & 0x00FF;
-    // cnt++;
-    // DataToSend[cnt] = (newConf & 0xFF00) >> 8;
-    // cnt++;
-    // DataToSend[cnt] = GLB_Command.ModeWorkByte;
-    // cnt++;
-    // DataToSend[cnt] = GLB_Command.StartInstruct;
-    // cnt++;
-    // DataToSend[cnt] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ / УКАЗАТЕЛЬ
-    // cnt++;
-    // ComPortWrite(0, (unsigned char*)DataToSend, cnt);
+    for(uint8_t i = 0; i < 6; i++)
+    {
+        if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
+        {
+            ComPortRead();
+            break;
+        }
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1499,443 +1523,104 @@ void MainWindow::on_pushButton_34_clicked()
 /*Configuration*/
 void MainWindow::on_pushButton_36_clicked()
 {
-    // SendToTerminal("Configurate", true, 2);
-    // uint8_t DataToSend[5][30] = {0, };
-    // uint8_t numMotor;
-    // uint16_t value = 0;
-    // uint8_t cnt[5] = {0, };
 
-    // GLB_Command.ModeWorkByte = GLB_ui->tabWidget->currentIndex();
-    // GLB_Command.StartInstruct = 0x01;   // Instruction start byte
+    SendToTerminal("Configurate", true, 1);
 
-    // for(uint8_t i = 0; i < 6; i++) MotorInstr[i].configHalfWord = 0x00;
+    bool flags_Enable[6] = {false, };       // Is it enabled?
+    uint8_t DataToSend[6][100] = {{0, }, };
+    uint8_t DataToSendALL[100] = {0, };
+    uint32_t CountData = 0;
 
-    // for(uint8_t i = 0; i < 6; i++) MotorInstr[i].configHalfWord |= COM_WORKMODE;
+    for(uint8_t i = 0; i < 6; i++)
+    {
+        MotorDefStruct[i].MD_SidePlate = (NumPlate)MotorDefStruct[i].TAB1_CheckBoxBackSide->isChecked();
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM_SIDEPLATE;
 
+        MotorDefStruct[i].MD_WorkMode = WRM_ANGLE_MODE;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM_WORKMODE;
 
-    // /*Check ChecBox*/
-    // // Motor 1
-    // numMotor = 0;
-    // for(uint8_t ii = 0; ii < 3; ii++)
-    // {
-    //     if(CtrlCheckState[ii])
-    //     {
-    //         if(ii == 0)      //angle
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_23->text().toStdString());
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Angle = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_ANGLE;
-    //                 MotorInstr[numMotor].Flags.FL2_AngleByte = true;
-    //             }
-    //         }
-    //         else if(ii == 1) // time
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_28->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Time = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_TIME;
-    //                 MotorInstr[numMotor].Flags.FL2_TimeByte = true;
-    //             }
-    //         }
-    //         else             // speed
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_33->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Speed = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_SPEED;
-    //                 MotorInstr[numMotor].Flags.FL2_SpeedByte = true;
-    //             }
-    //         }
-    //     }
-    // }
-    // value = std::stof(GLB_ui->lineEdit_44->text().toStdString()) * 100; // Delay
-    // if(value >= 0)
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_DelayByte = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_DELAY;
-    //     MotorInstr[numMotor].CTRL_2_Delay = value;
-    // }
-    // if(GLB_ui->radioButton_4->isChecked())
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // else
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x00;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // MotorInstr[numMotor].SelMotor = numMotor;
-    // MotorInstr[numMotor].configHalfWord |= COM1_SETMOTOR;
-    // MotorInstr[numMotor].configHalfWord |= COM1_TYPEMOVE;
-    // MotorInstr[numMotor].Flags.FL_TypeMoveByte = true;
-    // MotorInstr[numMotor].Flags.FL_SelMotByte = true;
-    // if(GLB_ui->radioButton_4->isChecked())                                   // FEEDBACK
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    // }
+        MotorDefStruct[i].MD2_SelMotor = i;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_SELMOTOR;
 
-    // if(GLB_ui->pushButton_14->isChecked()) MotorInstr[numMotor].TypeMove = ANGLE_MODE;
-    // else if(GLB_ui->pushButton_14->isChecked()) MotorInstr[numMotor].TypeMove = HOLD;
+        if(!MotorDefStruct[i].TAB2_FingerButton->isChecked()) flags_Enable[i] = false;
+        else
+        {
+            MotorDefStruct[i].MD2_MoveType = ANGLE_MODE;
+            flags_Enable[i] = true;
+        }
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_TYPEMOVE;
 
-    // // Motor 2
-    // numMotor = 1;
-    // for(uint8_t ii = 0; ii < 3; ii++)
-    // {
-    //     if(CtrlCheckState[ii])
-    //     {
-    //         if(ii == 0)      //angle
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_22->text().toStdString());
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Angle = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_ANGLE;
-    //                 MotorInstr[numMotor].Flags.FL2_AngleByte = true;
-    //             }
-    //         }
-    //         else if(ii == 1) // time
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_27->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Time = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_TIME;
-    //                 MotorInstr[numMotor].Flags.FL2_TimeByte = true;
-    //             }
-    //         }
-    //         else             // speed
-    //         {
-    //             if(value > 0)
-    //             {
-    //                 value = std::stof(GLB_ui->lineEdit_35->text().toStdString()) * 100;
-    //                 MotorInstr[numMotor].CTRL_2_Speed = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_SPEED;
-    //                 MotorInstr[numMotor].Flags.FL2_SpeedByte = true;
-    //             }
-    //         }
-    //     }
-    // }
-    // value = std::stof(GLB_ui->lineEdit_41->text().toStdString()) * 100; // Delay
-    // if(value >= 0)
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_DelayByte = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_DELAY;
-    //     MotorInstr[numMotor].CTRL_2_Delay = value;
-    // }
-    // if(GLB_ui->radioButton_5->isChecked())
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // else
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x00;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // MotorInstr[numMotor].SelMotor = numMotor;
-    // MotorInstr[numMotor].configHalfWord |= COM1_SETMOTOR;
-    // MotorInstr[numMotor].configHalfWord |= COM1_TYPEMOVE;
-    // MotorInstr[numMotor].Flags.FL_TypeMoveByte = true;
-    // MotorInstr[numMotor].Flags.FL_SelMotByte = true;
-    // if(GLB_ui->radioButton_5->isChecked())                                   // FEEDBACK
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    // }
-    // if(GLB_ui->pushButton_15->isChecked()) MotorInstr[numMotor].TypeMove = ANGLE_MODE;
-    // else if(GLB_ui->pushButton_15->isChecked()) MotorInstr[numMotor].TypeMove = HOLD;
-    // // Motor 3
-    // numMotor = 2;
-    // for(uint8_t ii = 0; ii < 3; ii++)
-    // {
-    //     if(CtrlCheckState[ii])
-    //     {
-    //         if(ii == 0)      //angle
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_21->text().toStdString());
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Angle = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_ANGLE;
-    //                 MotorInstr[numMotor].Flags.FL2_AngleByte = true;
-    //             }
-    //         }
-    //         else if(ii == 1) // time
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_26->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Time = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_TIME;
-    //                 MotorInstr[numMotor].Flags.FL2_TimeByte = true;
-    //             }
-    //         }
-    //         else             // speed
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_34->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Speed = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_SPEED;
-    //                 MotorInstr[numMotor].Flags.FL2_SpeedByte = true;
-    //             }
-    //         }
-    //     }
-    // }
-    // value = std::stof(GLB_ui->lineEdit_42->text().toStdString()) * 100; // Delay
-    // if(value >= 0)
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_DelayByte = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_DELAY;
-    //     MotorInstr[numMotor].CTRL_2_Delay = value;
-    // }
-    // if(GLB_ui->radioButton_6->isChecked())
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // else
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x00;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // MotorInstr[numMotor].SelMotor = numMotor;
-    // MotorInstr[numMotor].configHalfWord |= COM1_SETMOTOR;
-    // MotorInstr[numMotor].configHalfWord |= COM1_TYPEMOVE;
-    // MotorInstr[numMotor].Flags.FL_TypeMoveByte = true;
-    // MotorInstr[numMotor].Flags.FL_SelMotByte = true;
-    // if(GLB_ui->radioButton_6->isChecked())                                   // FEEDBACK
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    // }
-    // if(GLB_ui->pushButton_16->isChecked()) MotorInstr[numMotor].TypeMove = ANGLE_MODE;
-    // else if(GLB_ui->pushButton_16->isChecked()) MotorInstr[numMotor].TypeMove = HOLD;
-    // // Motor 4
-    // numMotor = 3;
-    // for(uint8_t ii = 0; ii < 3; ii++)
-    // {
-    //     if(CtrlCheckState[ii])
-    //     {
-    //         if(ii == 0)      //angle
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_24->text().toStdString());
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Angle = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_ANGLE;
-    //                 MotorInstr[numMotor].Flags.FL2_AngleByte = true;
-    //             }
-    //         }
-    //         else if(ii == 1) // time
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_29->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Time = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_TIME;
-    //                 MotorInstr[numMotor].Flags.FL2_TimeByte = true;
-    //             }
-    //         }
-    //         else             // speed
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_31->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Speed = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_SPEED;
-    //                 MotorInstr[numMotor].Flags.FL2_SpeedByte = true;
-    //             }
-    //         }
-    //     }
-    // }
-    // value = std::stof(GLB_ui->lineEdit_43->text().toStdString()) * 100; // Delay
-    // if(value >= 0)
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_DelayByte = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_DELAY;
-    //     MotorInstr[numMotor].CTRL_2_Delay = value;
-    // }
-    // if(GLB_ui->radioButton_7->isChecked())
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // else
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x00;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
+        MotorDefStruct[i].MD2_Angle = std::stof(MotorDefStruct[i].TAB2_LineEditAngle->text().toStdString());
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_ANGLE;
 
-    // MotorInstr[numMotor].SelMotor = numMotor;
-    // MotorInstr[numMotor].configHalfWord |= COM1_SETMOTOR;
-    // MotorInstr[numMotor].configHalfWord |= COM1_TYPEMOVE;
-    // MotorInstr[numMotor].Flags.FL_TypeMoveByte = true;
-    // MotorInstr[numMotor].Flags.FL_SelMotByte = true;
-    // if(GLB_ui->radioButton_7->isChecked())                                   // FEEDBACK
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    // }
-    // if(GLB_ui->pushButton_17->isChecked()) MotorInstr[numMotor].TypeMove = ANGLE_MODE;
-    // else if(GLB_ui->pushButton_17->isChecked()) MotorInstr[numMotor].TypeMove = HOLD;
-    // // Motor 5
-    // numMotor = 4;
-    // for(uint8_t ii = 0; ii < 3; ii++)
-    // {
-    //     if(CtrlCheckState[ii])
-    //     {
-    //         if(ii == 0)      //angle
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_25->text().toStdString());
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Angle = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_ANGLE;
-    //                 MotorInstr[numMotor].Flags.FL2_AngleByte = true;
-    //             }
-    //         }
-    //         else if(ii == 1) // time
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_30->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Time = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_TIME;
-    //                 MotorInstr[numMotor].Flags.FL2_TimeByte = true;
-    //             }
-    //         }
-    //         else             // speed
-    //         {
-    //             value = std::stof(GLB_ui->lineEdit_32->text().toStdString()) * 100;
-    //             if(value > 0)
-    //             {
-    //                 MotorInstr[numMotor].CTRL_2_Speed = value;
-    //                 MotorInstr[numMotor].configHalfWord |= COM2_SPEED;
-    //                 MotorInstr[numMotor].Flags.FL2_SpeedByte = true;
-    //             }
-    //         }
-    //     }
-    // }
-    // value = std::stof(GLB_ui->lineEdit_40->text().toStdString()) * 100; // Delay
-    // if(value >= 0)
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_DelayByte = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_DELAY;
-    //     MotorInstr[numMotor].CTRL_2_Delay = value;
-    // }
-    // if(GLB_ui->radioButton_8->isChecked())
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
-    // else
-    // {
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x00;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    // }
+        MotorDefStruct[i].MD2_Time = std::stof(MotorDefStruct[i].TAB2_LineEditTime->text().toStdString()) * 100;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_TIME;
 
-    // MotorInstr[numMotor].SelMotor = numMotor;
-    // MotorInstr[numMotor].configHalfWord |= COM1_SETMOTOR;
-    // MotorInstr[numMotor].configHalfWord |= COM1_TYPEMOVE;
-    // MotorInstr[numMotor].Flags.FL_TypeMoveByte = true;
-    // MotorInstr[numMotor].Flags.FL_SelMotByte = true;
-    // if(GLB_ui->radioButton_8->isChecked())                                   // FEEDBACK
-    // {
-    //     MotorInstr[numMotor].Flags.FL2_FeedBack = true;
-    //     MotorInstr[numMotor].configHalfWord |= COM2_FEEDBACK;
-    //     MotorInstr[numMotor].CTRL_2_FeedBack = 0x01;
-    // }
-    // if(GLB_ui->pushButton_18->isChecked()) MotorInstr[numMotor].TypeMove = ANGLE_MODE;
-    // else if(GLB_ui->pushButton_18->isChecked()) MotorInstr[numMotor].TypeMove = HOLD;
+        MotorDefStruct[i].MD2_Speed = std::stof(MotorDefStruct[i].TAB2_LineEditSpeed->text().toStdString()) * 100;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_SPEED;
 
-    // for(uint8_t i = 0; i < 5; i++)
-    // {
-    //     if(MotorInstr[i].Flags.FL2_AngleByte || MotorInstr[i].Flags.FL2_TimeByte
-    //         || MotorInstr[i].Flags.FL2_SpeedByte)
-    //     {
-    //         DataToSend[i][cnt[i]] = MotorInstr[i].configHalfWord & 0x00FF;
-    //         cnt[i]++;
-    //         DataToSend[i][cnt[i]] = (MotorInstr[i].configHalfWord & 0xFF00) >> 8;
-    //         cnt[i]++;
-    //         DataToSend[i][cnt[i]] = GLB_Command.ModeWorkByte;
-    //         cnt[i]++;
+        MotorDefStruct[i].MD2_Delay = std::stof(MotorDefStruct[i].TAB2_LineEditDelay->text().toStdString()) * 100;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_DELAY;
 
-    //         if(MotorInstr[i].Flags.FL_StatusByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].Status;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL_SelMotByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].SelMotor;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL_TypeMoveByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].TypeMove;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL2_AngleByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].CTRL_2_Angle & 0x00FF;
-    //             cnt[i]++;
-    //             DataToSend[i][cnt[i]] = (MotorInstr[i].CTRL_2_Angle & 0xFF00) >> 8;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL2_TimeByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].CTRL_2_Time & 0x00FF;
-    //             cnt[i]++;
-    //             DataToSend[i][cnt[i]] = (MotorInstr[i].CTRL_2_Time & 0xFF00) >> 8;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL2_SpeedByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].CTRL_2_Speed & 0x00FF;
-    //             cnt[i]++;
-    //             DataToSend[i][cnt[i]] = (MotorInstr[i].CTRL_2_Speed & 0xFF00) >> 8;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL2_DelayByte)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].CTRL_2_Delay & 0x00FF;
-    //             cnt[i]++;
-    //             DataToSend[i][cnt[i]] = (MotorInstr[i].CTRL_2_Delay & 0xFF00) >> 8;
-    //             cnt[i]++;
-    //         }
-    //         if(MotorInstr[i].Flags.FL2_FeedBack)
-    //         {
-    //             DataToSend[i][cnt[i]] = MotorInstr[i].CTRL_2_FeedBack;
-    //             cnt[i]++;
-    //         }
-    //         DataToSend[i][cnt[i]] = 0xFF;           ///////////// БАЙТ - РАЗДЕЛИТЕЛЬ
-    //         cnt[i]++;
-    //         // ComPortWrite(0, (unsigned char*)DataToSend[i], cnt[i]);
-    //     }
-    // }
-    // memset(&DataToSend, 0, sizeof(DataToSend));
-    // memset(&cnt, 0, sizeof(cnt));
+        MotorDefStruct[i].MD2_FeedBack = MotorDefStruct[i].TAB2_RatioButtonCH->isChecked();
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_FEEDBACK;
+    }
+
+    uint8_t nowCnt = 0;
+    for(uint8_t i = 0; i < 6; i++)
+    {
+        if(!flags_Enable[i]) continue;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_1;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_2;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_SidePlate;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_WorkMode;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_SelMotor;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_MoveType;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Angle & 0x00FF;
+        nowCnt++;
+        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Angle & 0xFF00) >> 8;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Time & 0x00FF;
+        nowCnt++;
+        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Time & 0xFF00) >> 8;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Speed & 0x00FF;
+        nowCnt++;
+        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Speed & 0xFF00) >> 8;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Delay & 0x00FF;
+        nowCnt++;
+        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Delay & 0xFF00) >> 8;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_FeedBack;
+        nowCnt++;
+
+        DataToSend[i][nowCnt] = 0xFF;
+        nowCnt++;
+        DataToSend[i][nowCnt] = 0xDD;
+        nowCnt++;
+
+        for(uint8_t t = 0; t < nowCnt; t++)
+        {
+            DataToSendALL[(i * nowCnt) + t] = DataToSend[i][t];
+        }
+
+        CountData += nowCnt;
+        nowCnt = 0;
+    }
+
+    ComPortWrite(DataToSendALL, CountData);
+    CountData = 0;
+
+    memset(&DataToSend, 0, sizeof(DataToSend));
+    memset(&DataToSendALL, 0, sizeof(DataToSendALL));
+
 }
 /*Start Instuction 2*/
 void MainWindow::on_pushButton_35_clicked()

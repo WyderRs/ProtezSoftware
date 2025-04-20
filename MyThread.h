@@ -24,13 +24,16 @@ private:
     QSerialPort *serialDevice1;  // Первый последовательный порт
 
 public slots:
-    QVector<uint8_t> ComPortRead();
+    QVector<uint8_t> ComPortReadData();
+    void ComPort_handleError(QSerialPort::SerialPortError error);
     QList<QString> ComPortSearch();
     QString ComPortFoundPort();
     bool ComPortConnect();
     void ComPortClose();
     QString ComPortWrite(uint8_t *data, uint32_t cntdata);
 
+    void onCheckConnect();
+    void onPortClosed();
 
 signals:
     void PaintGraph_signal();

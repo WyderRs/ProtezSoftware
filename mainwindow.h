@@ -21,11 +21,13 @@
 #define MASK_COM1_DELAY       0x0040
 #define MASK_COM1_ADC         0x0080
 /*COM2 mask*/
-// #define MASK_COM2_ANGLE       0x0010
-// #define MASK_COM2_TIME        0x0020
-// #define MASK_COM2_SPEED       0x0040
-// #define MASK_COM2_DELAY       0x0080
-// #define MASK_COM2_FEEDBACK    0x0100
+#define MASK_COM2_SELMOTOR    0x0004
+#define MASK_COM2_TYPEMOVE    0x0008
+#define MASK_COM2_ANGLE       0x0010
+#define MASK_COM2_TIME        0x0020
+#define MASK_COM2_SPEED       0x0040
+#define MASK_COM2_DELAY       0x0080
+#define MASK_COM2_FEEDBACK    0x0100
 /*COM3 mask*/
 // #define MASK_COM2_ANGLE       0x0010
 // #define MASK_COM2_TIME        0x0020
@@ -156,6 +158,13 @@ typedef struct MotorDef
     QCheckBox   *TAB1_CheckBoxADC;
     QCheckBox   *TAB1_CheckBoxBackSide;
 
+    QPushButton *TAB2_FingerButton;
+    QLineEdit   *TAB2_LineEditAngle;
+    QLineEdit   *TAB2_LineEditTime;
+    QLineEdit   *TAB2_LineEditSpeed;
+    QLineEdit   *TAB2_LineEditDelay;
+    QRadioButton *TAB2_RatioButtonCH;
+
 
     /*Main com0 bytes*/
     uint8_t     MD_Config_1;
@@ -163,15 +172,23 @@ typedef struct MotorDef
     WorkModeEnum MD_WorkMode;
     NumPlate     MD_SidePlate;
     /*Individual com2 bytes - PWM Mode*/
-    uint8_t     MD_SelMotor;
-    MoveType    MD_MoveType;
-    uint16_t    MD_PWM;
-    uint16_t    MD_TimeWork;
-    uint16_t    MD_TimeDelay;
-    uint8_t     MD_ADC_CH;
+    uint8_t     MD1_SelMotor;
+    MoveType    MD1_MoveType;
+    uint16_t    MD1_PWM;
+    uint16_t    MD1_TimeWork;
+    uint16_t    MD1_TimeDelay;
+    uint8_t     MD1_ADC_CH;
+    /*Individual com3 bytes - Angle Mode*/
+    uint8_t     MD2_SelMotor;
+    MoveType    MD2_MoveType;
+    uint16_t    MD2_Angle;
+    uint16_t    MD2_Time;
+    uint16_t    MD2_Speed;
+    uint16_t    MD2_Delay;
+    uint8_t     MD2_FeedBack;
     /*Individual com1 bytes - Status Mode*/
 
-    /*Individual com3 bytes - Angle Mode*/
+    /*Individual com1 bytes - Setting Mode*/
 
 } MotorDef;
 
