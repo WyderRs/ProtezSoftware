@@ -56,7 +56,7 @@ typedef struct GLB_WindowsObjects
     QPushButton *GLB_WindowsButton[50];
     QSlider *GLB_WindowsSlider[20];
     QLineEdit *GLB_WindowsLineEdit[50];
-    QCheckBox *GLB_WindowsCheckBox[20];
+    QCheckBox *GLB_WindowsCheckBox[30];
     QComboBox *GLB_WindowsComboBox[2];
     QRadioButton *GLB_WindowsRadioButton[10];
     QCustomPlot *GLB_WindowsCustomPlot[5];
@@ -164,7 +164,7 @@ typedef struct MotorDef
     QLineEdit   *TAB2_LineEditTime;
     QLineEdit   *TAB2_LineEditSpeed;
     QLineEdit   *TAB2_LineEditDelay;
-    QRadioButton *TAB2_RatioButtonCH;
+    QCheckBox   *TAB2_CheckBoxCH;
 
 
     /*Main com0 bytes*/
@@ -192,7 +192,12 @@ typedef struct MotorDef
     /*Individual com1 bytes - Setting Mode*/
 
 } MotorDef;
-
+typedef enum LastTypeCommand
+{
+    Last_None = 0,
+    Last_PWM_MODE = 0x01,
+    Last_ANGLE_MODE = 0x02,
+} LastTypeCommand;
 
 
 //
@@ -226,7 +231,6 @@ public slots:
     void ComportWrite_slot(QString back);
 
     void PaintGraph();
-    void PaintGraph2();
 
 private slots:
 
@@ -365,16 +369,6 @@ private slots:
 
     void on_pushButton_36_clicked();
 
-    void on_radioButton_4_clicked();
-
-    void on_radioButton_5_clicked();
-
-    void on_radioButton_6_clicked();
-
-    void on_radioButton_7_clicked();
-
-    void on_radioButton_8_clicked();
-
     void on_checkBox_6_toggled(bool checked);
 
     void on_checkBox_7_toggled(bool checked);
@@ -390,8 +384,6 @@ private slots:
     void on_pushButton_17_clicked(bool checked);
 
     void on_pushButton_18_clicked(bool checked);
-
-    void on_radioButton_clicked();
 
     void on_pushButton_35_clicked();
 

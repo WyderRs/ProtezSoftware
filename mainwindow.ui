@@ -2263,107 +2263,6 @@
        <string>Clear</string>
       </property>
      </widget>
-     <widget class="QWidget" name="RatioCH_widget" native="true">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>60</y>
-        <width>51</width>
-        <height>261</height>
-       </rect>
-      </property>
-      <widget class="QRadioButton" name="radioButton_8">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>160</y>
-         <width>51</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CH_5</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_6">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>80</y>
-         <width>51</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CH_3</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_7">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>120</y>
-         <width>51</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CH_4</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_4">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>1</y>
-         <width>51</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CH_1</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_5">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>40</y>
-         <width>51</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CH_2</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>240</y>
-         <width>51</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>None</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_9">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>200</y>
-         <width>51</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>CH_5</string>
-       </property>
-      </widget>
-     </widget>
      <widget class="QCheckBox" name="checkBox_6">
       <property name="geometry">
        <rect>
@@ -2657,6 +2556,84 @@
       </property>
       <property name="dragEnabled">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_16">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>60</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH1</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_17">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>100</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH2</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_18">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>140</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH3</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_19">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>180</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH4</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_20">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>220</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH5</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_21">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>260</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH6</string>
       </property>
      </widget>
     </widget>

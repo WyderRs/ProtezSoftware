@@ -46,6 +46,8 @@ QString DataFromFile[10];
 /*Work variables*/
 MotorDef MotorDefStruct[6];
 CommandStruct MotorCommand[6];
+LastTypeCommand LTC;
+bool Instruct_FLAG = false;
 
 typedef enum Fingers
 {
@@ -63,6 +65,9 @@ MyThread_2 *thread_2;
 uint32_t dataRecvd2 = 0;
 uint8_t TypeThreadInterrupt;    // 0 - Graph, 1 - Search
 bool ThreadAutoConnectState;
+
+
+
 /*Thread 2*/
 
 
@@ -119,84 +124,87 @@ double _2ByteTo_1Byte(uint16_t halfWorld)
 }
 void MainWindow::PaintGraph()
 {
-    double Step;
-    float value_time;
-    QVector<double> NewGraph_x, NewGraph_y;
-    for(uint16_t i = 0; i < GLB_Graph_y.size() / 2; i = i + 2)
+    if(LTC == Last_PWM_MODE)
     {
-        NewGraph_y.append(FormulaADC(
-            (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
-            ));
+        double Step;
+        float value_time;
+        QVector<double> NewGraph_x, NewGraph_y;
+        for(uint16_t i = 0; i < GLB_Graph_y.size() / 2; i = i + 2)
+        {
+            NewGraph_y.append(FormulaADC(
+                (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
+                ));
+        }
+        for(uint16_t i = 5; i < NewGraph_y.size(); i++)
+            NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
+
+        double max_val_x = -100;
+        double min_val_x = 1000;
+
+        double max_val_y = -100;
+        double min_val_y = 1000;
+
+        /*Settings Graph 1*/
+        if(GLB_ui->checkBox->isChecked()) value_time = std::stof(GLB_ui->lineEdit_6->text().toStdString());
+        else if(GLB_ui->checkBox_2->isChecked()) value_time = std::stof(GLB_ui->lineEdit_7->text().toStdString());
+        else if(GLB_ui->checkBox_3->isChecked()) value_time = std::stof(GLB_ui->lineEdit_10->text().toStdString());
+        else if(GLB_ui->checkBox_4->isChecked()) value_time = std::stof(GLB_ui->lineEdit_9->text().toStdString());
+        else if(GLB_ui->checkBox_5->isChecked()) value_time = std::stof(GLB_ui->lineEdit_8->text().toStdString());
+        else if(GLB_ui->checkBox_13->isChecked()) value_time = std::stof(GLB_ui->lineEdit_37->text().toStdString());
+
+        Step = value_time / NewGraph_y.size();
+        for(double i = 0; i < NewGraph_y.size(); i++)
+        {
+            NewGraph_x.append(Step * i);
+            if(max_val_x < NewGraph_x[i]) max_val_x = NewGraph_x[i];
+            if(min_val_x > NewGraph_x[i]) min_val_x = NewGraph_x[i];
+            if(max_val_y < NewGraph_y[i]) max_val_y = NewGraph_y[i];
+            if(min_val_y > NewGraph_y[i]) min_val_y = NewGraph_y[i];
+        }
+
+
+        GLB_ui->widget->xAxis->setRange(min_val_x, max_val_x);
+        GLB_ui->widget->yAxis->setRange(min_val_y, max_val_y);
+        GLB_ui->widget->addGraph();
+        GLB_ui->widget->graph(0)->setPen(QPen(Qt::blue));
+        GLB_ui->widget->graph(0)->setData(NewGraph_x, NewGraph_y);
+        GLB_ui->widget->replot();
+        GLB_Graph_y.clear();
     }
-    for(uint16_t i = 5; i < NewGraph_y.size(); i++)
-        NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
-
-    double max_val_x = -100;
-    double min_val_x = 1000;
-
-    double max_val_y = -100;
-    double min_val_y = 1000;
-
-    /*Settings Graph 1*/
-    if(GLB_ui->checkBox->isChecked()) value_time = std::stof(GLB_ui->lineEdit_6->text().toStdString());
-    else if(GLB_ui->checkBox_2->isChecked()) value_time = std::stof(GLB_ui->lineEdit_7->text().toStdString());
-    else if(GLB_ui->checkBox_3->isChecked()) value_time = std::stof(GLB_ui->lineEdit_10->text().toStdString());
-    else if(GLB_ui->checkBox_4->isChecked()) value_time = std::stof(GLB_ui->lineEdit_9->text().toStdString());
-    else if(GLB_ui->checkBox_5->isChecked()) value_time = std::stof(GLB_ui->lineEdit_8->text().toStdString());
-    else if(GLB_ui->checkBox_13->isChecked()) value_time = std::stof(GLB_ui->lineEdit_37->text().toStdString());
-
-    Step = value_time / NewGraph_y.size();
-    for(double i = 0; i < NewGraph_y.size(); i++)
+    else if(LTC == Last_ANGLE_MODE)
     {
-        NewGraph_x.append(Step * i);
-        if(max_val_x < NewGraph_x[i]) max_val_x = NewGraph_x[i];
-        if(min_val_x > NewGraph_x[i]) min_val_x = NewGraph_x[i];
-        if(max_val_y < NewGraph_y[i]) max_val_y = NewGraph_y[i];
-        if(min_val_y > NewGraph_y[i]) min_val_y = NewGraph_y[i];
+        double Step;
+        QVector<double> NewGraph2_x, NewGraph2_y;
+        for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
+        {
+            NewGraph2_y.append(_2ByteTo_1Byte(
+                (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
+                ));
+        }
+
+        double max_val_x = 0.0;
+        double min_val_x = 0.0;
+
+        double max_val_y = 0.0;
+        double min_val_y = 0.0;
+
+        Step = 1.0;
+        for(double i = 0; i < NewGraph2_y.size(); i++)
+        {
+            NewGraph2_x.append(i);
+            if(max_val_x < NewGraph2_x[i]) max_val_x = NewGraph2_x[i];
+            if(min_val_x > NewGraph2_x[i]) min_val_x = NewGraph2_x[i];
+            if(max_val_y < NewGraph2_y[i]) max_val_y = NewGraph2_y[i];
+            if(min_val_y > NewGraph2_y[i]) min_val_y = NewGraph2_y[i];
+        }
+
+        GLB_ui->widget_2->xAxis->setRange(min_val_x, max_val_x);
+        GLB_ui->widget_2->yAxis->setRange(min_val_y, max_val_y);
+        GLB_ui->widget_2->addGraph();
+        GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
+        GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
+        GLB_ui->widget_2->replot();
     }
-
-
-    GLB_ui->widget->xAxis->setRange(min_val_x, max_val_x);
-    GLB_ui->widget->yAxis->setRange(min_val_y, max_val_y);
-    GLB_ui->widget->addGraph();
-    GLB_ui->widget->graph(0)->setPen(QPen(Qt::blue));
-    GLB_ui->widget->graph(0)->setData(NewGraph_x, NewGraph_y);
-    GLB_ui->widget->replot();
-    GLB_Graph_y.clear();
-}
-void MainWindow::PaintGraph2()
-{
-    double Step;
-    QVector<double> NewGraph2_x, NewGraph2_y;
-    for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
-    {
-        NewGraph2_y.append(_2ByteTo_1Byte(
-            (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
-            ));
-    }
-
-    double max_val_x = 0.0;
-    double min_val_x = 0.0;
-
-    double max_val_y = 0.0;
-    double min_val_y = 0.0;
-
-    Step = 1.0;
-    for(double i = 0; i < NewGraph2_y.size(); i++)
-    {
-        NewGraph2_x.append(i);
-        if(max_val_x < NewGraph2_x[i]) max_val_x = NewGraph2_x[i];
-        if(min_val_x > NewGraph2_x[i]) min_val_x = NewGraph2_x[i];
-        if(max_val_y < NewGraph2_y[i]) max_val_y = NewGraph2_y[i];
-        if(min_val_y > NewGraph2_y[i]) min_val_y = NewGraph2_y[i];
-    }
-
-    GLB_ui->widget_2->xAxis->setRange(min_val_x, max_val_x);
-    GLB_ui->widget_2->yAxis->setRange(min_val_y, max_val_y);
-    GLB_ui->widget_2->addGraph();
-    GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
-    GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
-    GLB_ui->widget_2->replot();
 }
 
 
@@ -277,6 +285,13 @@ void SetStartGUISettings()
 
     GLB_WinObj.GLB_WindowsCheckBox[13] = GLB_ui->checkBox_14;    // Tab 0 - The back of the hand
     GLB_WinObj.GLB_WindowsCheckBox[14] = GLB_ui->checkBox_15;    // Tab 0 - Enable auto currect PWM for the back of the hand
+
+    GLB_WinObj.GLB_WindowsCheckBox[15] = GLB_ui->checkBox_16;    // Tab 2 - CH1
+    GLB_WinObj.GLB_WindowsCheckBox[16] = GLB_ui->checkBox_17;    // Tab 2 - CH2
+    GLB_WinObj.GLB_WindowsCheckBox[17] = GLB_ui->checkBox_18;    // Tab 2 - CH3
+    GLB_WinObj.GLB_WindowsCheckBox[18] = GLB_ui->checkBox_19;    // Tab 2 - CH4
+    GLB_WinObj.GLB_WindowsCheckBox[19] = GLB_ui->checkBox_20;    // Tab 2 - CH5
+    GLB_WinObj.GLB_WindowsCheckBox[20] = GLB_ui->checkBox_21;    // Tab 2 - CH6
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLineEdit[0] = GLB_ui->lineEdit_20;    // Tab 0 - File Repository
 
@@ -334,17 +349,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
     /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsRadioButton[0] = GLB_ui->radioButton_4; // Tab 2 - FeedBack CH_0
-    GLB_WinObj.GLB_WindowsRadioButton[1] = GLB_ui->radioButton_5; // Tab 2 - FeedBack CH_1
-    GLB_WinObj.GLB_WindowsRadioButton[2] = GLB_ui->radioButton_6; // Tab 2 - FeedBack CH_2
-    GLB_WinObj.GLB_WindowsRadioButton[3] = GLB_ui->radioButton_7; // Tab 2 - FeedBack CH_3
-    GLB_WinObj.GLB_WindowsRadioButton[4] = GLB_ui->radioButton_8; // Tab 2 - FeedBack CH_4
-    GLB_WinObj.GLB_WindowsRadioButton[5] = GLB_ui->radioButton;   // Tab 2 - FeedBack NONE
-
     GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
     GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
-
-    GLB_WinObj.GLB_WindowsRadioButton[8] = GLB_ui->radioButton_9; // Tab 2 - FeedBack CH_5
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsCustomPlot[0] = GLB_ui->widget;         // Tab 1 - FeedBack ADC_Graph
     GLB_WinObj.GLB_WindowsCustomPlot[1] = GLB_ui->widget_2;       // Tab 2 - FeedBack FeedBack_Graph
@@ -390,7 +396,6 @@ void SetStartGUISettings()
 
 
 
-
     /*****************************************/
     MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
     MotorDefStruct[0].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[20];
@@ -409,8 +414,7 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[24];
     MotorDefStruct[0].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[29];
     MotorDefStruct[0].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[34];
-    MotorDefStruct[0].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[0];
-
+    MotorDefStruct[0].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[15];
     /*****************************************/
     MotorDefStruct[1].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[3];
     MotorDefStruct[1].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[21];
@@ -429,7 +433,8 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[25];
     MotorDefStruct[1].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[30];
     MotorDefStruct[1].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[35];
-    MotorDefStruct[1].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[1];
+    MotorDefStruct[1].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[16];
+
     /*****************************************/
     MotorDefStruct[2].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[4];
     MotorDefStruct[2].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[22];
@@ -449,7 +454,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[26];
     MotorDefStruct[2].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[31];
     MotorDefStruct[2].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[36];
-    MotorDefStruct[2].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[2];
+    MotorDefStruct[2].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[17];
     /*****************************************/
     MotorDefStruct[3].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[5];
     MotorDefStruct[3].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[23];
@@ -469,7 +474,7 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[27];
     MotorDefStruct[3].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[32];
     MotorDefStruct[3].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[37];
-    MotorDefStruct[3].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[3];
+    MotorDefStruct[3].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[18];
     /*****************************************/
     MotorDefStruct[4].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[6];
     MotorDefStruct[4].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[24];
@@ -488,7 +493,7 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[28];
     MotorDefStruct[4].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[33];
     MotorDefStruct[4].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[38];
-    MotorDefStruct[4].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[4];
+    MotorDefStruct[4].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[19];
     /*****************************************/
     MotorDefStruct[5].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[7];
     MotorDefStruct[5].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[25];
@@ -507,7 +512,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[42];
     MotorDefStruct[5].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[43];
     MotorDefStruct[5].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[44];
-    MotorDefStruct[5].TAB2_RatioButtonCH = GLB_WinObj.GLB_WindowsRadioButton[8];
+    MotorDefStruct[5].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[20];
     /*****************************************/
 
 
@@ -660,6 +665,33 @@ void MainWindow::ComportRead_slot()
 void MainWindow::ComportWrite_slot(QString back)
 {
     SendToTerminal("Feedback: " + back, true, 1);
+
+    if(Instruct_FLAG)
+    {
+        if(LTC == Last_PWM_MODE)
+        {
+            for(uint8_t i = 0; i < 6; i++)
+            {
+                if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
+                {
+                    ComPortRead();
+                    break;
+                }
+            }
+        }
+        else if(LTC == Last_ANGLE_MODE)
+        {
+            for(uint8_t i = 0; i < 6; i++)
+            {
+                if(MotorDefStruct[i].MD2_FeedBack == 0x01)
+                {
+                    ComPortRead();
+                    break;
+                }
+            }
+        }
+        Instruct_FLAG = false;
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -673,7 +705,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     thread_1 = new MyThread_1(GLB_mainwindow);
 
-    connect(thread_1, &MyThread_1::PaintGraph2_signal, this, &MainWindow::PaintGraph2);
     connect(thread_1, &MyThread_1::PaintGraph_signal, this, &MainWindow::PaintGraph);
 
     connect(thread_1, &MyThread_1::ComportDataUpdate_signal, this, &MainWindow::ComportDataUpdate_slot);
@@ -1503,16 +1534,10 @@ void MainWindow::on_pushButton_34_clicked()
     DataToSendALL[nowCnt] = 0xDD;
     nowCnt++;
 
+    LTC = (LastTypeCommand)WRM_PWM_MODE;
+    Instruct_FLAG = true;
     ComPortWrite(DataToSendALL, nowCnt);
 
-    for(uint8_t i = 0; i < 6; i++)
-    {
-        if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
-        {
-            ComPortRead();
-            break;
-        }
-    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1563,8 +1588,8 @@ void MainWindow::on_pushButton_36_clicked()
         MotorDefStruct[i].MD2_Delay = std::stof(MotorDefStruct[i].TAB2_LineEditDelay->text().toStdString()) * 100;
         MotorDefStruct[i].MD_Config_1 |= MASK_COM2_DELAY;
 
-        MotorDefStruct[i].MD2_FeedBack = MotorDefStruct[i].TAB2_RatioButtonCH->isChecked();
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_FEEDBACK;
+        MotorDefStruct[i].MD2_FeedBack = MotorDefStruct[i].TAB2_CheckBoxCH->isChecked();
+        MotorDefStruct[i].MD_Config_2 |= MASK_COM2_FEEDBACK >> 8;
     }
 
     uint8_t nowCnt = 0;
@@ -1648,52 +1673,28 @@ void MainWindow::on_pushButton_35_clicked()
     DataToSendALL[nowCnt] = 0xDD;
     nowCnt++;
 
+
+    Instruct_FLAG = true;
+    LTC = (LastTypeCommand)WRM_ANGLE_MODE;
+
     ComPortWrite(DataToSendALL, nowCnt);
-
-    for(uint8_t i = 0; i < 6; i++)
-    {
-        if(MotorDefStruct[i].MD2_FeedBack == 0x01)
-        {
-            ComPortRead();
-            break;
-        }
-    }
-
 
 }
 
 
 /*Channels ADC*/
 // Channel_1
-void MainWindow::on_radioButton_4_clicked()
-{
-    RatioStateNow = Ratio_CH_1;
-}
+
 // Channel_2
-void MainWindow::on_radioButton_5_clicked()
-{
-    RatioStateNow = Ratio_CH_2;
-}
+
 // Channel_3
-void MainWindow::on_radioButton_6_clicked()
-{
-    RatioStateNow = Ratio_CH_3;
-}
+
 // Channel_4
-void MainWindow::on_radioButton_7_clicked()
-{
-    RatioStateNow = Ratio_CH_4;
-}
+
 // Channel_5
-void MainWindow::on_radioButton_8_clicked()
-{
-    RatioStateNow = Ratio_CH_5;
-}
+
 // Channel_None
-void MainWindow::on_radioButton_clicked()
-{
-    RatioStateNow = Ratio_CH_None;
-}
+
 
 /*TypeControl*/
 //Angle
