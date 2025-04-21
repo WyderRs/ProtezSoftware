@@ -14,6 +14,8 @@ extern bool ThreadAutoConnectState;
 extern uint8_t ComportDataToSend[50];
 extern uint8_t ComportCountDataToSend;
 
+extern LastTypeCommand LTC;
+
 bool flag_com = false;
 
 /*Port data variables*/
@@ -105,7 +107,6 @@ void MyThread_1::run()
 
 QVector<uint8_t> MyThread_1::ComPortReadData()
 {
-
     QVector<uint8_t> GLB_RecvData;
     uint32_t cnt_dataRecvd = 0;
     QByteArray newData;
@@ -115,7 +116,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
     {
         if(serialDevice1->waitForReadyRead(300))
         {
-            newData = serialDevice1->read(10);
+            newData = serialDevice1->readAll();
             while(serialDevice1->waitForReadyRead(20))
             {
                 newData += serialDevice1->read(10);
@@ -144,6 +145,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
 
     qDebug() <<"PACK Cnt: " << ComportCountdataRecv;
     return GLB_RecvData;
+
 }
 
 
