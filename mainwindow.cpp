@@ -162,6 +162,7 @@ void MainWindow::PaintGraph()
     GLB_ui->widget->graph(0)->setPen(QPen(Qt::blue));
     GLB_ui->widget->graph(0)->setData(NewGraph_x, NewGraph_y);
     GLB_ui->widget->replot();
+    GLB_Graph_y.clear();
 }
 void MainWindow::PaintGraph2()
 {
@@ -1488,7 +1489,7 @@ void MainWindow::on_pushButton_34_clicked()
 
     DataToSendALL[nowCnt] |= MASK_COM_SIDEPLATE | MASK_COM_WORKMODE;    // config_1
     nowCnt++;
-    DataToSendALL[nowCnt] |= MASK_COM_START_INSTR >> 8;                 // config_2
+    DataToSendALL[nowCnt] |= MASK_COM1_START_INSTR >> 8;                 // config_2
     nowCnt++;
     DataToSendALL[nowCnt] |= (NumPlate)MotorDefStruct[0].TAB1_CheckBoxBackSide->isChecked();   // select plate
     nowCnt++;
@@ -1625,38 +1626,40 @@ void MainWindow::on_pushButton_36_clicked()
 /*Start Instuction 2*/
 void MainWindow::on_pushButton_35_clicked()
 {
-    // SendToTerminal("Start instruction", true, 2);
 
-    // CheckGlobalStateMotorVariables();
+    uint8_t DataToSendALL[100] = {0, };
+    uint8_t nowCnt = 0;
 
-    // /*Start Received FeedBack channel*/
+    SendToTerminal("Start instruction", true, 1);
 
-    // if(GLB_ui->checkBox_11->isChecked() && (GlobalFlagsMotor[1])/* && GLB_Thread_Flag[0]*/)
-    // {
-    //     // thread_1 = new MyThread_1(GLB_mainwindow);
-    //     // connect(thread_1, &MyThread_1::PaintGraph2_signal, this, &MainWindow::PaintGraph2);
-    //     thread_1->start();
-    //     while(!thread_1->isRunning()) {}
-    //     GLB_Thread_Flag[0] = true;
-    //     SendToTerminal("Thread #1 is started!", true, 2);
-    // }
-    // for(uint8_t i = 0; i < 6; i++) memset(&MotorInstr[i].Flags, 0, sizeof(MotorInstr[i]));
-    // /**/
+    DataToSendALL[nowCnt] |= MASK_COM_SIDEPLATE | MASK_COM_WORKMODE;    // config_1
+    nowCnt++;
+    DataToSendALL[nowCnt] |= MASK_COM2_START_INSTR >> 8;                // config_2
+    nowCnt++;
+    DataToSendALL[nowCnt] |= INTERN_PLATE;                              // select plate
+    nowCnt++;
+    DataToSendALL[nowCnt] |= WRM_ANGLE_MODE;                            // select workmode
+    nowCnt++;
+    DataToSendALL[nowCnt] = 0x01;                                       // start instruct byte
+    nowCnt++;
 
-    // uint8_t DataToSend[10] = {0, };
-    // uint8_t cnt = 0;
-    // uint16_t newConf = COM2_START_INSTR | COM_WORKMODE;
-    // DataToSend[cnt] = newConf & 0x00FF;
-    // cnt++;
-    // DataToSend[cnt] = (newConf & 0xFF00) >> 8;
-    // cnt++;
-    // DataToSend[cnt] = GLB_Command.ModeWorkByte;
-    // cnt++;
-    // DataToSend[cnt] = GLB_Command.StartInstruct;
-    // cnt++;
-    // DataToSend[cnt] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ / УКАЗАТЕЛЬ
-    // cnt++;
-    // ComPortWrite(0, (unsigned char*)DataToSend, cnt);
+    DataToSendALL[nowCnt] = 0xFF;
+    nowCnt++;
+    DataToSendALL[nowCnt] = 0xDD;
+    nowCnt++;
+
+    ComPortWrite(DataToSendALL, nowCnt);
+
+    for(uint8_t i = 0; i < 6; i++)
+    {
+        if(MotorDefStruct[i].MD2_FeedBack == 0x01)
+        {
+            ComPortRead();
+            break;
+        }
+    }
+
+
 }
 
 

@@ -12,7 +12,6 @@
 /*Common com mask*/
 #define MASK_COM_SIDEPLATE    0x0001
 #define MASK_COM_WORKMODE     0x0002
-#define MASK_COM_START_INSTR  0x0100
 /*COM1 mask*/
 #define MASK_COM1_SELMOTOR    0x0004
 #define MASK_COM1_TYPEMOVE    0x0008
@@ -20,6 +19,7 @@
 #define MASK_COM1_TIMEWORK    0x0020
 #define MASK_COM1_DELAY       0x0040
 #define MASK_COM1_ADC         0x0080
+#define MASK_COM1_START_INSTR  0x0100
 /*COM2 mask*/
 #define MASK_COM2_SELMOTOR    0x0004
 #define MASK_COM2_TYPEMOVE    0x0008
@@ -28,6 +28,7 @@
 #define MASK_COM2_SPEED       0x0040
 #define MASK_COM2_DELAY       0x0080
 #define MASK_COM2_FEEDBACK    0x0100
+#define MASK_COM2_START_INSTR  0x0200
 /*COM3 mask*/
 // #define MASK_COM2_ANGLE       0x0010
 // #define MASK_COM2_TIME        0x0020

@@ -35,6 +35,7 @@ public slots:
     void onCheckConnect();
     void onPortClosed();
 
+
 signals:
     void PaintGraph_signal();
     void PaintGraph2_signal();

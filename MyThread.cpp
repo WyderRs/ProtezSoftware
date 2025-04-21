@@ -49,6 +49,7 @@ void MyThread_1::run()
             qRegisterMetaType<QSerialPort::SerialPortError>("QSerialPort::SerialPortError");
             connect(serialDevice1, &QSerialPort::errorOccurred, this, &MyThread_1::ComPort_handleError);
             connect(serialDevice1, &QSerialPort::aboutToClose, this, &MyThread_1::onPortClosed);
+
         }
         flag_com = true;
 
@@ -92,7 +93,7 @@ void MyThread_1::run()
                 ComportdataRecv = ComPortReadData();
                 GLB_Graph_y = ComportdataRecv;
 
-                emit PaintGraph_signal(); // Сигнал для обновления графика
+                emit PaintGraph_signal();
             }
             TypeThreadInterrupt = 0;
         }
@@ -109,8 +110,8 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
     qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
     while (1)
     {
-        serialDevice1->waitForReadyRead(100);
-        QByteArray newData = serialDevice1->read(10);
+        serialDevice1->waitForReadyRead(50);
+        QByteArray newData = serialDevice1->readAll();
         if (!newData.isEmpty())
         {
             for (char byte : newData)
@@ -120,7 +121,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
                 lastTime = QDateTime::currentMSecsSinceEpoch();
             }
         }
-        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 100)
+        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 1000)
         {
             break;
         }
@@ -130,6 +131,13 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
     serialDevice1->clear();
 
     return GLB_RecvData;
+}
+
+
+
+
+
+
 
 
     // QVector<uint8_t> GLB_RecvData;
@@ -166,7 +174,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
 
     // return GLB_RecvData;
 
-}
+
 QList<QString> MyThread_1::ComPortSearch()
 {
     uint8_t ii = 0;
