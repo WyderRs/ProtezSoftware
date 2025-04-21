@@ -52,14 +52,14 @@ typedef struct CommandStruct
 /******************************************************/
 typedef struct GLB_WindowsObjects
 {
-    QLabel *GLB_WindowsLabel[20];
+    QLabel *GLB_WindowsLabel[30];
     QPushButton *GLB_WindowsButton[50];
     QSlider *GLB_WindowsSlider[20];
     QLineEdit *GLB_WindowsLineEdit[50];
     QCheckBox *GLB_WindowsCheckBox[30];
     QComboBox *GLB_WindowsComboBox[2];
     QRadioButton *GLB_WindowsRadioButton[10];
-    QCustomPlot *GLB_WindowsCustomPlot[5];
+    QCustomPlot *GLB_WindowsCustomPlot[20];
     QPlainTextEdit *GLB_WindowsPlainTextEdit[5];
 
     QTabWidget *GLB_WindowsTab[5];
@@ -158,6 +158,7 @@ typedef struct MotorDef
     QLineEdit   *TAB1_LineEditDelayTime;
     QCheckBox   *TAB1_CheckBoxADC;
     QCheckBox   *TAB1_CheckBoxBackSide;
+    QCustomPlot *TAB1_ADCPlot;
 
     QPushButton *TAB2_FingerButton;
     QLineEdit   *TAB2_LineEditAngle;
@@ -165,7 +166,7 @@ typedef struct MotorDef
     QLineEdit   *TAB2_LineEditSpeed;
     QLineEdit   *TAB2_LineEditDelay;
     QCheckBox   *TAB2_CheckBoxCH;
-
+    QCustomPlot *TAB2_FeedBackPlot;
 
     /*Main com0 bytes*/
     uint8_t     MD_Config_1;

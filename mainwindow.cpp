@@ -352,9 +352,20 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
     GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
     /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsCustomPlot[0] = GLB_ui->widget;         // Tab 1 - FeedBack ADC_Graph
-    GLB_WinObj.GLB_WindowsCustomPlot[1] = GLB_ui->widget_2;       // Tab 2 - FeedBack FeedBack_Graph
-    GLB_WinObj.GLB_WindowsCustomPlot[2] = GLB_ui->widget_3;       // Tab 2 - FeedBack FeedBack_Graph
+    GLB_WinObj.GLB_WindowsCustomPlot[0] = GLB_ui->widget;         // Tab 1 -  ADC_Graph 0
+    GLB_WinObj.GLB_WindowsCustomPlot[1] = GLB_ui->widget_5;       // Tab 1 -  ADC_Graph 1
+    GLB_WinObj.GLB_WindowsCustomPlot[2] = GLB_ui->widget_4;       // Tab 1 -  ADC_Graph 2
+    GLB_WinObj.GLB_WindowsCustomPlot[3] = GLB_ui->widget_6;       // Tab 1 -  ADC_Graph 3
+    GLB_WinObj.GLB_WindowsCustomPlot[4] = GLB_ui->widget_7;       // Tab 1 -  ADC_Graph 4
+    GLB_WinObj.GLB_WindowsCustomPlot[5] = GLB_ui->widget_8;       // Tab 1 -  ADC_Graph 5
+
+    GLB_WinObj.GLB_WindowsCustomPlot[6] = GLB_ui->widget_2;       // Tab 2 -  FeedBack_Graph 0
+    GLB_WinObj.GLB_WindowsCustomPlot[7] = GLB_ui->widget_9;       // Tab 2 -  FeedBack_Graph 1
+    GLB_WinObj.GLB_WindowsCustomPlot[8] = GLB_ui->widget_3;       // Tab 2 -  FeedBack_Graph 2
+    GLB_WinObj.GLB_WindowsCustomPlot[9] = GLB_ui->widget_10;      // Tab 2 -  FeedBack_Graph 3
+    GLB_WinObj.GLB_WindowsCustomPlot[10] = GLB_ui->widget_11;      // Tab 2 - FeedBack_Graph 4
+    GLB_WinObj.GLB_WindowsCustomPlot[11] = GLB_ui->widget_12;      // Tab 2 - FeedBack_Graph 5
+
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLabel[0] = GLB_ui->label_4;             // Tab 0 - Repository label
     GLB_WinObj.GLB_WindowsLabel[1] = GLB_ui->label_13;            // Tab 1 - PWM label
@@ -370,6 +381,28 @@ void SetStartGUISettings()
 
     GLB_WinObj.GLB_WindowsLabel[9] = GLB_ui->label;              // Tab 0 - Debug Mode Title
     GLB_WinObj.GLB_WindowsLabel[10] = GLB_ui->label_2;           // Tab 0 - Baudrate label
+
+    GLB_WinObj.GLB_WindowsLabel[11] = GLB_ui->label_23;           // Tab 1 - M1#
+    GLB_WinObj.GLB_WindowsLabel[12] = GLB_ui->label_24;           // Tab 1 - M2#
+    GLB_WinObj.GLB_WindowsLabel[13] = GLB_ui->label_25;           // Tab 1 - M3#
+    GLB_WinObj.GLB_WindowsLabel[14] = GLB_ui->label_26;           // Tab 1 - M4#
+    GLB_WinObj.GLB_WindowsLabel[15] = GLB_ui->label_27;           // Tab 1 - M5#
+    GLB_WinObj.GLB_WindowsLabel[16] = GLB_ui->label_28;           // Tab 1 - M6#
+
+    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_16;           // Tab 1 - Graph M1
+    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_17;           // Tab 1 - Graph M2
+    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_18;           // Tab 1 - Graph M3
+    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_19;           // Tab 1 - Graph M4
+    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_20;           // Tab 1 - Graph M5
+    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_22;           // Tab 1 - Graph M6
+
+    GLB_WinObj.GLB_WindowsLabel[20] = GLB_ui->label_34;           // Tab 2 - Graph Thumb
+    GLB_WinObj.GLB_WindowsLabel[21] = GLB_ui->label_32;           // Tab 2 - Graph Index
+    GLB_WinObj.GLB_WindowsLabel[22] = GLB_ui->label_29;           // Tab 2 - Graph Middle
+    GLB_WinObj.GLB_WindowsLabel[23] = GLB_ui->label_30;           // Tab 2 - Graph Ring
+    GLB_WinObj.GLB_WindowsLabel[24] = GLB_ui->label_31;           // Tab 2 - Graph Pinkie
+    GLB_WinObj.GLB_WindowsLabel[25] = GLB_ui->label_33;           // Tab 2 - Graph Hand
+
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsSlider[0] = GLB_ui->horizontalSlider;            // Tab 1 - PWM 0 value Slider
     GLB_WinObj.GLB_WindowsSlider[1] = GLB_ui->horizontalSlider_2;          // Tab 1 - PWM 1 value Slider
@@ -379,9 +412,7 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsSlider[5] = GLB_ui->horizontalSlider_6;          // Tab 1 - PWM 5 value Slider
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsPlainTextEdit[0] = GLB_ui->plainTextEdit;        // Tab 0 - Terminal Line Edit
-
     GLB_WinObj.GLB_WindowsPlainTextEdit[1] = GLB_ui->plainTextEdit_2;      // Tab 1 - Terminal Line Edit
-
     GLB_WinObj.GLB_WindowsPlainTextEdit[2] = GLB_ui->plainTextEdit_3;      // Tab 2 - Terminal Line Edit
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsFrame[0] = GLB_ui->frame;                        // Tab 0 - Debug Mode frame
@@ -393,7 +424,6 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsTabWidget[1] = GLB_ui->tab;                      // Tab widget 1
     GLB_WinObj.GLB_WindowsTabWidget[2] = GLB_ui->tab_2;                    // Tab widget 2
     /****************************************************************************************/
-
 
 
     /*****************************************/
@@ -408,6 +438,7 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[0];
     MotorDefStruct[0].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[1];
     MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[0].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[0];
 
     MotorDefStruct[0].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[29];
     MotorDefStruct[0].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[19];
@@ -415,6 +446,8 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[29];
     MotorDefStruct[0].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[34];
     MotorDefStruct[0].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[15];
+    MotorDefStruct[0].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[6];
+
     /*****************************************/
     MotorDefStruct[1].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[3];
     MotorDefStruct[1].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[21];
@@ -427,6 +460,7 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[1];
     MotorDefStruct[1].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[2];
     MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[1].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[1];
 
     MotorDefStruct[1].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[30];
     MotorDefStruct[1].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[20];
@@ -434,6 +468,7 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[30];
     MotorDefStruct[1].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[35];
     MotorDefStruct[1].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[16];
+    MotorDefStruct[1].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[7];
 
     /*****************************************/
     MotorDefStruct[2].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[4];
@@ -448,6 +483,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[2];
     MotorDefStruct[2].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[3];
     MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[2].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[2];
 
     MotorDefStruct[2].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[31];
     MotorDefStruct[2].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[21];
@@ -455,6 +491,8 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[31];
     MotorDefStruct[2].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[36];
     MotorDefStruct[2].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[17];
+    MotorDefStruct[2].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[8];
+
     /*****************************************/
     MotorDefStruct[3].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[5];
     MotorDefStruct[3].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[23];
@@ -468,6 +506,7 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[3];
     MotorDefStruct[3].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[4];
     MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[3].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[3];
 
     MotorDefStruct[3].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[32];
     MotorDefStruct[3].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[22];
@@ -475,6 +514,8 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[32];
     MotorDefStruct[3].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[37];
     MotorDefStruct[3].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[18];
+    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9];
+
     /*****************************************/
     MotorDefStruct[4].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[6];
     MotorDefStruct[4].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[24];
@@ -487,6 +528,7 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[4];
     MotorDefStruct[4].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[5];
     MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[4].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[4];
 
     MotorDefStruct[4].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[33];
     MotorDefStruct[4].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[23];
@@ -494,6 +536,8 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[33];
     MotorDefStruct[4].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[38];
     MotorDefStruct[4].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[19];
+    MotorDefStruct[4].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[10];
+
     /*****************************************/
     MotorDefStruct[5].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[7];
     MotorDefStruct[5].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[25];
@@ -506,6 +550,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[5];
     MotorDefStruct[5].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[6];
     MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[5].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[5];
 
     MotorDefStruct[5].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[38];
     MotorDefStruct[5].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[41];
@@ -513,6 +558,8 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[43];
     MotorDefStruct[5].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[44];
     MotorDefStruct[5].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[20];
+    MotorDefStruct[5].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[11];
+
     /*****************************************/
 
 
