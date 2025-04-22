@@ -23,7 +23,7 @@ CMD_Global GLB_Command;
 /*ComPort variables*/
 bool isConnectedComPort = false;
 uint32_t PackToRecv;
-uint32_t CountPoints = 5000;
+uint32_t CountPoints = 2500;
 uint32_t GLB_I;
 QList<QString> GLB_Comports;
 QString CurrentComPort;

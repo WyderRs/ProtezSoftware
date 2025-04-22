@@ -119,7 +119,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
             newData = serialDevice1->readAll();
             while(serialDevice1->waitForReadyRead(50))
             {
-                newData += serialDevice1->read(10);
+                newData += serialDevice1->readAll();
             }
             for (char byte : newData)
             {
@@ -272,7 +272,8 @@ QString MyThread_1::ComPortFoundPort()
                 qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
                 while(1)
                 {
-                    QByteArray newData = serialDevice1->readAll();
+                    serialDevice1->waitForReadyRead(100);
+                    QByteArray newData = serialDevice1->read(3);
                     if(!newData.isEmpty())
                     {
                         receivedData.append(newData);
