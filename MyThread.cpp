@@ -80,6 +80,7 @@ void MyThread_1::run()
         }
         else if(TypeThreadInterrupt == 4)   // COMPORT WRITE
         {
+            serialDevice1->clear(QSerialPort::Input);
             QString feddat = ComPortWrite(ComportDataToSend, ComportCountDataToSend);
 
             memset(ComportDataToSend, 0, ComportCountDataToSend);
@@ -98,12 +99,11 @@ void MyThread_1::run()
 
                 emit PaintGraph_signal();
             }
-            TypeThreadInterrupt = 0;
+            if(TypeThreadInterrupt == 5) TypeThreadInterrupt = 0;
         }
     }
     qDebug() << "Thread #1 is disable!";
 }
-
 
 QVector<uint8_t> MyThread_1::ComPortReadData()
 {
@@ -133,7 +133,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
             GLB_RecvData.clear();
             newData.clear();
         }
-        if (QDateTime::currentMSecsSinceEpoch() - lastTime > 10000)
+        if((QDateTime::currentMSecsSinceEpoch() - lastTime > 10000) || (TypeThreadInterrupt != 5))
         {
             break;
         }
@@ -230,7 +230,7 @@ QList<QString> MyThread_1::ComPortSearch()
     uint8_t ii = 0;
     QList<QString> ComportList;
     ComportList.append("Select comport...");
-    for(uint8_t i = 1; i < 10; i++)
+    for(uint8_t i = 1; i < 15; i++)
     {
         QString portName = QString("COM%1").arg(i);
         QSerialPortInfo ComPortInfo(portName);
@@ -271,11 +271,11 @@ QString MyThread_1::ComPortFoundPort()
                 {
                     // if(serialDevice1->waitForReadyRead(1000))
                     // {
-                    //     newData += serialDevice1->readAll();
-                        while(serialDevice1->waitForReadyRead(50))
+                        newData = serialDevice1->read(3);
+                        while((!newData.isEmpty()) || (serialDevice1->waitForReadyRead(200)))
                         {
                             newData += serialDevice1->read(3);
-                            if(newData.contains(QByteArray::fromHex("FFFFFF")))
+                            if(newData.contains(QByteArray::fromHex("DDDDDD")))
                             {
                                 isConnectedComPort = true;
                                 CurrentComPort = trg_comports[i];
