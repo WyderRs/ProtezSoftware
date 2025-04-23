@@ -128,7 +128,7 @@ void MainWindow::PaintGraph()
         double Step;
         float value_time;
         QVector<double> NewGraph_x, NewGraph_y;
-        for(uint16_t i = 0; i < GLB_Graph_y.size() / 2; i = i + 2)
+        for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
         {
             NewGraph_y.append(FormulaADC(
                 (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
