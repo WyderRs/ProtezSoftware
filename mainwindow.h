@@ -199,8 +199,6 @@ typedef enum LastTypeCommand
     Last_PWM_MODE = 0x01,
     Last_ANGLE_MODE = 0x02,
 } LastTypeCommand;
-
-
 //
 QT_BEGIN_NAMESPACE
 namespace Ui {

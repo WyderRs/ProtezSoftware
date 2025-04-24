@@ -46,6 +46,7 @@ QString DataFromFile[10];
 MotorDef MotorDefStruct[6];
 CommandStruct MotorCommand[6];
 LastTypeCommand LTC;
+uint8_t LNCM;
 bool Instruct_FLAG = false;
 
 typedef enum Fingers
@@ -128,12 +129,23 @@ void MainWindow::PaintGraph()
         double Step;
         float value_time;
         QVector<double> NewGraph_x, NewGraph_y;
-        for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
+        QVector<double> DataMotor[12];
+        for(uint32_t i = 0; i < (uint32_t)(GLB_Graph_y.size()); i = i + 2)
         {
             NewGraph_y.append(FormulaADC(
                 (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
                 ));
         }
+        // Распределяем по графикам
+        for(uint8_t i = 0; i < LNCM; i++)
+        {
+            for(uint32_t j = i; j < (uint32_t)(NewGraph_y.size() - LNCM); j = j + LNCM)
+            {
+                DataMotor[i].append(NewGraph_y[j]);
+            }
+        }
+        LNCM = 0;
+
         for(uint16_t i = 5; i < NewGraph_y.size(); i++)
             NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
 
@@ -1506,10 +1518,15 @@ void MainWindow::on_pushButton_29_clicked()
         // }
     }
 
+    uint8_t del_mot = 0;
     uint8_t nowCnt = 0;
     for(uint8_t i = 0; i < 6; i++)
     {
-        if(!flags_Enable[i]) continue;
+        if(!flags_Enable[i])
+        {
+            del_mot++;
+            continue;
+        }
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_1;
         nowCnt++;
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_2;
@@ -1542,11 +1559,12 @@ void MainWindow::on_pushButton_29_clicked()
 
         for(uint8_t t = 0; t < nowCnt; t++)
         {
-            DataToSendALL[(i * nowCnt) + t] = DataToSend[i][t];
+            DataToSendALL[((i - del_mot) * nowCnt) + t] = DataToSend[i][t];
         }
 
         CountData += nowCnt;
         nowCnt = 0;
+        LNCM++;
     }
 
     ComPortWrite(DataToSendALL, CountData);
@@ -1685,6 +1703,7 @@ void MainWindow::on_pushButton_36_clicked()
 
         CountData += nowCnt;
         nowCnt = 0;
+        LNCM++;
     }
 
     ComPortWrite(DataToSendALL, CountData);
