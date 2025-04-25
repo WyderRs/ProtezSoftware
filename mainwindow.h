@@ -159,6 +159,7 @@ typedef struct MotorDef
     QCheckBox   *TAB1_CheckBoxADC;
     QCheckBox   *TAB1_CheckBoxBackSide;
     QCustomPlot *TAB1_ADCPlot;
+    QPen        TAB1GraphPen;
 
     QPushButton *TAB2_FingerButton;
     QLineEdit   *TAB2_LineEditAngle;
@@ -167,6 +168,7 @@ typedef struct MotorDef
     QLineEdit   *TAB2_LineEditDelay;
     QCheckBox   *TAB2_CheckBoxCH;
     QCustomPlot *TAB2_FeedBackPlot;
+
 
     /*Main com0 bytes*/
     uint8_t     MD_Config_1;

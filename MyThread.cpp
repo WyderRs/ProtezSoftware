@@ -141,7 +141,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
 
     ComportCountdataRecv = cnt_dataRecvd;
 
-    qDebug() <<"PACK Cnt: " << ComportCountdataRecv;
+    // qDebug() <<"PACK Cnt: " << ComportCountdataRecv;
     return GLB_RecvData;
 
 }

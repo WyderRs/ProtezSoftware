@@ -126,61 +126,72 @@ void MainWindow::PaintGraph()
 {
     if(LTC == Last_PWM_MODE)
     {
-        double Step;
-        float value_time;
-        QVector<double> NewGraph_x, NewGraph_y;
-        QVector<double> DataMotor[12];
+        QVector<double> DataMotor_x[12], DataMotor_y[12];
+        // Собираем все данные по парам байт
+        QVector<double> AllDataToGraph;
         for(uint32_t i = 0; i < (uint32_t)(GLB_Graph_y.size()); i = i + 2)
         {
-            NewGraph_y.append(FormulaADC(
+            AllDataToGraph.append(FormulaADC(
                 (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
                 ));
         }
         // Распределяем по графикам
+        uint8_t LNCMAN = 0;//ADC_NUM
         for(uint8_t i = 0; i < LNCM; i++)
         {
-            for(uint32_t j = i; j < (uint32_t)(NewGraph_y.size() - LNCM); j = j + LNCM)
+            if(MotorDefStruct[i].TAB1_CheckBoxADC->isChecked()) LNCMAN++;
+        }
+        for(uint8_t i = 0; i < LNCMAN; i++)
+        {
+            for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN); j = j + LNCMAN)
             {
-                DataMotor[i].append(NewGraph_y[j]);
+                DataMotor_y[i].append(AllDataToGraph[j]);
             }
         }
-        LNCM = 0;
-
-        for(uint16_t i = 5; i < NewGraph_y.size(); i++)
-            NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
-
-        double max_val_x = -100;
-        double min_val_x = 1000;
-
-        double max_val_y = -100;
-        double min_val_y = 1000;
-
-        /*Settings Graph 1*/
-        if(GLB_ui->checkBox->isChecked()) value_time = std::stof(GLB_ui->lineEdit_6->text().toStdString());
-        else if(GLB_ui->checkBox_2->isChecked()) value_time = std::stof(GLB_ui->lineEdit_7->text().toStdString());
-        else if(GLB_ui->checkBox_3->isChecked()) value_time = std::stof(GLB_ui->lineEdit_10->text().toStdString());
-        else if(GLB_ui->checkBox_4->isChecked()) value_time = std::stof(GLB_ui->lineEdit_9->text().toStdString());
-        else if(GLB_ui->checkBox_5->isChecked()) value_time = std::stof(GLB_ui->lineEdit_8->text().toStdString());
-        else if(GLB_ui->checkBox_13->isChecked()) value_time = std::stof(GLB_ui->lineEdit_37->text().toStdString());
-
-        Step = value_time / NewGraph_y.size();
-        for(double i = 0; i < NewGraph_y.size(); i++)
+        // Скользящяя средняя 2 варианта
+        // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
+        //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
+        double cf_mid = 0.2;
+        for(uint8_t i = 0; i < LNCMAN; i++)
         {
-            NewGraph_x.append(Step * i);
-            if(max_val_x < NewGraph_x[i]) max_val_x = NewGraph_x[i];
-            if(min_val_x > NewGraph_x[i]) min_val_x = NewGraph_x[i];
-            if(max_val_y < NewGraph_y[i]) max_val_y = NewGraph_y[i];
-            if(min_val_y > NewGraph_y[i]) min_val_y = NewGraph_y[i];
+            for(uint16_t j = 1; j < DataMotor_y[i].size(); j++)
+            {
+                DataMotor_y[i][j] = cf_mid * DataMotor_y[i][j] + (1 - cf_mid) * DataMotor_y[i][j - 1];
+            }
         }
 
+        for(uint8_t i = 0; i < LNCMAN; i++)
+        {
+            double MaxVal_x = 0;
+            double MaxVal_y = 0;
+            double MinVal_x = 0;
+            double MinVal_y = 0;
 
-        GLB_ui->widget->xAxis->setRange(min_val_x, max_val_x);
-        GLB_ui->widget->yAxis->setRange(min_val_y, max_val_y);
-        GLB_ui->widget->addGraph();
-        GLB_ui->widget->graph(0)->setPen(QPen(Qt::blue));
-        GLB_ui->widget->graph(0)->setData(NewGraph_x, NewGraph_y);
-        GLB_ui->widget->replot();
-        GLB_Graph_y.clear();
+            float value_time = 0;
+            if(MotorDefStruct[i].TAB1_CheckBoxADC->isChecked()) value_time = std::stof(MotorDefStruct[i].TAB1_LineEditWorkTime->text().toStdString());
+            double Step = value_time / DataMotor_y[i].size();
+
+            for(double j = 0; j < DataMotor_y[i].size(); j++)
+            {
+                DataMotor_x[i].append(Step * j);
+                if(MaxVal_x < DataMotor_x[i][j]) MaxVal_x = DataMotor_x[i][j];
+                if(MinVal_x > DataMotor_x[i][j]) MinVal_x = DataMotor_x[i][j];
+                if(MaxVal_y < DataMotor_y[i][j]) MaxVal_y = DataMotor_y[i][j];
+                if(MinVal_y > DataMotor_y[i][j]) MinVal_y = DataMotor_y[i][j];
+            }
+
+            qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[i].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
+
+            // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
+
+            MotorDefStruct[i].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
+            MotorDefStruct[i].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
+            MotorDefStruct[i].TAB1_ADCPlot->addGraph();
+            MotorDefStruct[i].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[i].TAB1GraphPen);
+            MotorDefStruct[i].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[i], DataMotor_y[i]);
+            MotorDefStruct[i].TAB1_ADCPlot->replot();
+        }
+        LNCM = 0;
     }
     else if(LTC == Last_ANGLE_MODE)
     {
@@ -436,7 +447,6 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsTabWidget[2] = GLB_ui->tab_2;                    // Tab widget 2
     /****************************************************************************************/
 
-
     /*****************************************/
     MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
     MotorDefStruct[0].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[20];
@@ -450,6 +460,7 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[1];
     MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[0].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[0];
+    MotorDefStruct[0].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[0].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[29];
     MotorDefStruct[0].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[19];
@@ -472,6 +483,7 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[2];
     MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[1].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[1];
+    MotorDefStruct[1].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[1].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[30];
     MotorDefStruct[1].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[20];
@@ -495,6 +507,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[3];
     MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[2].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[2];
+    MotorDefStruct[2].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[2].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[31];
     MotorDefStruct[2].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[21];
@@ -518,6 +531,7 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[4];
     MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[3].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[3];
+    MotorDefStruct[3].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[3].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[32];
     MotorDefStruct[3].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[22];
@@ -540,6 +554,7 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[5];
     MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[4].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[4];
+    MotorDefStruct[4].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[4].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[33];
     MotorDefStruct[4].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[23];
@@ -562,6 +577,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[6];
     MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[5].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[5];
+    MotorDefStruct[5].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[5].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[38];
     MotorDefStruct[5].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[41];
@@ -803,7 +819,6 @@ void MainWindow::on_pushButton_12_clicked()
     }
 
     ComPortWrite((unsigned char *)data, 10);
-
 }
 
 /* PWM LineEdit */
