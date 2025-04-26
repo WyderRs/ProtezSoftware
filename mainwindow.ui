@@ -39,7 +39,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -797,7 +797,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>560</y>
+        <y>530</y>
         <width>61</width>
         <height>21</height>
        </rect>
@@ -1596,8 +1596,8 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>410</y>
-        <width>341</width>
+        <y>380</y>
+        <width>661</width>
         <height>141</height>
        </rect>
       </property>
@@ -1608,8 +1608,8 @@
      <widget class="QPushButton" name="pushButton_38">
       <property name="geometry">
        <rect>
-        <x>300</x>
-        <y>560</y>
+        <x>620</x>
+        <y>530</y>
         <width>51</width>
         <height>21</height>
        </rect>

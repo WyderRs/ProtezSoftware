@@ -20,7 +20,7 @@ bool flag_com = false;
 
 /*Port data variables*/
 QVector<uint8_t> ComportdataRecv;
-uint32_t ComportCountdataRecv;
+extern uint32_t ComportCountdataRecv;
 
 /*Graph variables*/
 extern QVector<uint8_t> GLB_Graph_y;
@@ -93,7 +93,7 @@ void MyThread_1::run()
         {
             if (serialDevice1->isOpen())
             {
-                GLB_Graph_y.clear();
+                // GLB_Graph_y.clear();
                 ComportdataRecv = ComPortReadData();
                 GLB_Graph_y = ComportdataRecv;
 
@@ -110,7 +110,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
     QVector<uint8_t> GLB_RecvData;
     uint32_t cnt_dataRecvd = 0;
     QByteArray newData;
-
+    ComportCountdataRecv = 0;
     qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
     while(1)
     {
@@ -130,100 +130,18 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
         }
         else
         {
-            GLB_RecvData.clear();
-            newData.clear();
+            // GLB_RecvData.clear();
+            // newData.clear();
         }
         if((QDateTime::currentMSecsSinceEpoch() - lastTime > 10000) || (TypeThreadInterrupt != 5))
         {
             break;
         }
     }
-
     ComportCountdataRecv = cnt_dataRecvd;
-
     // qDebug() <<"PACK Cnt: " << ComportCountdataRecv;
     return GLB_RecvData;
-
 }
-
-
-
-
-
-
-
-
-
-// QVector<uint8_t> MyThread_1::ComPortReadData()
-// {
-
-//     QVector<uint8_t> GLB_RecvData;
-//     uint32_t cnt_dataRecvd = 0;
-
-//     qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
-//     while (1)
-//     {
-//         serialDevice1->waitForReadyRead(50);
-//         QByteArray newData = serialDevice1->readAll();
-//         if (!newData.isEmpty())
-//         {
-//             for (char byte : newData)
-//             {
-//                 GLB_RecvData.append(static_cast<uint8_t>(byte));
-//                 cnt_dataRecvd++;
-//                 lastTime = QDateTime::currentMSecsSinceEpoch();
-//             }
-//         }
-//         if (QDateTime::currentMSecsSinceEpoch() - lastTime > 1000)
-//         {
-//             break;
-//         }
-//     }
-
-//     ComportCountdataRecv = cnt_dataRecvd;
-//     serialDevice1->clear();
-
-//     return GLB_RecvData;
-// }
-
-
-
-
-
-    // QVector<uint8_t> GLB_RecvData;
-    // uint32_t cnt_dataRecvd = 0;
-
-    // qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
-    // while (1)
-    // {
-    //     serialDevice1->waitForReadyRead(100);
-    //     QByteArray newData = serialDevice1->readAll();
-    //     if (!newData.isEmpty())
-    //     {
-    //         for (char byte : newData)
-    //         {
-    //             GLB_RecvData.append(static_cast<uint8_t>(byte));
-    //             cnt_dataRecvd++;
-    //             lastTime = QDateTime::currentMSecsSinceEpoch();
-    //         }
-    //         if(!(serialDevice1->bytesAvailable() > 0)) break;
-    //     }
-    //     if (QDateTime::currentMSecsSinceEpoch() - lastTime > 5000)
-    //     {
-    //         break;
-    //     }
-    //     QThread::msleep(10);
-    // }
-
-    // ComportCountdataRecv = cnt_dataRecvd;
-    // GLB_Graph_y = GLB_RecvData;
-    // serialDevice1->clear();
-
-
-    // emit PaintGraph_signal(); // Сигнал для обновления графика
-
-    // return GLB_RecvData;
-
 
 QList<QString> MyThread_1::ComPortSearch()
 {
@@ -269,8 +187,8 @@ QString MyThread_1::ComPortFoundPort()
                 qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
                 while(1)
                 {
-                    // if(serialDevice1->waitForReadyRead(1000))
-                    // {
+                    if(serialDevice1->waitForReadyRead(1000))
+                    {
                         newData = serialDevice1->read(3);
                         while((!newData.isEmpty()) || (serialDevice1->waitForReadyRead(200)))
                         {
@@ -286,7 +204,7 @@ QString MyThread_1::ComPortFoundPort()
                             }
                             break;
                         }
-                    // }
+                    }
                     if (QDateTime::currentMSecsSinceEpoch() - lastTime > 2000)
                     {
                         serialDevice1->close();
@@ -294,87 +212,6 @@ QString MyThread_1::ComPortFoundPort()
                     }
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // if(serialDevice1->isOpen())
-            // {
-            //     QByteArray receivedData;
-            //     qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
-            //     while(1)
-            //     {
-            //         serialDevice1->waitForReadyRead(500);
-            //         QByteArray newData = serialDevice1->read(3);
-            //         if(!newData.isEmpty())
-            //         {
-            //             receivedData.append(newData);
-            //             if(receivedData.contains(QByteArray::fromHex("FFFFFF")))
-            //             {
-            //                 isConnectedComPort = true;
-            //                 CurrentComPort = trg_comports[i];
-            //                 uint8_t dat[4] = {0x44, 0x44, 0x44, 0x44};
-            //                 ComPortWrite(dat, 4);
-            //                 // while(1)
-            //                 // {
-            //                 //     if(serialDevice1->waitForReadyRead(300))
-            //                 //     {
-            //                 //         newData = serialDevice1->readAll();
-            //                 //         while(serialDevice1->waitForReadyRead(20))
-            //                 //         {
-            //                 //             newData += serialDevice1->read(10);
-            //                 //         }
-            //                 //         for (char byte : newData)
-            //                 //         {
-            //                 //             GLB_RecvData.append(static_cast<uint8_t>(byte));
-            //                 //             cnt_dataRecvd++;
-            //                 //         }
-            //                 //         break;
-            //                 //     }
-            //                 //     else
-            //                 //     {
-            //                 //         GLB_RecvData.clear();
-            //                 //         newData.clear();
-            //                 //         serialDevice1->clear();
-            //                 //     }
-            //                 //     if (QDateTime::currentMSecsSinceEpoch() - lastTime > 10000)
-            //                 //     {
-            //                 //         break;
-            //                 //     }
-            //                 // }
-            //                 return trg_comports[i];
-            //                 break;
-            //             }
-            //         }
-            //         if (QDateTime::currentMSecsSinceEpoch() - lastTime > 1000)
-            //         {
-            //             serialDevice1->close();
-            //             break;
-            //         }
-            //     }
-            //     QThread::msleep(50);
-            // }
         }
     }
     return "";

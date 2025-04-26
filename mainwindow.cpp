@@ -19,7 +19,6 @@ MainWindow *GLB_mainwindow;
 MotorCom MotorInstr[6];
 CMD_Global GLB_Command;
 
-
 /*ComPort variables*/
 bool isConnectedComPort = false;
 uint32_t PackToRecv;
@@ -27,12 +26,12 @@ uint32_t GLB_I;
 QList<QString> GLB_Comports;
 QString CurrentComPort;
 uint32_t CurrentBoundRate;
-extern uint32_t ComportCountdataRecv;
+uint32_t ComportCountdataRecv;
 uint8_t ComportDataToSend[50];
 uint32_t ComportCountDataToSend;
 
 /*Graph variables*/
-QVector<uint8_t> GLB_Graph_x, GLB_Graph_y;
+QVector<uint8_t> GLB_Graph_y;
 
 /*File variables*/
 QString RepositoryURL;
@@ -182,7 +181,17 @@ void MainWindow::PaintGraph()
 
             qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[i].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
 
-            // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
+            QString debug = QString("CH #%1 NumPack: %2 ==> MaxX: %3, MaxY: %4, MinX: %5, MinY: %6")
+                                 .arg(i)
+                                 .arg(DataMotor_y[i].size())
+                                 .arg(MaxVal_x)
+                                 .arg(MaxVal_y)
+                                 .arg(MinVal_x)
+                                 .arg(MinVal_y);
+
+
+            SendToTerminal(debug, true, 1);
+
 
             MotorDefStruct[i].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
             MotorDefStruct[i].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
@@ -192,6 +201,7 @@ void MainWindow::PaintGraph()
             MotorDefStruct[i].TAB1_ADCPlot->replot();
         }
         LNCM = 0;
+        // GLB_Graph_y.clear();
     }
     else if(LTC == Last_ANGLE_MODE)
     {
@@ -226,6 +236,9 @@ void MainWindow::PaintGraph()
         GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
         GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
         GLB_ui->widget_2->replot();
+
+        LNCM = 0;
+        // GLB_Graph_y.clear();
     }
 }
 
@@ -370,6 +383,12 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
+
+    GLB_WinObj.GLB_WindowsLineEdit[41] = GLB_ui->lineEdit_47;   // Tab 2 - Angle 5 Line Edit
+    GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
+    GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
+    GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
+
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
     GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
@@ -1465,6 +1484,7 @@ void MainWindow::on_horizontalSlider_6_valueChanged(int value)
 // Configurate
 void MainWindow::on_pushButton_29_clicked()
 {
+    LNCM = 0;
     SendToTerminal("Configurate", true, 1);
 
     bool flags_Enable[6] = {false, };       // Is it enabled?
@@ -1628,7 +1648,7 @@ void MainWindow::on_pushButton_34_clicked()
 /*Configuration*/
 void MainWindow::on_pushButton_36_clicked()
 {
-
+    LNCM = 0;
     SendToTerminal("Configurate", true, 1);
 
     bool flags_Enable[6] = {false, };       // Is it enabled?
@@ -1782,6 +1802,14 @@ void MainWindow::on_checkBox_6_toggled(bool checked)
 {
     if(GLB_ui->checkBox_6->isChecked())
     {
+
+        MotorDefStruct[0].TAB2_LineEditAngle->setEnabled(true);
+        MotorDefStruct[1].TAB2_LineEditAngle->setEnabled(true);
+        MotorDefStruct[2].TAB2_LineEditAngle->setEnabled(true);
+        MotorDefStruct[3].TAB2_LineEditAngle->setEnabled(true);
+        MotorDefStruct[4].TAB2_LineEditAngle->setEnabled(true);
+        MotorDefStruct[5].TAB2_LineEditAngle->setEnabled(true);
+
         GLB_ui->lineEdit_21->setEnabled(true);
         GLB_ui->lineEdit_22->setEnabled(true);
         GLB_ui->lineEdit_23->setEnabled(true);
