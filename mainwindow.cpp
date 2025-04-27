@@ -19,6 +19,7 @@ MainWindow *GLB_mainwindow;
 MotorCom MotorInstr[6];
 CMD_Global GLB_Command;
 
+
 /*ComPort variables*/
 bool isConnectedComPort = false;
 uint32_t PackToRecv;
@@ -26,12 +27,18 @@ uint32_t GLB_I;
 QList<QString> GLB_Comports;
 QString CurrentComPort;
 uint32_t CurrentBoundRate;
-uint32_t ComportCountdataRecv;
+extern uint32_t ComportCountdataRecv;
 uint8_t ComportDataToSend[50];
 uint32_t ComportCountDataToSend;
 
+// uint8_t ComportDataToSend[10][50];
+// uint32_t ComportCountDataToSend[10];
+
+uint16_t ComportCountDataIndexCnt;
+
 /*Graph variables*/
-QVector<uint8_t> GLB_Graph_y;
+QVector<uint8_t> GLB_Graph_x;
+QVector<uint8_t> GLB_Graph_y(0, 0);
 
 /*File variables*/
 QString RepositoryURL;
@@ -46,6 +53,7 @@ MotorDef MotorDefStruct[6];
 CommandStruct MotorCommand[6];
 LastTypeCommand LTC;
 uint8_t LNCM;
+QByteArray LNCMAN = 0; // Enabled feedBack(ADC) variable
 bool Instruct_FLAG = false;
 
 typedef enum Fingers
@@ -56,7 +64,6 @@ typedef enum Fingers
     Ring = 0x03,
     Pinkie = 0x04,
 } Fingers;
-bool GlobalFlagsMotor[10] = {0, }; // [0] FLAGS_ENABLE_ADC_CHANNEL > 0, [1] FLAGS_ENABLE_FEEDBACK > 0
 
 /*Thread variables*/
 MyThread_1 *thread_1;
@@ -64,8 +71,6 @@ MyThread_2 *thread_2;
 uint32_t dataRecvd2 = 0;
 uint8_t TypeThreadInterrupt;    // 0 - Graph, 1 - Search
 bool ThreadAutoConnectState;
-
-
 
 /*Thread 2*/
 
@@ -122,6 +127,7 @@ double _2ByteTo_1Byte(uint16_t halfWorld)
     return halfWorld;
 }
 void MainWindow::PaintGraph()
+
 {
     if(LTC == Last_PWM_MODE)
     {
@@ -134,32 +140,30 @@ void MainWindow::PaintGraph()
                 (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
                 ));
         }
-        // Распределяем по графикам
-        uint8_t LNCMAN = 0;//ADC_NUM
-        for(uint8_t i = 0; i < LNCM; i++)
+
+        uint8_t LNCMAN_len = LNCMAN.length();
+        for(uint8_t i = 0; i < LNCMAN_len; i++)
         {
-            if(MotorDefStruct[i].TAB1_CheckBoxADC->isChecked()) LNCMAN++;
-        }
-        for(uint8_t i = 0; i < LNCMAN; i++)
-        {
-            for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN); j = j + LNCMAN)
+
+            for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
             {
-                DataMotor_y[i].append(AllDataToGraph[j]);
+                DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
             }
         }
         // Скользящяя средняя 2 варианта
         // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
         //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
         double cf_mid = 0.2;
-        for(uint8_t i = 0; i < LNCMAN; i++)
+        for(uint8_t i = 0; i < LNCMAN_len; i++)
         {
-            for(uint16_t j = 1; j < DataMotor_y[i].size(); j++)
+            for(uint16_t j = 1; j < DataMotor_y[(uint8_t)LNCMAN[i]].size(); j++)
             {
-                DataMotor_y[i][j] = cf_mid * DataMotor_y[i][j] + (1 - cf_mid) * DataMotor_y[i][j - 1];
+                DataMotor_y[(uint8_t)LNCMAN[i]][j] =
+                    cf_mid * DataMotor_y[(uint8_t)LNCMAN[i]][j] + (1 - cf_mid) * DataMotor_y[(uint8_t)LNCMAN[i]][j - 1];
             }
         }
 
-        for(uint8_t i = 0; i < LNCMAN; i++)
+        for(uint8_t i = 0; i < LNCMAN_len; i++)
         {
             double MaxVal_x = 0;
             double MaxVal_y = 0;
@@ -167,41 +171,31 @@ void MainWindow::PaintGraph()
             double MinVal_y = 0;
 
             float value_time = 0;
-            if(MotorDefStruct[i].TAB1_CheckBoxADC->isChecked()) value_time = std::stof(MotorDefStruct[i].TAB1_LineEditWorkTime->text().toStdString());
-            double Step = value_time / DataMotor_y[i].size();
+            if(MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_CheckBoxADC->isChecked())
+                value_time = std::stof(MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_LineEditWorkTime->text().toStdString());
+            double Step = value_time / DataMotor_y[(uint8_t)LNCMAN[i]].size();
 
-            for(double j = 0; j < DataMotor_y[i].size(); j++)
+            for(double j = 0; j < DataMotor_y[(uint8_t)LNCMAN[i]].size(); j++)
             {
-                DataMotor_x[i].append(Step * j);
-                if(MaxVal_x < DataMotor_x[i][j]) MaxVal_x = DataMotor_x[i][j];
-                if(MinVal_x > DataMotor_x[i][j]) MinVal_x = DataMotor_x[i][j];
-                if(MaxVal_y < DataMotor_y[i][j]) MaxVal_y = DataMotor_y[i][j];
-                if(MinVal_y > DataMotor_y[i][j]) MinVal_y = DataMotor_y[i][j];
+                DataMotor_x[(uint8_t)LNCMAN[i]].append(Step * j);
+                if(MaxVal_x < DataMotor_x[(uint8_t)LNCMAN[i]][j]) MaxVal_x = DataMotor_x[(uint8_t)LNCMAN[i]][j];
+                if(MinVal_x > DataMotor_x[(uint8_t)LNCMAN[i]][j]) MinVal_x = DataMotor_x[(uint8_t)LNCMAN[i]][j];
+                if(MaxVal_y < DataMotor_y[(uint8_t)LNCMAN[i]][j]) MaxVal_y = DataMotor_y[(uint8_t)LNCMAN[i]][j];
+                if(MinVal_y > DataMotor_y[(uint8_t)LNCMAN[i]][j]) MinVal_y = DataMotor_y[(uint8_t)LNCMAN[i]][j];
             }
 
-            qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[i].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
+            qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[(uint8_t)LNCMAN[i]].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
 
-            QString debug = QString("CH #%1 NumPack: %2 ==> MaxX: %3, MaxY: %4, MinX: %5, MinY: %6")
-                                 .arg(i)
-                                 .arg(DataMotor_y[i].size())
-                                 .arg(MaxVal_x)
-                                 .arg(MaxVal_y)
-                                 .arg(MinVal_x)
-                                 .arg(MinVal_y);
+            // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
 
-
-            SendToTerminal(debug, true, 1);
-
-
-            MotorDefStruct[i].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
-            MotorDefStruct[i].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
-            MotorDefStruct[i].TAB1_ADCPlot->addGraph();
-            MotorDefStruct[i].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[i].TAB1GraphPen);
-            MotorDefStruct[i].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[i], DataMotor_y[i]);
-            MotorDefStruct[i].TAB1_ADCPlot->replot();
+            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
+            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
+            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->addGraph();
+            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1GraphPen);
+            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[(uint8_t)LNCMAN[i]], DataMotor_y[(uint8_t)LNCMAN[i]]);
+            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->replot();
         }
         LNCM = 0;
-        // GLB_Graph_y.clear();
     }
     else if(LTC == Last_ANGLE_MODE)
     {
@@ -236,9 +230,6 @@ void MainWindow::PaintGraph()
         GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
         GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
         GLB_ui->widget_2->replot();
-
-        LNCM = 0;
-        // GLB_Graph_y.clear();
     }
 }
 
@@ -322,6 +313,7 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCheckBox[14] = GLB_ui->checkBox_15;    // Tab 0 - Enable auto currect PWM for the back of the hand
 
     GLB_WinObj.GLB_WindowsCheckBox[15] = GLB_ui->checkBox_16;    // Tab 2 - CH1
+
     GLB_WinObj.GLB_WindowsCheckBox[16] = GLB_ui->checkBox_17;    // Tab 2 - CH2
     GLB_WinObj.GLB_WindowsCheckBox[17] = GLB_ui->checkBox_18;    // Tab 2 - CH3
     GLB_WinObj.GLB_WindowsCheckBox[18] = GLB_ui->checkBox_19;    // Tab 2 - CH4
@@ -383,12 +375,6 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[41] = GLB_ui->lineEdit_47;   // Tab 2 - Angle 5 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
-
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
     GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
@@ -691,13 +677,22 @@ void MainWindow::ComPortOpen(QString com, uint32_t boudrate)
 }
 void MainWindow::ComPortWrite(uint8_t *datatosend, uint32_t cntdata)
 {
-    TypeThreadInterrupt = 4;
+
+    // for (uint32_t i = 0; i < cntdata; i++)
+    // {
+    //     ComportDataToSend[ComportCountDataIndexCnt][i] = datatosend[i];
+    // }
+    // ComportCountDataToSend[ComportCountDataIndexCnt] = cntdata;
+    // ComportCountDataIndexCnt++;
+
 
     for (uint32_t i = 0; i < cntdata; i++)
     {
         ComportDataToSend[i] = datatosend[i];
     }
     ComportCountDataToSend = cntdata;
+
+    TypeThreadInterrupt = 4;
 
     // thread_1->start();
     // while(!thread_1->isRunning()) {}
@@ -822,7 +817,7 @@ MainWindow::~MainWindow()
     ConfigFile.open(QFile::WriteOnly);
     IOFile.setDevice(&ConfigFile);
 
-    IOFile << GLB_ui->lineEdit_20->text();
+    // IOFile << GLB_ui->lineEdit_20->text();
 
     ConfigFile.close();
 
@@ -843,28 +838,12 @@ void MainWindow::on_pushButton_12_clicked()
 /* PWM LineEdit */
 void MainWindow::on_lineEdit_textEdited(const QString &arg1)
 {
-    // if(arg1 > 0)
-    // {
-    //     std::string str = arg1.toStdString();
-    //     uint8_t i = 0;
-    //     for(; i < str.length(); i++)
-    //     {
-    //         if(!isdigit(str[i])) break;
-    //     }
-    //     if(i == str.length())
-    //     {
-    //         uint16_t value = std::stoi(arg1.toStdString());
-    //         std::cout << arg1.toStdString() << std::endl;
-    //         GLB_ui->horizontalSlider->setValue(value);
-    //     }
-    // }
     if(arg1 > 0)
     {
         std::string str = arg1.toStdString();
         uint16_t value = std::stoi(arg1.toStdString());
-        GLB_ui->horizontalSlider->setValue(value);
+        MotorDefStruct[0].TAB1_SliderPWM->setValue(value);
     }
-
 }
 void MainWindow::on_lineEdit_2_textEdited(const QString &arg1)
 {
@@ -872,8 +851,7 @@ void MainWindow::on_lineEdit_2_textEdited(const QString &arg1)
     {
         std::string str = arg1.toStdString();
         uint16_t value = std::stoi(arg1.toStdString());
-        GLB_ui->horizontalSlider_2->setValue(value);
-
+        MotorDefStruct[1].TAB1_SliderPWM->setValue(value);
     }
 }
 void MainWindow::on_lineEdit_3_textEdited(const QString &arg1)
@@ -882,7 +860,7 @@ void MainWindow::on_lineEdit_3_textEdited(const QString &arg1)
     {
         std::string str = arg1.toStdString();
         uint16_t value = std::stoi(arg1.toStdString());
-        GLB_ui->horizontalSlider_3->setValue(value);
+        MotorDefStruct[2].TAB1_SliderPWM->setValue(value);
     }
 }
 void MainWindow::on_lineEdit_4_textEdited(const QString &arg1)
@@ -891,7 +869,7 @@ void MainWindow::on_lineEdit_4_textEdited(const QString &arg1)
     {
         std::string str = arg1.toStdString();
         uint16_t value = std::stoi(arg1.toStdString());
-        GLB_ui->horizontalSlider_4->setValue(value);
+        MotorDefStruct[3].TAB1_SliderPWM->setValue(value);
     }
 }
 void MainWindow::on_lineEdit_5_textEdited(const QString &arg1)
@@ -900,13 +878,20 @@ void MainWindow::on_lineEdit_5_textEdited(const QString &arg1)
     {
         std::string str = arg1.toStdString();
         uint16_t value = std::stoi(arg1.toStdString());
-        GLB_ui->horizontalSlider_5->setValue(value);
+        MotorDefStruct[4].TAB1_SliderPWM->setValue(value);
     }
 }
 
-
+void MainWindow::on_lineEdit_36_textEdited(const QString &arg1)
+{
+    if(arg1 > 0)
+    {
+        std::string str = arg1.toStdString();
+        uint16_t value = std::stoi(arg1.toStdString());
+        MotorDefStruct[5].TAB1_SliderPWM->setValue(value);
+    }
+}
 /* TIME LineEdit */
-
 void MainWindow::on_lineEdit_7_textEdited(const QString &arg1)
 {
     if(arg1 > 0)
@@ -939,8 +924,6 @@ void MainWindow::on_lineEdit_8_textEdited(const QString &arg1)
         // float value = std::stof(arg1.toStdString());
     }
 }
-
-
 /* DELAY LineEdit */
 void MainWindow::on_lineEdit_11_textEdited(const QString &arg1)
 {
@@ -982,7 +965,6 @@ void MainWindow::on_lineEdit_13_textEdited(const QString &arg1)
         // float value = std::stof(arg1.toStdString());
     }
 }
-
 /* Operation */
 void MainWindow::on_SearchButton_clicked()
 {
@@ -997,7 +979,7 @@ void MainWindow::on_comboBox_textActivated(const QString &arg1)
 void MainWindow::on_pushButton_13_clicked()
 {
     QString directory = QFileDialog::getExistingDirectory(nullptr, "Выберите папку", "",
-    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks); // Опции диалога
+                                                          QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks); // Опции диалога
     GLB_ui->lineEdit_20->setText(directory);
 }
 
@@ -1157,9 +1139,6 @@ void MainWindow::on_checkBox_11_toggled(bool checked)
 {
     if(checked)
     {
-        // thread_1 = new MyThread_1(GLB_mainwindow);
-        // thread_1->start();
-        // while(!thread_1->isRunning()) {}
         SendToTerminal("Thread #1 enable.", true, 0);
     }
     else if(!checked)
@@ -1168,7 +1147,7 @@ void MainWindow::on_checkBox_11_toggled(bool checked)
     }
 }
 
-    // СОЗДАТЬ ЧЕКБОКС ЕСЛИ ТРЕБУЕТСЯ ЗАПУСК ВТОРОГО ПОТОКА (НАСТРОЙКА)
+// СОЗДАТЬ ЧЕКБОКС ЕСЛИ ТРЕБУЕТСЯ ЗАПУСК ВТОРОГО ПОТОКА (НАСТРОЙКА)
 //     if(checked)
 //     {
 //         GLB_Thread_Flag[1] = true;
@@ -1485,6 +1464,7 @@ void MainWindow::on_horizontalSlider_6_valueChanged(int value)
 void MainWindow::on_pushButton_29_clicked()
 {
     LNCM = 0;
+    LNCMAN = 0;
     SendToTerminal("Configurate", true, 1);
 
     bool flags_Enable[6] = {false, };       // Is it enabled?
@@ -1507,14 +1487,14 @@ void MainWindow::on_pushButton_29_clicked()
         MotorDefStruct[i].MD1_SelMotor = i;
         // if(MotorDefStruct[i].MD_SelMotor > 0)
         // {
-            MotorDefStruct[i].MD_Config_1 |= MASK_COM1_SELMOTOR;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_SELMOTOR;
 
         // }
 
         if((!MotorDefStruct[i].TAB1_ComporessButton->isChecked()) &&
             (!MotorDefStruct[i].TAB1_DecompressButton->isChecked()) &&
             (!MotorDefStruct[i].TAB1_FreeButton->isChecked()) &&
-                (!MotorDefStruct[i].TAB1_HoldButton->isChecked())) flags_Enable[i] = false;
+            (!MotorDefStruct[i].TAB1_HoldButton->isChecked())) flags_Enable[i] = false;
         else
         {
             MotorDefStruct[i].MD1_MoveType;
@@ -1522,34 +1502,34 @@ void MainWindow::on_pushButton_29_clicked()
         }
         // if(MotorDefStruct[i].MD_MoveType > 0)
         // {
-            MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TYPEMOVE;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TYPEMOVE;
 
         // }
 
         MotorDefStruct[i].MD1_PWM = std::stof(MotorDefStruct[i].TAB1_LineEditPWM->text().toStdString());
         // if(MotorDefStruct[i].MD_PWM > 0)
         // {
-            MotorDefStruct[i].MD_Config_1 |= MASK_COM1_PWM;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_PWM;
 
         // }
 
         MotorDefStruct[i].MD1_TimeWork = std::stof(MotorDefStruct[i].TAB1_LineEditWorkTime->text().toStdString()) * 100;
         // if(MotorDefStruct[i].MD_TimeWork > 0)
         // {
-            MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TIMEWORK;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TIMEWORK;
 
         // }
 
         MotorDefStruct[i].MD1_TimeDelay = std::stof(MotorDefStruct[i].TAB1_LineEditDelayTime->text().toStdString()) * 100;
         // if(MotorDefStruct[i].MD_TimeDelay > 0)
         // {
-            MotorDefStruct[i].MD_Config_1 |= MASK_COM1_DELAY;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_DELAY;
         // }
 
         MotorDefStruct[i].MD1_ADC_CH = MotorDefStruct[i].TAB1_CheckBoxADC->isChecked();
         // if(MotorDefStruct[i].MD_ADC_CH > 0)
         // {
-            MotorDefStruct[i].MD_Config_1 |= MASK_COM1_ADC;
+        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_ADC;
         // }
     }
 
@@ -1592,6 +1572,10 @@ void MainWindow::on_pushButton_29_clicked()
         DataToSend[i][nowCnt] = 0xDD;
         nowCnt++;
 
+
+        // ComPortWrite(DataToSend[i], nowCnt);
+
+
         for(uint8_t t = 0; t < nowCnt; t++)
         {
             DataToSendALL[((i - del_mot) * nowCnt) + t] = DataToSend[i][t];
@@ -1600,7 +1584,12 @@ void MainWindow::on_pushButton_29_clicked()
         CountData += nowCnt;
         nowCnt = 0;
         LNCM++;
+        LNCMAN.append(i);
+
+        // nowCnt = 0;
+        // LNCM++;
     }
+
 
     ComPortWrite(DataToSendALL, CountData);
     CountData = 0;
@@ -1649,6 +1638,7 @@ void MainWindow::on_pushButton_34_clicked()
 void MainWindow::on_pushButton_36_clicked()
 {
     LNCM = 0;
+    LNCMAN = 0;
     SendToTerminal("Configurate", true, 1);
 
     bool flags_Enable[6] = {false, };       // Is it enabled?
@@ -1802,14 +1792,6 @@ void MainWindow::on_checkBox_6_toggled(bool checked)
 {
     if(GLB_ui->checkBox_6->isChecked())
     {
-
-        MotorDefStruct[0].TAB2_LineEditAngle->setEnabled(true);
-        MotorDefStruct[1].TAB2_LineEditAngle->setEnabled(true);
-        MotorDefStruct[2].TAB2_LineEditAngle->setEnabled(true);
-        MotorDefStruct[3].TAB2_LineEditAngle->setEnabled(true);
-        MotorDefStruct[4].TAB2_LineEditAngle->setEnabled(true);
-        MotorDefStruct[5].TAB2_LineEditAngle->setEnabled(true);
-
         GLB_ui->lineEdit_21->setEnabled(true);
         GLB_ui->lineEdit_22->setEnabled(true);
         GLB_ui->lineEdit_23->setEnabled(true);
@@ -2101,3 +2083,4 @@ void MainWindow::on_checkBox_10_toggled(bool checked)
 {
 
 }
+

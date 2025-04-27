@@ -403,6 +403,8 @@ private slots:
 
     void on_checkBox_10_toggled(bool checked);
 
+    void on_lineEdit_36_textEdited(const QString &arg1);
+
 public:
     Ui::MainWindow *ui;
 private:
