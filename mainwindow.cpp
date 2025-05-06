@@ -53,7 +53,8 @@ MotorDef MotorDefStruct[6];
 CommandStruct MotorCommand[6];
 LastTypeCommand LTC;
 uint8_t LNCM;
-QByteArray LNCMAN = 0; // Enabled feedBack(ADC) variable
+QByteArray LNCMAN = 0;   // Enabled feedBack(ADC) counter variable
+bool LNCMAN_Indexes[12]; // Enabled feedBack(ADC) indexes
 bool Instruct_FLAG = false;
 
 typedef enum Fingers
@@ -141,25 +142,44 @@ void MainWindow::PaintGraph()
                 ));
         }
 
-        uint8_t LNCMAN_len = LNCMAN.length();
-        for(uint8_t i = 0; i < LNCMAN_len; i++)
+        // uint8_t LNCMAN_len = LNCMAN.length();
+        uint8_t LNCMAN_len = 0;
+        QByteArray TempIndexes;
+        for(auto item : LNCMAN_Indexes)
         {
+            if(item) LNCMAN_len++;
+        }
 
-            for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
+        for(uint8_t i = 0; i < 12; i++)
+        {
+            if(LNCMAN_Indexes[i])
             {
-                DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
+                for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
+                {
+                    DataMotor_y[i].append(AllDataToGraph[j]);
+                }
+                TempIndexes.append(i);
             }
         }
+
+
+        // for(uint8_t i = 0; i < LNCMAN_len; i++)
+        // {
+        //     for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
+        //     {
+        //         DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
+        //     }
+        // }
         // Скользящяя средняя 2 варианта
         // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
         //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
         double cf_mid = 0.2;
         for(uint8_t i = 0; i < LNCMAN_len; i++)
         {
-            for(uint16_t j = 1; j < DataMotor_y[(uint8_t)LNCMAN[i]].size(); j++)
+            for(uint16_t j = 1; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
             {
-                DataMotor_y[(uint8_t)LNCMAN[i]][j] =
-                    cf_mid * DataMotor_y[(uint8_t)LNCMAN[i]][j] + (1 - cf_mid) * DataMotor_y[(uint8_t)LNCMAN[i]][j - 1];
+                DataMotor_y[(uint16_t)TempIndexes[i]][j] =
+                    cf_mid * DataMotor_y[(uint16_t)TempIndexes[i]][j] + (1 - cf_mid) * DataMotor_y[(uint16_t)TempIndexes[i]][j - 1];
             }
         }
 
@@ -171,31 +191,49 @@ void MainWindow::PaintGraph()
             double MinVal_y = 0;
 
             float value_time = 0;
-            if(MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_CheckBoxADC->isChecked())
-                value_time = std::stof(MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_LineEditWorkTime->text().toStdString());
-            double Step = value_time / DataMotor_y[(uint8_t)LNCMAN[i]].size();
 
-            for(double j = 0; j < DataMotor_y[(uint8_t)LNCMAN[i]].size(); j++)
+            if(TempIndexes[i] < 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toStdString());
+            else if(TempIndexes[i] >= 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_LineEditWorkTime->text().toStdString());
+            double Step = value_time / DataMotor_y[(uint16_t)TempIndexes[i]].size();
+
+
+
+
+            for(double j = 0; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
             {
-                DataMotor_x[(uint8_t)LNCMAN[i]].append(Step * j);
-                if(MaxVal_x < DataMotor_x[(uint8_t)LNCMAN[i]][j]) MaxVal_x = DataMotor_x[(uint8_t)LNCMAN[i]][j];
-                if(MinVal_x > DataMotor_x[(uint8_t)LNCMAN[i]][j]) MinVal_x = DataMotor_x[(uint8_t)LNCMAN[i]][j];
-                if(MaxVal_y < DataMotor_y[(uint8_t)LNCMAN[i]][j]) MaxVal_y = DataMotor_y[(uint8_t)LNCMAN[i]][j];
-                if(MinVal_y > DataMotor_y[(uint8_t)LNCMAN[i]][j]) MinVal_y = DataMotor_y[(uint8_t)LNCMAN[i]][j];
+                DataMotor_x[(uint16_t)TempIndexes[i]].append(Step * j);
+                if(MaxVal_x < DataMotor_x[(uint16_t)TempIndexes[i]][j]) MaxVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+                if(MinVal_x > DataMotor_x[(uint16_t)TempIndexes[i]][j]) MinVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+                if(MaxVal_y < DataMotor_y[(uint16_t)TempIndexes[i]][j]) MaxVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+                if(MinVal_y > DataMotor_y[(uint16_t)TempIndexes[i]][j]) MinVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
             }
 
             qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[(uint8_t)LNCMAN[i]].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
 
             // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
 
-            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
-            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
-            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->addGraph();
-            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1GraphPen);
-            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[(uint8_t)LNCMAN[i]], DataMotor_y[(uint8_t)LNCMAN[i]]);
-            MotorDefStruct[(uint8_t)LNCMAN[i]].TAB1_ADCPlot->replot();
+            if((uint16_t)TempIndexes[i] < 6)
+            {
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->addGraph();
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1GraphPen);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->replot();
+            }
+            if((uint16_t)TempIndexes[i] >= 6)
+            {
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->xAxis->setRange(MinVal_x, MaxVal_x);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->yAxis->setRange(MinVal_y, MaxVal_y);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->addGraph();
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1GraphPen);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->replot();
+            }
+
         }
         LNCM = 0;
+        memset(LNCMAN_Indexes, '\0', 12);
     }
     else if(LTC == Last_ANGLE_MODE)
     {
@@ -393,6 +431,22 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCustomPlot[10] = GLB_ui->widget_11;      // Tab 2 - FeedBack_Graph 4
     GLB_WinObj.GLB_WindowsCustomPlot[11] = GLB_ui->widget_12;      // Tab 2 - FeedBack_Graph 5
 
+    GLB_WinObj.GLB_WindowsCustomPlot[12] = GLB_ui->widget_52;       // Tab 2 -  FeedBack_Graph 0 Back
+    GLB_WinObj.GLB_WindowsCustomPlot[13] = GLB_ui->widget_49;       // Tab 2 -  FeedBack_Graph 1 Back
+    GLB_WinObj.GLB_WindowsCustomPlot[14] = GLB_ui->widget_51;       // Tab 2 -  FeedBack_Graph 2 Back
+    GLB_WinObj.GLB_WindowsCustomPlot[15] = GLB_ui->widget_54;      // Tab 2 -  FeedBack_Graph 3 Back
+    GLB_WinObj.GLB_WindowsCustomPlot[16] = GLB_ui->widget_50;      // Tab 2 - FeedBack_Graph 4 Back
+    GLB_WinObj.GLB_WindowsCustomPlot[17] = GLB_ui->widget_53;      // Tab 2 - FeedBack_Graph 5 Back
+
+    // FOR ANGLE MODE
+    // GLB_WinObj.GLB_WindowsCustomPlot[6] = GLB_ui->widget_2;       // Tab 2 -  FeedBack_Graph 0
+    // GLB_WinObj.GLB_WindowsCustomPlot[7] = GLB_ui->widget_9;       // Tab 2 -  FeedBack_Graph 1
+    // GLB_WinObj.GLB_WindowsCustomPlot[8] = GLB_ui->widget_3;       // Tab 2 -  FeedBack_Graph 2
+    // GLB_WinObj.GLB_WindowsCustomPlot[9] = GLB_ui->widget_10;      // Tab 2 -  FeedBack_Graph 3
+    // GLB_WinObj.GLB_WindowsCustomPlot[10] = GLB_ui->widget_11;      // Tab 2 - FeedBack_Graph 4
+    // GLB_WinObj.GLB_WindowsCustomPlot[11] = GLB_ui->widget_12;      // Tab 2 - FeedBack_Graph 5
+
+
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLabel[0] = GLB_ui->label_4;             // Tab 0 - Repository label
     GLB_WinObj.GLB_WindowsLabel[1] = GLB_ui->label_13;            // Tab 1 - PWM label
@@ -416,12 +470,12 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLabel[15] = GLB_ui->label_27;           // Tab 1 - M5#
     GLB_WinObj.GLB_WindowsLabel[16] = GLB_ui->label_28;           // Tab 1 - M6#
 
-    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_16;           // Tab 1 - Graph M1
-    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_17;           // Tab 1 - Graph M2
-    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_18;           // Tab 1 - Graph M3
-    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_19;           // Tab 1 - Graph M4
-    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_20;           // Tab 1 - Graph M5
-    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_22;           // Tab 1 - Graph M6
+    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_35;           // Tab 1 - Graph M1
+    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_36;           // Tab 1 - Graph M2
+    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_37;           // Tab 1 - Graph M3
+    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_38;           // Tab 1 - Graph M4
+    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_39;           // Tab 1 - Graph M5
+    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_40;           // Tab 1 - Graph M6
 
     GLB_WinObj.GLB_WindowsLabel[20] = GLB_ui->label_34;           // Tab 2 - Graph Thumb
     GLB_WinObj.GLB_WindowsLabel[21] = GLB_ui->label_32;           // Tab 2 - Graph Index
@@ -429,6 +483,26 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLabel[23] = GLB_ui->label_30;           // Tab 2 - Graph Ring
     GLB_WinObj.GLB_WindowsLabel[24] = GLB_ui->label_31;           // Tab 2 - Graph Pinkie
     GLB_WinObj.GLB_WindowsLabel[25] = GLB_ui->label_33;           // Tab 2 - Graph Hand
+
+    GLB_WinObj.GLB_WindowsLabel[26] = GLB_ui->label_3;           // Tab 1 - Graph title
+    GLB_WinObj.GLB_WindowsLabel[27] = GLB_ui->label_18;           // Tab 1 - Graph title
+
+    GLB_WinObj.GLB_WindowsLabel[28] = GLB_ui->label_82;           // Tab 1 - Graph M1 Back
+    GLB_WinObj.GLB_WindowsLabel[29] = GLB_ui->label_79;           // Tab 1 - Graph M2 Back
+    GLB_WinObj.GLB_WindowsLabel[30] = GLB_ui->label_78;           // Tab 1 - Graph M3 Back
+    GLB_WinObj.GLB_WindowsLabel[31] = GLB_ui->label_80;           // Tab 1 - Graph M4 Back
+    GLB_WinObj.GLB_WindowsLabel[32] = GLB_ui->label_77;           // Tab 1 - Graph M5 Back
+    GLB_WinObj.GLB_WindowsLabel[33] = GLB_ui->label_81;           // Tab 1 - Graph M6 Back
+
+    GLB_WinObj.GLB_WindowsLabel[34] = GLB_ui->label_6;           // Tab 2 - Graph Grapgh title
+    GLB_WinObj.GLB_WindowsLabel[35] = GLB_ui->label_11;           // Tab 2 - Graph Grapgh title
+
+    GLB_WinObj.GLB_WindowsLabel[36] = GLB_ui->label_50;           // Tab 2 - Graph Thumb Back
+    GLB_WinObj.GLB_WindowsLabel[37] = GLB_ui->label_49;           // Tab 2 - Graph Index Back
+    GLB_WinObj.GLB_WindowsLabel[38] = GLB_ui->label_48;           // Tab 2 - Graph Middle Back
+    GLB_WinObj.GLB_WindowsLabel[39] = GLB_ui->label_51;           // Tab 2 - Graph Ring Back
+    GLB_WinObj.GLB_WindowsLabel[40] = GLB_ui->label_47;           // Tab 2 - Graph Pinkie Back
+    GLB_WinObj.GLB_WindowsLabel[41] = GLB_ui->label_52;           // Tab 2 - Graph Hand Back
 
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsSlider[0] = GLB_ui->horizontalSlider;            // Tab 1 - PWM 0 value Slider
@@ -444,6 +518,10 @@ void SetStartGUISettings()
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsFrame[0] = GLB_ui->frame;                        // Tab 0 - Debug Mode frame
     GLB_WinObj.GLB_WindowsFrame[1] = GLB_ui->frame_2;                      // Tab 0 - Debug Mode frame Motor check
+    GLB_WinObj.GLB_WindowsFrame[2] = GLB_ui->frame_4;                      // Tab 1 - Frame Graph internal side
+    GLB_WinObj.GLB_WindowsFrame[3] = GLB_ui->frame_5;                      // Tab 1 - Frame Graph external side
+    GLB_WinObj.GLB_WindowsFrame[4] = GLB_ui->frame_6;                      // Tab 2 - Frame Graph external side
+
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsTab[0] = GLB_ui->tabWidget;                      // Tab self
     /****************************************************************************************/
@@ -451,6 +529,10 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsTabWidget[1] = GLB_ui->tab;                      // Tab widget 1
     GLB_WinObj.GLB_WindowsTabWidget[2] = GLB_ui->tab_2;                    // Tab widget 2
     /****************************************************************************************/
+
+
+
+
 
     /*****************************************/
     MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
@@ -465,6 +547,7 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[1];
     MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[0].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[0];
+    MotorDefStruct[0].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[12];
     MotorDefStruct[0].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[0].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[29];
@@ -488,6 +571,7 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[2];
     MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[1].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[1];
+    MotorDefStruct[1].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[13];
     MotorDefStruct[1].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[1].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[30];
@@ -512,6 +596,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[3];
     MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[2].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[2];
+    MotorDefStruct[2].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[14];
     MotorDefStruct[2].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[2].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[31];
@@ -536,6 +621,7 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[4];
     MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[3].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[3];
+    MotorDefStruct[3].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[15];
     MotorDefStruct[3].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[3].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[32];
@@ -559,6 +645,7 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[5];
     MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[4].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[4];
+    MotorDefStruct[4].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[16];
     MotorDefStruct[4].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[4].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[33];
@@ -582,6 +669,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[6];
     MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
     MotorDefStruct[5].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[5];
+    MotorDefStruct[5].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[17];
     MotorDefStruct[5].TAB1GraphPen = QPen(Qt::red);
 
     MotorDefStruct[5].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[38];
@@ -789,7 +877,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     GLB_ui = ui;
     GLB_mainwindowWidget = this;
-
+    showMaximized();
 
     thread_1 = new MyThread_1(GLB_mainwindow);
 
@@ -1465,6 +1553,8 @@ void MainWindow::on_pushButton_29_clicked()
 {
     LNCM = 0;
     LNCMAN = 0;
+
+
     SendToTerminal("Configurate", true, 1);
 
     bool flags_Enable[6] = {false, };       // Is it enabled?
@@ -1565,16 +1655,18 @@ void MainWindow::on_pushButton_29_clicked()
         DataToSend[i][nowCnt] = (MotorDefStruct[i].MD1_TimeDelay & 0xFF00) >> 8;
         nowCnt++;
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_ADC_CH;
+
+        if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
+        {
+            if(MotorDefStruct[i].MD_SidePlate == EXTERN_PLATE) LNCMAN_Indexes[i + 6] = true;
+            else if(MotorDefStruct[i].MD_SidePlate == INTERN_PLATE) LNCMAN_Indexes[i] = true;
+        }
         nowCnt++;
 
         DataToSend[i][nowCnt] = 0xFF;
         nowCnt++;
         DataToSend[i][nowCnt] = 0xDD;
         nowCnt++;
-
-
-        // ComPortWrite(DataToSend[i], nowCnt);
-
 
         for(uint8_t t = 0; t < nowCnt; t++)
         {
@@ -1584,10 +1676,8 @@ void MainWindow::on_pushButton_29_clicked()
         CountData += nowCnt;
         nowCnt = 0;
         LNCM++;
-        LNCMAN.append(i);
 
-        // nowCnt = 0;
-        // LNCM++;
+        LNCMAN.append(i);
     }
 
 
@@ -1639,6 +1729,7 @@ void MainWindow::on_pushButton_36_clicked()
 {
     LNCM = 0;
     LNCMAN = 0;
+
     SendToTerminal("Configurate", true, 1);
 
     bool flags_Enable[6] = {false, };       // Is it enabled?
