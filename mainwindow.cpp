@@ -347,8 +347,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCheckBox[11] = GLB_ui->checkBox_12;    // Tab 0 - Debug Mode Reverse direction
     GLB_WinObj.GLB_WindowsCheckBox[12] = GLB_ui->checkBox_10;    // Tab 0 - Auto-connect Comport
 
-    GLB_WinObj.GLB_WindowsCheckBox[13] = GLB_ui->checkBox_14;    // Tab 0 - The back of the hand
-    GLB_WinObj.GLB_WindowsCheckBox[14] = GLB_ui->checkBox_15;    // Tab 0 - Enable auto currect PWM for the back of the hand
+    GLB_WinObj.GLB_WindowsCheckBox[13] = GLB_ui->checkBox_14;    // Tab 1 - The back of the hand
+    GLB_WinObj.GLB_WindowsCheckBox[14] = GLB_ui->checkBox_15;    // Tab 1 - Enable auto currect PWM for the back of the hand
 
     GLB_WinObj.GLB_WindowsCheckBox[15] = GLB_ui->checkBox_16;    // Tab 2 - CH1
 
@@ -357,6 +357,15 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCheckBox[18] = GLB_ui->checkBox_19;    // Tab 2 - CH4
     GLB_WinObj.GLB_WindowsCheckBox[19] = GLB_ui->checkBox_20;    // Tab 2 - CH5
     GLB_WinObj.GLB_WindowsCheckBox[20] = GLB_ui->checkBox_21;    // Tab 2 - CH6
+
+    GLB_WinObj.GLB_WindowsCheckBox[21] = GLB_ui->checkBox_22;    // Tab 2 - The back of the hand
+
+    GLB_WinObj.GLB_WindowsCheckBox[22] = GLB_ui->checkBox_23;    // Tab 2 - CH1 Reverse
+    GLB_WinObj.GLB_WindowsCheckBox[23] = GLB_ui->checkBox_24;    // Tab 2 - CH2 Reverse
+    GLB_WinObj.GLB_WindowsCheckBox[24] = GLB_ui->checkBox_25;    // Tab 2 - CH3 Reverse
+    GLB_WinObj.GLB_WindowsCheckBox[25] = GLB_ui->checkBox_26;    // Tab 2 - CH4 Reverse
+    GLB_WinObj.GLB_WindowsCheckBox[26] = GLB_ui->checkBox_27;    // Tab 2 - CH5 Reverse
+    GLB_WinObj.GLB_WindowsCheckBox[27] = GLB_ui->checkBox_28;    // Tab 2 - CH6 Reverse
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLineEdit[0] = GLB_ui->lineEdit_20;    // Tab 0 - File Repository
 
@@ -533,7 +542,6 @@ void SetStartGUISettings()
 
 
 
-
     /*****************************************/
     MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
     MotorDefStruct[0].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[20];
@@ -546,6 +554,7 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[0];
     MotorDefStruct[0].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[1];
     MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[0].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
     MotorDefStruct[0].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[0];
     MotorDefStruct[0].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[12];
     MotorDefStruct[0].TAB1GraphPen = QPen(Qt::red);
@@ -557,6 +566,9 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[34];
     MotorDefStruct[0].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[15];
     MotorDefStruct[0].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[6];
+    MotorDefStruct[0].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[22];
+
+
 
     /*****************************************/
     MotorDefStruct[1].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[3];
@@ -570,6 +582,7 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[1];
     MotorDefStruct[1].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[2];
     MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[1].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
     MotorDefStruct[1].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[1];
     MotorDefStruct[1].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[13];
     MotorDefStruct[1].TAB1GraphPen = QPen(Qt::red);
@@ -581,6 +594,10 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[35];
     MotorDefStruct[1].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[16];
     MotorDefStruct[1].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[7];
+    MotorDefStruct[1].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[23];
+
+
+
 
     /*****************************************/
     MotorDefStruct[2].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[4];
@@ -595,6 +612,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[2];
     MotorDefStruct[2].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[3];
     MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[2].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
     MotorDefStruct[2].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[2];
     MotorDefStruct[2].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[14];
     MotorDefStruct[2].TAB1GraphPen = QPen(Qt::red);
@@ -606,7 +624,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[36];
     MotorDefStruct[2].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[17];
     MotorDefStruct[2].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[8];
-
+    MotorDefStruct[2].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[24];
     /*****************************************/
     MotorDefStruct[3].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[5];
     MotorDefStruct[3].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[23];
@@ -620,6 +638,7 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[3];
     MotorDefStruct[3].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[4];
     MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[3].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
     MotorDefStruct[3].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[3];
     MotorDefStruct[3].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[15];
     MotorDefStruct[3].TAB1GraphPen = QPen(Qt::red);
@@ -630,7 +649,10 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[32];
     MotorDefStruct[3].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[37];
     MotorDefStruct[3].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[18];
-    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9];
+    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9]; 
+    MotorDefStruct[3].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[25];
+
+
 
     /*****************************************/
     MotorDefStruct[4].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[6];
@@ -644,6 +666,7 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[4];
     MotorDefStruct[4].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[5];
     MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[4].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
     MotorDefStruct[4].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[4];
     MotorDefStruct[4].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[16];
     MotorDefStruct[4].TAB1GraphPen = QPen(Qt::red);
@@ -655,6 +678,8 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[38];
     MotorDefStruct[4].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[19];
     MotorDefStruct[4].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[10];
+    MotorDefStruct[4].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[26];
+
 
     /*****************************************/
     MotorDefStruct[5].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[7];
@@ -668,6 +693,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[5];
     MotorDefStruct[5].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[6];
     MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
+    MotorDefStruct[5].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
     MotorDefStruct[5].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[5];
     MotorDefStruct[5].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[17];
     MotorDefStruct[5].TAB1GraphPen = QPen(Qt::red);
@@ -679,6 +705,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[44];
     MotorDefStruct[5].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[20];
     MotorDefStruct[5].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[11];
+    MotorDefStruct[5].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[27];
 
     /*****************************************/
 
@@ -785,6 +812,7 @@ void MainWindow::ComPortWrite(uint8_t *datatosend, uint32_t cntdata)
     // thread_1->start();
     // while(!thread_1->isRunning()) {}
     SendToTerminal("Thread#1: sending...", true, 1);
+    SendToTerminal("Thread#1: sending...", true, 2);
 }
 void MainWindow::ComPortRead()
 {
@@ -1548,6 +1576,13 @@ void MainWindow::on_horizontalSlider_6_valueChanged(int value)
     // if(value != 0) MotorInstr[numMotor].configHalfWord |= COM1_PWM;
     MotorInstr[numMotor].PWM = value;
 }
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/*************************************PWM CONTROL*************************************/
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////
 // Configurate
 void MainWindow::on_pushButton_29_clicked()
 {
@@ -1737,9 +1772,12 @@ void MainWindow::on_pushButton_36_clicked()
     uint8_t DataToSendALL[100] = {0, };
     uint32_t CountData = 0;
 
+
+
+
     for(uint8_t i = 0; i < 6; i++)
     {
-        MotorDefStruct[i].MD_SidePlate = (NumPlate)MotorDefStruct[i].TAB1_CheckBoxBackSide->isChecked();
+        MotorDefStruct[i].MD_SidePlate = (NumPlate)MotorDefStruct[i].TAB2_CheckBoxBackSide->isChecked();
         MotorDefStruct[i].MD_Config_1 |= MASK_COM_SIDEPLATE;
 
         MotorDefStruct[i].MD_WorkMode = WRM_ANGLE_MODE;
@@ -1751,7 +1789,9 @@ void MainWindow::on_pushButton_36_clicked()
         if(!MotorDefStruct[i].TAB2_FingerButton->isChecked()) flags_Enable[i] = false;
         else
         {
-            MotorDefStruct[i].MD2_MoveType = ANGLE_MODE;
+            if(MotorDefStruct[i].TAB2_CheckBoxBackReverse->isChecked()) MotorDefStruct[i].MD2_MoveType = RIGHT;
+            else MotorDefStruct[i].MD2_MoveType = LEFT;
+            // MotorDefStruct[i].MD2_MoveType = ANGLE_MODE; // This descrip. for old angle mode
             flags_Enable[i] = true;
         }
         MotorDefStruct[i].MD_Config_1 |= MASK_COM2_TYPEMOVE;
@@ -1773,9 +1813,14 @@ void MainWindow::on_pushButton_36_clicked()
     }
 
     uint8_t nowCnt = 0;
+    uint8_t del_mot = 0;
     for(uint8_t i = 0; i < 6; i++)
     {
-        if(!flags_Enable[i]) continue;
+        if(!flags_Enable[i])
+        {
+            del_mot++;
+            continue;
+        }
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_1;
         nowCnt++;
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_2;
@@ -1805,6 +1850,12 @@ void MainWindow::on_pushButton_36_clicked()
         DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Delay & 0xFF00) >> 8;
         nowCnt++;
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_FeedBack;
+
+        if(MotorDefStruct[i].MD2_FeedBack == 0x01)
+        {
+            if(MotorDefStruct[i].MD_SidePlate == EXTERN_PLATE) LNCMAN_Indexes[i + 6] = true;
+            else if(MotorDefStruct[i].MD_SidePlate == INTERN_PLATE) LNCMAN_Indexes[i] = true;
+        }
         nowCnt++;
 
         DataToSend[i][nowCnt] = 0xFF;
@@ -1814,7 +1865,7 @@ void MainWindow::on_pushButton_36_clicked()
 
         for(uint8_t t = 0; t < nowCnt; t++)
         {
-            DataToSendALL[(i * nowCnt) + t] = DataToSend[i][t];
+            DataToSendALL[((i - del_mot) * nowCnt) + t] = DataToSend[i][t];
         }
 
         CountData += nowCnt;
@@ -1832,7 +1883,6 @@ void MainWindow::on_pushButton_36_clicked()
 /*Start Instuction 2*/
 void MainWindow::on_pushButton_35_clicked()
 {
-
     uint8_t DataToSendALL[100] = {0, };
     uint8_t nowCnt = 0;
 
@@ -1842,7 +1892,7 @@ void MainWindow::on_pushButton_35_clicked()
     nowCnt++;
     DataToSendALL[nowCnt] |= MASK_COM2_START_INSTR >> 8;                // config_2
     nowCnt++;
-    DataToSendALL[nowCnt] |= INTERN_PLATE;                              // select plate
+    DataToSendALL[nowCnt] |= (NumPlate)MotorDefStruct[0].TAB2_CheckBoxBackSide->isChecked();   // select plate
     nowCnt++;
     DataToSendALL[nowCnt] |= WRM_ANGLE_MODE;                            // select workmode
     nowCnt++;

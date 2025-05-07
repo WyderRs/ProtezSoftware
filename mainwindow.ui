@@ -2267,7 +2267,7 @@
      <widget class="Line" name="line_7">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>340</x>
         <y>60</y>
         <width>20</width>
         <height>231</height>
@@ -2280,7 +2280,7 @@
      <widget class="QLineEdit" name="lineEdit_21">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>180</x>
         <y>140</y>
         <width>41</width>
         <height>31</height>
@@ -2302,7 +2302,7 @@
      <widget class="QLineEdit" name="lineEdit_22">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>180</x>
         <y>100</y>
         <width>41</width>
         <height>31</height>
@@ -2324,7 +2324,7 @@
      <widget class="QLineEdit" name="lineEdit_23">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>180</x>
         <y>60</y>
         <width>41</width>
         <height>31</height>
@@ -2346,7 +2346,7 @@
      <widget class="QLineEdit" name="lineEdit_24">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>180</x>
         <y>180</y>
         <width>41</width>
         <height>31</height>
@@ -2368,7 +2368,7 @@
      <widget class="QLineEdit" name="lineEdit_25">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>180</x>
         <y>220</y>
         <width>41</width>
         <height>31</height>
@@ -2390,7 +2390,7 @@
      <widget class="QLineEdit" name="lineEdit_26">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>140</y>
         <width>41</width>
         <height>31</height>
@@ -2412,7 +2412,7 @@
      <widget class="QLineEdit" name="lineEdit_27">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>100</y>
         <width>41</width>
         <height>31</height>
@@ -2434,7 +2434,7 @@
      <widget class="QLineEdit" name="lineEdit_28">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>60</y>
         <width>41</width>
         <height>31</height>
@@ -2456,7 +2456,7 @@
      <widget class="QLineEdit" name="lineEdit_29">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>180</y>
         <width>41</width>
         <height>31</height>
@@ -2478,7 +2478,7 @@
      <widget class="QLineEdit" name="lineEdit_30">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>220</y>
         <width>41</width>
         <height>31</height>
@@ -2500,20 +2500,7 @@
      <widget class="Line" name="line_10">
       <property name="geometry">
        <rect>
-        <x>170</x>
-        <y>60</y>
-        <width>20</width>
-        <height>231</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-     <widget class="Line" name="line_11">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
+        <x>220</x>
         <y>60</y>
         <width>20</width>
         <height>231</height>
@@ -2526,7 +2513,7 @@
      <widget class="QLabel" name="label_5">
       <property name="geometry">
        <rect>
-        <x>136</x>
+        <x>186</x>
         <y>30</y>
         <width>31</width>
         <height>20</height>
@@ -2542,7 +2529,7 @@
      <widget class="QLabel" name="label_8">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>30</y>
         <width>41</width>
         <height>20</height>
@@ -2558,7 +2545,7 @@
      <widget class="QLineEdit" name="lineEdit_31">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>180</y>
         <width>41</width>
         <height>31</height>
@@ -2580,7 +2567,7 @@
      <widget class="QLineEdit" name="lineEdit_32">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>220</y>
         <width>41</width>
         <height>31</height>
@@ -2602,7 +2589,7 @@
      <widget class="QLineEdit" name="lineEdit_33">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>60</y>
         <width>41</width>
         <height>31</height>
@@ -2624,7 +2611,7 @@
      <widget class="QLineEdit" name="lineEdit_34">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>140</y>
         <width>41</width>
         <height>31</height>
@@ -2646,7 +2633,7 @@
      <widget class="QLineEdit" name="lineEdit_35">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>100</y>
         <width>41</width>
         <height>31</height>
@@ -2668,7 +2655,7 @@
      <widget class="Line" name="line_12">
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>280</x>
         <y>60</y>
         <width>20</width>
         <height>231</height>
@@ -2681,7 +2668,7 @@
      <widget class="QLabel" name="label_9">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>30</y>
         <width>41</width>
         <height>20</height>
@@ -2698,7 +2685,7 @@
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>310</y>
+        <y>360</y>
         <width>71</width>
         <height>31</height>
        </rect>
@@ -2711,7 +2698,7 @@
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>270</y>
+        <y>320</y>
         <width>71</width>
         <height>31</height>
        </rect>
@@ -2736,7 +2723,7 @@
      <widget class="QCheckBox" name="checkBox_6">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>190</x>
         <y>300</y>
         <width>41</width>
         <height>22</height>
@@ -2749,7 +2736,7 @@
      <widget class="QCheckBox" name="checkBox_7">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>250</x>
         <y>300</y>
         <width>41</width>
         <height>22</height>
@@ -2762,7 +2749,7 @@
      <widget class="QCheckBox" name="checkBox_8">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>310</x>
         <y>300</y>
         <width>41</width>
         <height>22</height>
@@ -2775,7 +2762,7 @@
      <widget class="QLineEdit" name="lineEdit_40">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>220</y>
         <width>41</width>
         <height>31</height>
@@ -2797,7 +2784,7 @@
      <widget class="QLineEdit" name="lineEdit_41">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>100</y>
         <width>41</width>
         <height>31</height>
@@ -2819,7 +2806,7 @@
      <widget class="QLineEdit" name="lineEdit_42">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>140</y>
         <width>41</width>
         <height>31</height>
@@ -2841,7 +2828,7 @@
      <widget class="QLineEdit" name="lineEdit_43">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>180</y>
         <width>41</width>
         <height>31</height>
@@ -2863,7 +2850,7 @@
      <widget class="QLineEdit" name="lineEdit_44">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>60</y>
         <width>41</width>
         <height>31</height>
@@ -2898,7 +2885,7 @@
      <widget class="QLabel" name="label_10">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>30</y>
         <width>41</width>
         <height>20</height>
@@ -2927,7 +2914,7 @@
      <widget class="QLineEdit" name="lineEdit_39">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>240</x>
         <y>260</y>
         <width>41</width>
         <height>31</height>
@@ -2965,7 +2952,7 @@
      <widget class="QLineEdit" name="lineEdit_45">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>300</x>
         <y>260</y>
         <width>41</width>
         <height>31</height>
@@ -2987,7 +2974,7 @@
      <widget class="QLineEdit" name="lineEdit_46">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>360</x>
         <y>260</y>
         <width>41</width>
         <height>31</height>
@@ -3009,7 +2996,7 @@
      <widget class="QLineEdit" name="lineEdit_47">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>180</x>
         <y>260</y>
         <width>41</width>
         <height>31</height>
@@ -3031,7 +3018,7 @@
      <widget class="QCheckBox" name="checkBox_16">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>420</x>
         <y>60</y>
         <width>51</width>
         <height>31</height>
@@ -3044,7 +3031,7 @@
      <widget class="QCheckBox" name="checkBox_17">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>420</x>
         <y>100</y>
         <width>51</width>
         <height>31</height>
@@ -3057,7 +3044,7 @@
      <widget class="QCheckBox" name="checkBox_18">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>420</x>
         <y>140</y>
         <width>51</width>
         <height>31</height>
@@ -3070,7 +3057,7 @@
      <widget class="QCheckBox" name="checkBox_19">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>420</x>
         <y>180</y>
         <width>51</width>
         <height>31</height>
@@ -3083,7 +3070,7 @@
      <widget class="QCheckBox" name="checkBox_20">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>420</x>
         <y>220</y>
         <width>51</width>
         <height>31</height>
@@ -3096,7 +3083,7 @@
      <widget class="QCheckBox" name="checkBox_21">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>420</x>
         <y>260</y>
         <width>51</width>
         <height>31</height>
@@ -3560,6 +3547,110 @@
        </property>
       </widget>
      </widget>
+     <widget class="QCheckBox" name="checkBox_22">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>The back of the hand</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_23">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>60</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>rvrs</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_24">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>100</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>rvrs</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_25">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>140</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>rvrs</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_26">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>180</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>rvrs</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_27">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>220</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>rvrs</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_28">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>260</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>rvrs</string>
+      </property>
+     </widget>
+     <widget class="Line" name="line_11">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>60</y>
+        <width>20</width>
+        <height>231</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
      <zorder>frame_6</zorder>
      <zorder>pushButton_14</zorder>
      <zorder>pushButton_15</zorder>
@@ -3578,7 +3669,6 @@
      <zorder>lineEdit_29</zorder>
      <zorder>lineEdit_30</zorder>
      <zorder>line_10</zorder>
-     <zorder>line_11</zorder>
      <zorder>label_5</zorder>
      <zorder>label_8</zorder>
      <zorder>lineEdit_31</zorder>
@@ -3614,6 +3704,14 @@
      <zorder>checkBox_20</zorder>
      <zorder>checkBox_21</zorder>
      <zorder>frame_7</zorder>
+     <zorder>checkBox_22</zorder>
+     <zorder>checkBox_23</zorder>
+     <zorder>checkBox_24</zorder>
+     <zorder>checkBox_25</zorder>
+     <zorder>checkBox_26</zorder>
+     <zorder>checkBox_27</zorder>
+     <zorder>checkBox_28</zorder>
+     <zorder>line_11</zorder>
     </widget>
    </widget>
   </widget>

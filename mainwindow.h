@@ -56,7 +56,7 @@ typedef struct GLB_WindowsObjects
     QPushButton *GLB_WindowsButton[50];
     QSlider *GLB_WindowsSlider[20];
     QLineEdit *GLB_WindowsLineEdit[50];
-    QCheckBox *GLB_WindowsCheckBox[30];
+    QCheckBox *GLB_WindowsCheckBox[40];
     QComboBox *GLB_WindowsComboBox[2];
     QRadioButton *GLB_WindowsRadioButton[10];
     QCustomPlot *GLB_WindowsCustomPlot[20];
@@ -169,7 +169,8 @@ typedef struct MotorDef
     QLineEdit   *TAB2_LineEditDelay;
     QCheckBox   *TAB2_CheckBoxCH;
     QCustomPlot *TAB2_FeedBackPlot;
-
+    QCheckBox   *TAB2_CheckBoxBackSide;
+    QCheckBox   *TAB2_CheckBoxBackReverse;
 
     /*Main com0 bytes*/
     uint8_t     MD_Config_1;
