@@ -237,37 +237,141 @@ void MainWindow::PaintGraph()
     }
     else if(LTC == Last_ANGLE_MODE)
     {
-        double Step;
-        QVector<double> NewGraph2_x, NewGraph2_y;
-        for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
+        QVector<double> DataMotor_x[12], DataMotor_y[12];
+        // Собираем все данные по парам байт
+        QVector<double> AllDataToGraph;
+        for(uint32_t i = 0; i < (uint32_t)(GLB_Graph_y.size()); i = i + 2)
         {
-            NewGraph2_y.append(_2ByteTo_1Byte(
-                (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
-                ));
+            AllDataToGraph.append((GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8));
         }
 
-        double max_val_x = 0.0;
-        double min_val_x = 0.0;
-
-        double max_val_y = 0.0;
-        double min_val_y = 0.0;
-
-        Step = 1.0;
-        for(double i = 0; i < NewGraph2_y.size(); i++)
+        // uint8_t LNCMAN_len = LNCMAN.length();
+        uint8_t LNCMAN_len = 0;
+        QByteArray TempIndexes;
+        for(auto item : LNCMAN_Indexes)
         {
-            NewGraph2_x.append(i);
-            if(max_val_x < NewGraph2_x[i]) max_val_x = NewGraph2_x[i];
-            if(min_val_x > NewGraph2_x[i]) min_val_x = NewGraph2_x[i];
-            if(max_val_y < NewGraph2_y[i]) max_val_y = NewGraph2_y[i];
-            if(min_val_y > NewGraph2_y[i]) min_val_y = NewGraph2_y[i];
+            if(item) LNCMAN_len++;
         }
 
-        GLB_ui->widget_2->xAxis->setRange(min_val_x, max_val_x);
-        GLB_ui->widget_2->yAxis->setRange(min_val_y, max_val_y);
-        GLB_ui->widget_2->addGraph();
-        GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
-        GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
-        GLB_ui->widget_2->replot();
+        for(uint8_t i = 0; i < 12; i++)
+        {
+            if(LNCMAN_Indexes[i])
+            {
+                for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
+                {
+                    DataMotor_y[i].append(AllDataToGraph[j]);
+                }
+                TempIndexes.append(i);
+            }
+        }
+
+
+        // for(uint8_t i = 0; i < LNCMAN_len; i++)
+        // {
+        //     for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
+        //     {
+        //         DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
+        //     }
+        // }
+        // Скользящяя средняя 2 варианта
+        // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
+        //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
+        double cf_mid = 0.2;
+        for(uint8_t i = 0; i < LNCMAN_len; i++)
+        {
+            for(uint16_t j = 1; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
+            {
+                DataMotor_y[(uint16_t)TempIndexes[i]][j] =
+                    cf_mid * DataMotor_y[(uint16_t)TempIndexes[i]][j] + (1 - cf_mid) * DataMotor_y[(uint16_t)TempIndexes[i]][j - 1];
+            }
+        }
+
+        for(uint8_t i = 0; i < LNCMAN_len; i++)
+        {
+            double MaxVal_x = 0;
+            double MaxVal_y = 0;
+            double MinVal_x = 0;
+            double MinVal_y = 0;
+
+            float value_time = 0;
+
+            // if(TempIndexes[i] < 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toStdString());
+            // else if(TempIndexes[i] >= 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_LineEditWorkTime->text().toStdString());
+
+
+            double Step = 1.0 / DataMotor_y[(uint16_t)TempIndexes[i]].size();
+
+
+            for(double j = 0; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
+            {
+                DataMotor_x[(uint16_t)TempIndexes[i]].append(Step * j);
+                if(MaxVal_x < DataMotor_x[(uint16_t)TempIndexes[i]][j]) MaxVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+                if(MinVal_x > DataMotor_x[(uint16_t)TempIndexes[i]][j]) MinVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+                if(MaxVal_y < DataMotor_y[(uint16_t)TempIndexes[i]][j]) MaxVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+                if(MinVal_y > DataMotor_y[(uint16_t)TempIndexes[i]][j]) MinVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+            }
+
+            qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[(uint8_t)LNCMAN[i]].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
+
+            // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
+
+            if((uint16_t)TempIndexes[i] < 6)
+            {
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->xAxis->setRange(MinVal_x, MaxVal_x);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->yAxis->setRange(MinVal_y, MaxVal_y);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->addGraph();
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1GraphPen);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->replot();
+            }
+            if((uint16_t)TempIndexes[i] >= 6)
+            {
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->xAxis->setRange(MinVal_x, MaxVal_x);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->yAxis->setRange(MinVal_y, MaxVal_y);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->addGraph();
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1GraphPen);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->replot();
+            }
+        }
+        LNCM = 0;
+        memset(LNCMAN_Indexes, '\0', 12);
+
+
+
+
+
+        // double Step;
+        // QVector<double> NewGraph2_x, NewGraph2_y;
+        // for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
+        // {
+        //     NewGraph2_y.append(_2ByteTo_1Byte(
+        //         (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
+        //         ));
+        // }
+
+        // double max_val_x = 0.0;
+        // double min_val_x = 0.0;
+
+        // double max_val_y = 0.0;
+        // double min_val_y = 0.0;
+
+        // Step = 1.0;
+        // for(double i = 0; i < NewGraph2_y.size(); i++)
+        // {
+        //     NewGraph2_x.append(i);
+        //     if(max_val_x < NewGraph2_x[i]) max_val_x = NewGraph2_x[i];
+        //     if(min_val_x > NewGraph2_x[i]) min_val_x = NewGraph2_x[i];
+        //     if(max_val_y < NewGraph2_y[i]) max_val_y = NewGraph2_y[i];
+        //     if(min_val_y > NewGraph2_y[i]) min_val_y = NewGraph2_y[i];
+        // }
+
+        // GLB_ui->widget_2->xAxis->setRange(min_val_x, max_val_x);
+        // GLB_ui->widget_2->yAxis->setRange(min_val_y, max_val_y);
+        // GLB_ui->widget_2->addGraph();
+        // GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
+        // GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
+        // GLB_ui->widget_2->replot();
     }
 }
 
@@ -447,13 +551,12 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCustomPlot[16] = GLB_ui->widget_50;      // Tab 2 - FeedBack_Graph 4 Back
     GLB_WinObj.GLB_WindowsCustomPlot[17] = GLB_ui->widget_53;      // Tab 2 - FeedBack_Graph 5 Back
 
-    // FOR ANGLE MODE
-    // GLB_WinObj.GLB_WindowsCustomPlot[6] = GLB_ui->widget_2;       // Tab 2 -  FeedBack_Graph 0
-    // GLB_WinObj.GLB_WindowsCustomPlot[7] = GLB_ui->widget_9;       // Tab 2 -  FeedBack_Graph 1
-    // GLB_WinObj.GLB_WindowsCustomPlot[8] = GLB_ui->widget_3;       // Tab 2 -  FeedBack_Graph 2
-    // GLB_WinObj.GLB_WindowsCustomPlot[9] = GLB_ui->widget_10;      // Tab 2 -  FeedBack_Graph 3
-    // GLB_WinObj.GLB_WindowsCustomPlot[10] = GLB_ui->widget_11;      // Tab 2 - FeedBack_Graph 4
-    // GLB_WinObj.GLB_WindowsCustomPlot[11] = GLB_ui->widget_12;      // Tab 2 - FeedBack_Graph 5
+    GLB_WinObj.GLB_WindowsCustomPlot[18] = GLB_ui->widget_24;       // Tab 2 -  BackFeedBack_Graph 0
+    GLB_WinObj.GLB_WindowsCustomPlot[19] = GLB_ui->widget_22;       // Tab 2 -  BackFeedBack_Graph 1
+    GLB_WinObj.GLB_WindowsCustomPlot[20] = GLB_ui->widget_21;       // Tab 2 -  BackFeedBack_Graph 2
+    GLB_WinObj.GLB_WindowsCustomPlot[21] = GLB_ui->widget_20;      // Tab 2 -  BackFeedBack_Graph 3
+    GLB_WinObj.GLB_WindowsCustomPlot[22] = GLB_ui->widget_19;      // Tab 2 - BackFeedBack_Graph 4
+    GLB_WinObj.GLB_WindowsCustomPlot[23] = GLB_ui->widget_23;      // Tab 2 - BackFeedBack_Graph 5
 
 
     /****************************************************************************************/
@@ -542,6 +645,7 @@ void SetStartGUISettings()
 
 
 
+
     /*****************************************/
     MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
     MotorDefStruct[0].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[20];
@@ -568,6 +672,8 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[6];
     MotorDefStruct[0].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[22];
 
+    MotorDefStruct[0].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[6];
+    MotorDefStruct[0].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[18];
 
 
     /*****************************************/
@@ -596,6 +702,8 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[7];
     MotorDefStruct[1].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[23];
 
+    MotorDefStruct[1].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[7];
+    MotorDefStruct[1].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[19];
 
 
 
@@ -625,6 +733,14 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[17];
     MotorDefStruct[2].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[8];
     MotorDefStruct[2].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[24];
+
+    MotorDefStruct[2].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[8];
+    MotorDefStruct[2].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[20];
+
+
+
+
+
     /*****************************************/
     MotorDefStruct[3].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[5];
     MotorDefStruct[3].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[23];
@@ -651,6 +767,9 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[18];
     MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9]; 
     MotorDefStruct[3].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[25];
+
+    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9];
+    MotorDefStruct[3].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[21];
 
 
 
@@ -680,6 +799,8 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[10];
     MotorDefStruct[4].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[26];
 
+    MotorDefStruct[4].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[10];
+    MotorDefStruct[4].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[22];
 
     /*****************************************/
     MotorDefStruct[5].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[7];
@@ -706,6 +827,9 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[20];
     MotorDefStruct[5].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[11];
     MotorDefStruct[5].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[27];
+
+    MotorDefStruct[5].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[11];
+    MotorDefStruct[5].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[23];
 
     /*****************************************/
 
