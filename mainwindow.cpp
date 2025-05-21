@@ -128,7 +128,6 @@ double _2ByteTo_1Byte(uint16_t halfWorld)
     return halfWorld;
 }
 void MainWindow::PaintGraph()
-
 {
     if(LTC == Last_PWM_MODE)
     {
@@ -245,6 +244,7 @@ void MainWindow::PaintGraph()
             AllDataToGraph.append((GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8));
         }
 
+
         // uint8_t LNCMAN_len = LNCMAN.length();
         uint8_t LNCMAN_len = 0;
         QByteArray TempIndexes;
@@ -276,6 +276,7 @@ void MainWindow::PaintGraph()
         // Скользящяя средняя 2 варианта
         // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
         //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
+
         double cf_mid = 0.2;
         for(uint8_t i = 0; i < LNCMAN_len; i++)
         {
@@ -336,42 +337,6 @@ void MainWindow::PaintGraph()
         }
         LNCM = 0;
         memset(LNCMAN_Indexes, '\0', 12);
-
-
-
-
-
-        // double Step;
-        // QVector<double> NewGraph2_x, NewGraph2_y;
-        // for(uint16_t i = 0; i < GLB_Graph_y.size(); i = i + 2)
-        // {
-        //     NewGraph2_y.append(_2ByteTo_1Byte(
-        //         (GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)
-        //         ));
-        // }
-
-        // double max_val_x = 0.0;
-        // double min_val_x = 0.0;
-
-        // double max_val_y = 0.0;
-        // double min_val_y = 0.0;
-
-        // Step = 1.0;
-        // for(double i = 0; i < NewGraph2_y.size(); i++)
-        // {
-        //     NewGraph2_x.append(i);
-        //     if(max_val_x < NewGraph2_x[i]) max_val_x = NewGraph2_x[i];
-        //     if(min_val_x > NewGraph2_x[i]) min_val_x = NewGraph2_x[i];
-        //     if(max_val_y < NewGraph2_y[i]) max_val_y = NewGraph2_y[i];
-        //     if(min_val_y > NewGraph2_y[i]) min_val_y = NewGraph2_y[i];
-        // }
-
-        // GLB_ui->widget_2->xAxis->setRange(min_val_x, max_val_x);
-        // GLB_ui->widget_2->yAxis->setRange(min_val_y, max_val_y);
-        // GLB_ui->widget_2->addGraph();
-        // GLB_ui->widget_2->graph(0)->setPen(QPen(Qt::red));
-        // GLB_ui->widget_2->graph(0)->setData(NewGraph2_x, NewGraph2_y);
-        // GLB_ui->widget_2->replot();
     }
 }
 
@@ -662,6 +627,8 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[0];
     MotorDefStruct[0].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[12];
     MotorDefStruct[0].TAB1GraphPen = QPen(Qt::red);
+    MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+
 
     MotorDefStruct[0].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[29];
     MotorDefStruct[0].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[19];
@@ -692,6 +659,7 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[1];
     MotorDefStruct[1].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[13];
     MotorDefStruct[1].TAB1GraphPen = QPen(Qt::red);
+    MotorDefStruct[1].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
 
     MotorDefStruct[1].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[30];
     MotorDefStruct[1].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[20];
@@ -724,6 +692,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[2];
     MotorDefStruct[2].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[14];
     MotorDefStruct[2].TAB1GraphPen = QPen(Qt::red);
+    MotorDefStruct[2].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
 
     MotorDefStruct[2].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[31];
     MotorDefStruct[2].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[21];
@@ -758,6 +727,7 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[3];
     MotorDefStruct[3].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[15];
     MotorDefStruct[3].TAB1GraphPen = QPen(Qt::red);
+    MotorDefStruct[3].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
 
     MotorDefStruct[3].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[32];
     MotorDefStruct[3].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[22];
@@ -789,6 +759,7 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[4];
     MotorDefStruct[4].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[16];
     MotorDefStruct[4].TAB1GraphPen = QPen(Qt::red);
+    MotorDefStruct[4].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
 
     MotorDefStruct[4].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[33];
     MotorDefStruct[4].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[23];
@@ -818,6 +789,7 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[5];
     MotorDefStruct[5].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[17];
     MotorDefStruct[5].TAB1GraphPen = QPen(Qt::red);
+    MotorDefStruct[5].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
 
     MotorDefStruct[5].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[38];
     MotorDefStruct[5].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[41];
@@ -1780,6 +1752,10 @@ void MainWindow::on_pushButton_29_clicked()
         // {
         MotorDefStruct[i].MD_Config_1 |= MASK_COM1_ADC;
         // }
+
+        MotorDefStruct[i].MD_Config_2 |= MASK_COM1_START_INSTR >> 8;
+        if(MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower->isChecked()) MotorDefStruct[i].MD1_StartInstr |= (1 << 1);
+        else MotorDefStruct[i].MD1_StartInstr &= ~(1 << 1);
     }
 
     uint8_t del_mot = 0;
@@ -1814,6 +1790,8 @@ void MainWindow::on_pushButton_29_clicked()
         DataToSend[i][nowCnt] = (MotorDefStruct[i].MD1_TimeDelay & 0xFF00) >> 8;
         nowCnt++;
         DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_ADC_CH;
+        nowCnt++;
+        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_StartInstr;
 
         if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
         {
@@ -1864,7 +1842,12 @@ void MainWindow::on_pushButton_34_clicked()
     DataToSendALL[nowCnt] |= WRM_PWM_MODE;                              // select workmode
     nowCnt++;
     DataToSendALL[nowCnt] = 0x01;                                       // start instruct byte
+    if(MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower->isChecked()) DataToSendALL[nowCnt] |= (1 << 1);
+    else DataToSendALL[nowCnt] &= ~(1 << 1);
     nowCnt++;
+
+
+
 
     DataToSendALL[nowCnt] = 0xFF;
     nowCnt++;

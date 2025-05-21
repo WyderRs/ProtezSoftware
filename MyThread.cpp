@@ -133,7 +133,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
     qint64 lastTime = QDateTime::currentMSecsSinceEpoch();
     while(1)
     {
-        if(serialDevice1->waitForReadyRead(300))
+        if(serialDevice1->waitForReadyRead(1000))
         {
             newData = serialDevice1->readAll();
             while(serialDevice1->waitForReadyRead(100))

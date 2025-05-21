@@ -39,7 +39,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -1544,13 +1544,19 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>340</y>
-        <width>291</width>
+        <y>310</y>
+        <width>181</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Enable auto currect PWM for the back of the hand</string>
+       <string>Enable auto settings other side</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QLabel" name="label_23">

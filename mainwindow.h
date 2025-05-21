@@ -76,7 +76,7 @@ typedef enum MoveType
     LEFT,
     RIGHT,
     HOLD,
-    ANGLE_MODE,
+    ANGLE_MODE, // Don`t need now
 } MoveType;
 typedef enum NumPlate
 {
@@ -144,6 +144,7 @@ typedef enum WorkModeEnum
     WRM_None = 0,
     WRM_PWM_MODE = 0x01,
     WRM_ANGLE_MODE = 0x02,
+    WRM_SETTING = 0x03,
 } WorkModeEnum;
 
 typedef struct MotorDef
@@ -161,6 +162,7 @@ typedef struct MotorDef
     QCustomPlot *TAB1_ADCPlot;
     QCustomPlot *TAB1_ADCPlotBack;
     QPen        TAB1GraphPen;
+    QCheckBox   *TAB1_CheckBoxAutoCurrectBackPower;
 
     QPushButton *TAB2_FingerButton;
     QLineEdit   *TAB2_LineEditAngle;
@@ -185,6 +187,7 @@ typedef struct MotorDef
     uint16_t    MD1_TimeWork;
     uint16_t    MD1_TimeDelay;
     uint8_t     MD1_ADC_CH;
+    uint8_t     MD1_StartInstr;
     /*Individual com3 bytes - Angle Mode*/
     uint8_t     MD2_SelMotor;
     MoveType    MD2_MoveType;
@@ -193,9 +196,11 @@ typedef struct MotorDef
     uint16_t    MD2_Speed;
     uint16_t    MD2_Delay;
     uint8_t     MD2_FeedBack;
-    /*Individual com1 bytes - Status Mode*/
+    uint8_t     MD2_StartInstr;
+    /*Individual com4 bytes - Setting*/
 
-    /*Individual com1 bytes - Setting Mode*/
+    /*Individual com5 bytes - Status Mode*/
+
 
 } MotorDef;
 typedef enum LastTypeCommand
