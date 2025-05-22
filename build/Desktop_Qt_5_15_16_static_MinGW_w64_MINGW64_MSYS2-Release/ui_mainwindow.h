@@ -679,7 +679,9 @@ public:
         checkBox_14->setGeometry(QRect(10, 30, 141, 22));
         checkBox_15 = new QCheckBox(tab);
         checkBox_15->setObjectName(QString::fromUtf8("checkBox_15"));
-        checkBox_15->setGeometry(QRect(10, 340, 291, 22));
+        checkBox_15->setGeometry(QRect(10, 310, 181, 22));
+        checkBox_15->setCheckable(true);
+        checkBox_15->setChecked(true);
         label_23 = new QLabel(tab);
         label_23->setObjectName(QString::fromUtf8("label_23"));
         label_23->setGeometry(QRect(0, 60, 31, 31));
@@ -1388,7 +1390,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(2);
+        tabWidget->setCurrentIndex(1);
         pushButton->setDefault(false);
 
 
@@ -1473,7 +1475,7 @@ public:
         pushButton_34->setText(QCoreApplication::translate("MainWindow", "Start", nullptr));
         pushButton_38->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         checkBox_14->setText(QCoreApplication::translate("MainWindow", "The back of the hand", nullptr));
-        checkBox_15->setText(QCoreApplication::translate("MainWindow", "Enable auto currect PWM for the back of the hand", nullptr));
+        checkBox_15->setText(QCoreApplication::translate("MainWindow", "Enable auto settings other side", nullptr));
         label_23->setText(QCoreApplication::translate("MainWindow", "M#1", nullptr));
         label_24->setText(QCoreApplication::translate("MainWindow", "M#2", nullptr));
         label_25->setText(QCoreApplication::translate("MainWindow", "M#3", nullptr));
