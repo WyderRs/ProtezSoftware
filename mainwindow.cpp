@@ -231,6 +231,43 @@ void MainWindow::PaintGraph()
             }
 
         }
+
+        if (GLB_WinObj.GLB_WindowsCheckBox[28]->isChecked())
+        {
+            int fileIndex = 1;
+            QString fileName;
+            QFile file;
+
+            // Ищем первый свободный номер файла
+            do {
+                fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/" + GLB_WinObj.GLB_WindowsLineEdit[45]->text()
+                                  + "_N" + "1" + "P" + GLB_WinObj.GLB_WindowsLineEdit[1]->text() + "_%1" + ".txt").arg(fileIndex);
+
+
+                file.setFileName(fileName);
+                fileIndex++;
+            } while (file.exists());
+
+            // Открываем файл для записи
+            if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+                QTextStream out(&file);
+
+                int size = DataMotor_x[0].size();
+                for (int i = 0; i < size; ++i)
+                {
+                    out << DataMotor_x[0][i] << '\t' << DataMotor_y[0][i] << "\n";
+                }
+
+                file.close();
+                qDebug() << "Data is saved to file:" << fileName;
+            }
+            else
+            {
+                qWarning() << "Data don`t save to file" << fileName;
+            }
+        }
+
         LNCM = 0;
         memset(LNCMAN_Indexes, '\0', 12);
     }
@@ -435,6 +472,10 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsCheckBox[25] = GLB_ui->checkBox_26;    // Tab 2 - CH4 Reverse
     GLB_WinObj.GLB_WindowsCheckBox[26] = GLB_ui->checkBox_27;    // Tab 2 - CH5 Reverse
     GLB_WinObj.GLB_WindowsCheckBox[27] = GLB_ui->checkBox_28;    // Tab 2 - CH6 Reverse
+
+    GLB_WinObj.GLB_WindowsCheckBox[28] = GLB_ui->checkBox_29;    // Tab 1 - CheckBox save file
+    GLB_WinObj.GLB_WindowsCheckBox[29] = GLB_ui->checkBox_31;    // Tab 2 - CheckBox save file
+
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsLineEdit[0] = GLB_ui->lineEdit_20;    // Tab 0 - File Repository
 
@@ -491,6 +532,9 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
     GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
+
+    GLB_WinObj.GLB_WindowsLineEdit[45] = GLB_ui->lineEdit_18;   // Tab 1 - LineEdit save file name
+    GLB_WinObj.GLB_WindowsLineEdit[46] = GLB_ui->lineEdit_50;   // Tab 2 - LineEdit save file name
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
     GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
@@ -599,6 +643,8 @@ void SetStartGUISettings()
     GLB_WinObj.GLB_WindowsFrame[3] = GLB_ui->frame_5;                      // Tab 1 - Frame Graph external side
     GLB_WinObj.GLB_WindowsFrame[4] = GLB_ui->frame_6;                      // Tab 2 - Frame Graph external side
 
+    GLB_WinObj.GLB_WindowsFrame[5] = GLB_ui->frame_8;                      // Tab 1 - Frame save file
+    GLB_WinObj.GLB_WindowsFrame[6] = GLB_ui->frame_9;                      // Tab 2 - Frame save file
     /****************************************************************************************/
     GLB_WinObj.GLB_WindowsTab[0] = GLB_ui->tabWidget;                      // Tab self
     /****************************************************************************************/
@@ -816,9 +862,22 @@ void SetStartGUISettings()
 
     QList<QLineEdit*> lineEdits;
     lineEdits = GLB_WinObj.GLB_WindowsTabWidget[1]->findChildren<QLineEdit*>();
-    for (QLineEdit *lineEdit : lineEdits) lineEdit->setValidator(validator);
+
+    for (QLineEdit *lineEdit : lineEdits)
+    {
+        if (lineEdit != GLB_WinObj.GLB_WindowsLineEdit[45])
+        {
+            lineEdit->setValidator(validator);
+        }
+    }
     lineEdits = GLB_WinObj.GLB_WindowsTabWidget[2]->findChildren<QLineEdit*>();
-    for (QLineEdit *lineEdit : lineEdits) lineEdit->setValidator(validator);
+    for (QLineEdit *lineEdit : lineEdits)
+    {
+        if (lineEdit != GLB_WinObj.GLB_WindowsLineEdit[47])
+        {
+            lineEdit->setValidator(validator);
+        }
+    }
     /*****************************************/
     /*Set background for buttons*/
     const QList<QPushButton*> PushButtons = GLB_mainwindowWidget->findChildren<QPushButton*>();
@@ -834,6 +893,9 @@ void SetStartGUISettings()
     /*Enable Debug panel*/
     GLB_WinObj.GLB_WindowsCheckBox[10]->setChecked(false);
     GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(false);
+    /*Enable SaveFile lineEdits*/
+    GLB_WinObj.GLB_WindowsLineEdit[45]->setEnabled(false);
+    GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(false);
 }
 
 
@@ -2331,4 +2393,30 @@ void MainWindow::on_checkBox_10_toggled(bool checked)
 {
 
 }
+
+
+void MainWindow::on_checkBox_29_clicked(bool checked)
+{
+    if (checked)
+    {
+        GLB_WinObj.GLB_WindowsLineEdit[45]->setEnabled(true);
+    }
+    else
+    {
+        GLB_WinObj.GLB_WindowsLineEdit[45]->setEnabled(false);
+    }
+}
+
+void MainWindow::on_checkBox_31_clicked(bool checked)
+{
+    if (checked)
+    {
+        GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(true);
+    }
+    else
+    {
+        GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(false);
+    }
+}
+
 

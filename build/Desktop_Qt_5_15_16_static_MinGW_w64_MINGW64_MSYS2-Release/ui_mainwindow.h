@@ -164,6 +164,9 @@ public:
     QCustomPlot *widget_53;
     QLabel *label_82;
     QCustomPlot *widget_54;
+    QFrame *frame_8;
+    QCheckBox *checkBox_29;
+    QLineEdit *lineEdit_18;
     QWidget *tab_2;
     QPushButton *pushButton_14;
     QPushButton *pushButton_15;
@@ -252,6 +255,9 @@ public:
     QCheckBox *checkBox_27;
     QCheckBox *checkBox_28;
     QFrame *line_11;
+    QFrame *frame_9;
+    QCheckBox *checkBox_31;
+    QLineEdit *lineEdit_50;
     QStatusBar *statusbar;
     QMenuBar *menubar;
     QMenu *menunual_operation;
@@ -669,11 +675,11 @@ public:
         pushButton_34->setGeometry(QRect(670, 340, 71, 31));
         plainTextEdit_2 = new QPlainTextEdit(tab);
         plainTextEdit_2->setObjectName(QString::fromUtf8("plainTextEdit_2"));
-        plainTextEdit_2->setGeometry(QRect(10, 380, 661, 141));
+        plainTextEdit_2->setGeometry(QRect(10, 380, 281, 141));
         plainTextEdit_2->setReadOnly(true);
         pushButton_38 = new QPushButton(tab);
         pushButton_38->setObjectName(QString::fromUtf8("pushButton_38"));
-        pushButton_38->setGeometry(QRect(620, 530, 51, 21));
+        pushButton_38->setGeometry(QRect(240, 530, 51, 21));
         checkBox_14 = new QCheckBox(tab);
         checkBox_14->setObjectName(QString::fromUtf8("checkBox_14"));
         checkBox_14->setGeometry(QRect(10, 30, 141, 22));
@@ -834,6 +840,17 @@ public:
         widget_54->setObjectName(QString::fromUtf8("widget_54"));
         widget_54->setGeometry(QRect(270, 244, 250, 151));
         widget_54->setStyleSheet(QString::fromUtf8("background-color: rgb(179, 179, 179);"));
+        frame_8 = new QFrame(tab);
+        frame_8->setObjectName(QString::fromUtf8("frame_8"));
+        frame_8->setGeometry(QRect(310, 380, 131, 71));
+        frame_8->setFrameShape(QFrame::Box);
+        frame_8->setFrameShadow(QFrame::Raised);
+        checkBox_29 = new QCheckBox(frame_8);
+        checkBox_29->setObjectName(QString::fromUtf8("checkBox_29"));
+        checkBox_29->setGeometry(QRect(10, 10, 71, 22));
+        lineEdit_18 = new QLineEdit(frame_8);
+        lineEdit_18->setObjectName(QString::fromUtf8("lineEdit_18"));
+        lineEdit_18->setGeometry(QRect(10, 40, 113, 24));
         tabWidget->addTab(tab, QString());
         frame_4->raise();
         checkBox_4->raise();
@@ -911,6 +928,7 @@ public:
         label_27->raise();
         label_28->raise();
         frame_5->raise();
+        frame_8->raise();
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
         pushButton_14 = new QPushButton(tab_2);
@@ -1311,6 +1329,17 @@ public:
         line_11->setGeometry(QRect(160, 60, 20, 231));
         line_11->setFrameShape(QFrame::VLine);
         line_11->setFrameShadow(QFrame::Sunken);
+        frame_9 = new QFrame(tab_2);
+        frame_9->setObjectName(QString::fromUtf8("frame_9"));
+        frame_9->setGeometry(QRect(10, 540, 131, 71));
+        frame_9->setFrameShape(QFrame::Box);
+        frame_9->setFrameShadow(QFrame::Raised);
+        checkBox_31 = new QCheckBox(frame_9);
+        checkBox_31->setObjectName(QString::fromUtf8("checkBox_31"));
+        checkBox_31->setGeometry(QRect(10, 10, 71, 22));
+        lineEdit_50 = new QLineEdit(frame_9);
+        lineEdit_50->setObjectName(QString::fromUtf8("lineEdit_50"));
+        lineEdit_50->setGeometry(QRect(10, 40, 113, 24));
         tabWidget->addTab(tab_2, QString());
         frame_6->raise();
         pushButton_14->raise();
@@ -1373,6 +1402,7 @@ public:
         checkBox_27->raise();
         checkBox_28->raise();
         line_11->raise();
+        frame_9->raise();
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -1496,6 +1526,10 @@ public:
         label_80->setText(QCoreApplication::translate("MainWindow", "Motor #4", nullptr));
         label_81->setText(QCoreApplication::translate("MainWindow", "Motor #5", nullptr));
         label_82->setText(QCoreApplication::translate("MainWindow", "Motor #1", nullptr));
+        checkBox_29->setText(QCoreApplication::translate("MainWindow", "Save file", nullptr));
+        lineEdit_18->setInputMask(QString());
+        lineEdit_18->setText(QString());
+        lineEdit_18->setPlaceholderText(QCoreApplication::translate("MainWindow", "NameFile", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "PWM Mode", nullptr));
         pushButton_14->setText(QCoreApplication::translate("MainWindow", "Thumb", nullptr));
         pushButton_15->setText(QCoreApplication::translate("MainWindow", "Index", nullptr));
@@ -1564,6 +1598,10 @@ public:
         checkBox_26->setText(QCoreApplication::translate("MainWindow", "rvrs", nullptr));
         checkBox_27->setText(QCoreApplication::translate("MainWindow", "rvrs", nullptr));
         checkBox_28->setText(QCoreApplication::translate("MainWindow", "rvrs", nullptr));
+        checkBox_31->setText(QCoreApplication::translate("MainWindow", "Save file", nullptr));
+        lineEdit_50->setInputMask(QString());
+        lineEdit_50->setText(QString());
+        lineEdit_50->setPlaceholderText(QCoreApplication::translate("MainWindow", "NameFile", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Angle Mode", nullptr));
         menunual_operation->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi

@@ -413,6 +413,11 @@ private slots:
 
     void on_lineEdit_36_textEdited(const QString &arg1);
 
+    void on_checkBox_29_clicked(bool checked);
+
+
+    void on_checkBox_31_clicked(bool checked);
+
 public:
     Ui::MainWindow *ui;
 private:
