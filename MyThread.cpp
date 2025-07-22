@@ -136,7 +136,7 @@ QVector<uint8_t> MyThread_1::ComPortReadData()
         if(serialDevice1->waitForReadyRead(1000))
         {
             newData = serialDevice1->readAll();
-            while(serialDevice1->waitForReadyRead(100))
+            while(serialDevice1->waitForReadyRead(500))
             {
                 newData += serialDevice1->readAll();
             }

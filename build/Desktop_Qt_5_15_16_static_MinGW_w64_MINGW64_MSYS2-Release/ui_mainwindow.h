@@ -1239,6 +1239,19 @@ public:
         label_6->setGeometry(QRect(10, 10, 511, 20));
         label_6->setFrameShape(QFrame::Box);
         label_6->setAlignment(Qt::AlignCenter);
+        widget_11->raise();
+        widget_10->raise();
+        label_31->raise();
+        widget_3->raise();
+        widget_9->raise();
+        label_29->raise();
+        label_32->raise();
+        widget_12->raise();
+        label_34->raise();
+        label_30->raise();
+        label_33->raise();
+        label_6->raise();
+        widget_2->raise();
         frame_7 = new QFrame(tab_2);
         frame_7->setObjectName(QString::fromUtf8("frame_7"));
         frame_7->setGeometry(QRect(1070, 10, 531, 591));
@@ -1420,7 +1433,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(2);
         pushButton->setDefault(false);
 
 

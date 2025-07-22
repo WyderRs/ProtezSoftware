@@ -242,7 +242,7 @@ void MainWindow::PaintGraph()
             do {
                 fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/" + GLB_WinObj.GLB_WindowsLineEdit[45]->text()
                                   + "_N" + "1" + "P" + GLB_WinObj.GLB_WindowsLineEdit[1]->text() + "_%1" + ".txt").arg(fileIndex);
-
+                // fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/file.txt");
 
                 file.setFileName(fileName);
                 fileIndex++;
@@ -266,6 +266,7 @@ void MainWindow::PaintGraph()
             {
                 qWarning() << "Data don`t save to file" << fileName;
             }
+            file.close();
         }
 
         LNCM = 0;

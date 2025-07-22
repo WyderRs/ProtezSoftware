@@ -39,7 +39,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -3374,6 +3374,19 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <zorder>widget_11</zorder>
+      <zorder>widget_10</zorder>
+      <zorder>label_31</zorder>
+      <zorder>widget_3</zorder>
+      <zorder>widget_9</zorder>
+      <zorder>label_29</zorder>
+      <zorder>label_32</zorder>
+      <zorder>widget_12</zorder>
+      <zorder>label_34</zorder>
+      <zorder>label_30</zorder>
+      <zorder>label_33</zorder>
+      <zorder>label_6</zorder>
+      <zorder>widget_2</zorder>
      </widget>
      <widget class="QFrame" name="frame_7">
       <property name="geometry">
