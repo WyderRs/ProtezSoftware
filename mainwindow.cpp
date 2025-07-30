@@ -7,6 +7,8 @@
 #include <QTextStream>
 #include <QFileDialog>
 #include "MyThread.h"
+#include <string>
+
 
 /*GUI variables*/
 Ui::MainWindow* GLB_ui = nullptr;
@@ -191,8 +193,12 @@ void MainWindow::PaintGraph()
 
             float value_time = 0;
 
-            if(TempIndexes[i] < 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toStdString());
-            else if(TempIndexes[i] >= 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_LineEditWorkTime->text().toStdString());
+
+            if((uint16_t)TempIndexes[i] < 6)
+                value_time = MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toFloat();
+            else if((uint16_t)TempIndexes[i] >= 6)
+                value_time = MotorDefStruct[(uint16_t)TempIndexes[i - 6]].TAB1_LineEditWorkTime->text().toFloat();
+
             double Step = value_time / DataMotor_y[(uint16_t)TempIndexes[i]].size();
 
 
@@ -1061,6 +1067,38 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
+    std::string ver;
+    switch (__cplusplus){
+    case 1:
+        ver = "pre-standard C++";
+        break;
+    case 199711L:
+        ver = "C++98";
+        break;
+    case 201103L:
+        ver = "C++11";
+        break;
+    case 201402L:
+        ver = "C++14";
+        break;
+    case 201703L:
+        ver = "C++17";
+        break;
+    case 202002L:
+        ver = "C++20";
+        break;
+    case 202100L:
+        ver = "C++20";
+        break;
+    default:
+        ver = "Unknown";
+    }
+    std::cout << "Your standard is " << ver << '\n' << "__cplusplus = " << __cplusplus << std::endl;
+
+
+
+
     ui->setupUi(this);
     GLB_ui = ui;
     GLB_mainwindowWidget = this;
@@ -1101,14 +1139,52 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_12_clicked()
 {
-    uint8_t data[10];
-    for(uint8_t i = 0; i < 10; i++)
-    {
-        data[i] = i + 1;
-    }
+    // uint8_t data[10];
+    // for(uint8_t i = 0; i < 10; i++)
+    // {
+    //     data[i] = i + 1;
+    // }
 
-    ComPortWrite((unsigned char *)data, 10);
+    uint8_t data[100] =
+        {
+        0xEA, 0xBC,
+        0xDE, 0xAD,
+
+        0x21, 0x00,
+        0x22, 0x01,
+        0x24, 0x00,
+        0x25, 0x01,
+        0x26, 0x64,
+        0x27, 0x64,
+        0x2A, 0x64,
+
+        0xBE, 0xEF,
+        0xBC, 0xAE,
+        };
+
+
+    ComPortWrite((unsigned char *)data, 22);
 }
+void MainWindow::on_pushButton_41_clicked()
+{
+    uint8_t data[100] =
+    {
+        0xEA, 0xBC,
+        0xDE, 0xAD,
+
+        0x21, 0x00,
+        0x22, 0x01,
+        0x24, 0x00,
+        0x2D, 0x01,
+
+        0xBE, 0xEF,
+        0xBC, 0xAE,
+    };
+    ComPortWrite((unsigned char *)data, 16);
+}
+
+
+
 
 /* PWM LineEdit */
 void MainWindow::on_lineEdit_textEdited(const QString &arg1)
@@ -2419,5 +2495,7 @@ void MainWindow::on_checkBox_31_clicked(bool checked)
         GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(false);
     }
 }
+
+
 
 
