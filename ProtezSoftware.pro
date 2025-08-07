@@ -16,11 +16,15 @@ SOURCES += \
     MyThread.cpp \
     main.cpp \
     mainwindow.cpp \
+    protezcommand.cpp \
+    protezmotor.cpp \
     qcustomplot.cpp
 
 HEADERS += \
     MyThread.h \
     mainwindow.h \
+    protezcommand.h \
+    protezmotor.h \
     qcustomplot.h
 
 FORMS += \

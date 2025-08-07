@@ -3,11 +3,17 @@
 
 #include <QMainWindow>
 #include "ui_mainwindow.h"
+
 #include "iostream"
 #include <string.h>
 #include <QTimer>
-
 #include <QDebug>
+#include "protezcommand.h"
+#include "protezmotor.h"
+
+
+
+#define PR_NUMBER_MOTOR                 6
 
 /*Common com mask*/
 #define MASK_COM_SIDEPLATE    0x0001
@@ -48,7 +54,7 @@ typedef struct CommandStruct
 
 
 /******************************************************/
-    //Windows Definitions
+//Windows Definitions
 /******************************************************/
 typedef struct GLB_WindowsObjects
 {
@@ -76,7 +82,7 @@ typedef enum MoveType
     LEFT,
     RIGHT,
     HOLD,
-    ANGLE_MODE, // Don`t need now
+    // ANGLE_MODE, // Don`t need now
 } MoveType;
 typedef enum NumPlate
 {
@@ -225,24 +231,10 @@ public:
     ~MainWindow();
 
 public slots:
-    void ComPortSearch(uint32_t boudrate);
-    void ComportDataUpdate_slot();
-
-    void ComPortOpen(QString com, uint32_t boudrate);
-    void ComportConnect_slot();
-
-    void ComportClose_slot();
-
-    void ComportRead_slot();
-    void ComPortRead();
-
-    void ComPortWrite(uint8_t *datatosend, uint32_t cntdata);
-    void ComportWrite_slot(QString back);
 
     void PaintGraph();
 
 private slots:
-
 
     void on_pushButton_12_clicked();
 
@@ -415,21 +407,27 @@ private slots:
 
     void on_checkBox_29_clicked(bool checked);
 
-
     void on_checkBox_31_clicked(bool checked);
 
     void on_pushButton_41_clicked();
 
+    void on_comboBox_currentIndexChanged(int index);
+
 public:
     Ui::MainWindow *ui;
-private:
-    // QSerialPort *serialDevice1;  // Первый последовательный порт
+
 signals:
-    void ComportSearch_signal();
-    void ComportConnect_signal();
-    void ComportClose_signal();
 
 
+    void signal_ComportSearch();
+    void signal_ComportConnect(QString, qint32 baudRate);
+
+
+
+public slots:
+    void on_ComportSearchBack(QList<QString>);
+    void on_ComportConnectBack(QString);
+    void on_ComportCloseBack(QString);
 
 };
 

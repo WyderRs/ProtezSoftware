@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     MainWindow* w = new MainWindow();
     GLB_mainwindow = w;
 
-
+    qRegisterMetaType<QList<QString>>("QList<QString>");
 
 
 

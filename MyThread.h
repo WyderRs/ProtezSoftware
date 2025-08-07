@@ -1,84 +1,46 @@
-#ifndef MYTHREAD_H
-#define MYTHREAD_H
-
 #include <QThread>
-#include "mainwindow.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
-#include <QTimer>
-#include <QDateTime>
+#include <QDebug>
+#include <QWaitCondition>
 
-
-
-/*Thread_1*/
 class MyThread_1 : public QThread
 {
     Q_OBJECT
-
 public:
-    MyThread_1(MainWindow* mainWindowInstance1, QObject *parent = nullptr);
-    ~MyThread_1();
+    explicit MyThread_1(QObject *parent = nullptr);
+    ~MyThread_1() override;
 
-private:
-    MainWindow* mainWindow;
-    QSerialPort *serialDevice1;  // Первый последовательный порт
-
-public slots:
-    QVector<uint8_t> ComPortReadData();
-    void ComPort_handleError(QSerialPort::SerialPortError error);
     QList<QString> ComPortSearch();
-    QString ComPortFoundPort();
-    bool ComPortConnect();
+    bool ComPortConnect(const QString &portName, qint32 baudRate = QSerialPort::Baud115200);
     void ComPortClose();
-    QString ComPortWrite(uint8_t *data, uint32_t cntdata);
 
-    void onCheckConnect();
-    void onPortClosed();
-
-    // void READDATA();
+    QString ComPortWrite(const uint8_t *data, uint32_t cntdata);
 
 signals:
-    void PaintGraph_signal();
-    void PaintGraph2_signal();
-
-    void ComportDataUpdate_signal();
-    void ComportConnect_signal();
-    void ComportClose_signal();
-    void ComPortConnect_signal();
-    void ComportRead_signal();
-    void ComPortWrite_signal(QString back);
+    void dataReceived(const QByteArray &data);
+    void portClosed();
+    void errorOccurred(const QString &error);
 
 
-    // void ComportSelect_signal(uint8_t numcom, bool state);
-    // void ComportOpenPort_signal(QString portName, qint32 baudRate);
-    // QList<QString> ComportSearch_signal();
 
+
+
+
+    void signal_ComportSearchBack(QList<QString>);
+    void signal_ComportConnectBack(QString);
+    void signal_ComportCloseBack(QString);
+public slots:
+    void on_ComPortSearch();
+    void on_ComPortConnect(QString, qint32 baudRate);
 
 protected:
     void run() override;
-};
-/*Thread_2*/
 
-class MyThread_2 : public QThread
-{
-    Q_OBJECT
-
-public:
-    MyThread_2(MainWindow* mainWindowInstance2, QObject *parent = nullptr);
-    ~MyThread_2();
+private slots:
+    void onReadyRead();
 
 private:
-    MainWindow* mainWindow;
-    // QSerialPort *serialDevice1;  // Первый последовательный порт
-
-protected:
-    void run() override;
-
-signals:
-    // void ComportSelect_signal(uint8_t numcom, bool state);
-    // void ComportOpenPort_signal(QString portName, qint32 baudRate);
-    // void ComportClose_signal();
-    // QList<QString> ComportSearch_signal();
+    QSerialPort *serialPort = nullptr;
+    bool stopThread = false;
 };
-
-#endif // MYTHREAD_H

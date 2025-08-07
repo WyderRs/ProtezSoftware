@@ -1,5 +1,5 @@
+#include "ui_mainwindow.h"
 #include "mainwindow.h"
-
 #include <QVector>
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -27,9 +27,7 @@ bool isConnectedComPort = false;
 uint32_t PackToRecv;
 uint32_t GLB_I;
 QList<QString> GLB_Comports;
-QString CurrentComPort;
 uint32_t CurrentBoundRate;
-extern uint32_t ComportCountdataRecv;
 uint8_t ComportDataToSend[50];
 uint32_t ComportCountDataToSend;
 
@@ -70,7 +68,6 @@ typedef enum Fingers
 
 /*Thread variables*/
 MyThread_1 *thread_1;
-MyThread_2 *thread_2;
 uint32_t dataRecvd2 = 0;
 uint8_t TypeThreadInterrupt;    // 0 - Graph, 1 - Search
 bool ThreadAutoConnectState;
@@ -82,23 +79,43 @@ bool ThreadAutoConnectState;
 RatioChannelsNumber RatioStateNow;
 bool CtrlCheckState[3];
 
+
+
+
+
+
+
+
+ProtezCommand Command;
+ProtezMotor Motor[6] = {
+    ProtezMotor(0),
+    ProtezMotor(1),
+    ProtezMotor(2),
+    ProtezMotor(3),
+    ProtezMotor(4),
+    ProtezMotor(5),
+};
+
+
+
+
 /********************************/
 void SendToTerminal(QString data, bool Newline, uint8_t tab_widget)
 {
     if(tab_widget == 0)
     {
-        if(Newline) GLB_WinObj.GLB_WindowsPlainTextEdit[2]->appendPlainText(data);
-        else GLB_WinObj.GLB_WindowsPlainTextEdit[2]->insertPlainText(data);
+        if(Newline) GLB_ui->plainTextEdit_3->appendPlainText(data);
+        else GLB_ui->plainTextEdit_3->insertPlainText(data);
     }
     else if(tab_widget == 1)
     {
-        if(Newline) GLB_WinObj.GLB_WindowsPlainTextEdit[1]->appendPlainText(data);
-        else GLB_WinObj.GLB_WindowsPlainTextEdit[1]->insertPlainText(data);
+        if(Newline) GLB_ui->plainTextEdit_2->appendPlainText(data);
+        else GLB_ui->plainTextEdit_2->insertPlainText(data);
     }
     else if(tab_widget == 2)
     {
-        if(Newline) GLB_WinObj.GLB_WindowsPlainTextEdit[0]->appendPlainText(data);
-        else GLB_WinObj.GLB_WindowsPlainTextEdit[0]->insertPlainText(data);
+        if(Newline) GLB_ui->plainTextEdit->appendPlainText(data);
+        else GLB_ui->plainTextEdit->insertPlainText(data);
     }
 }
 void ClearTerminal(uint8_t tab_widget)
@@ -106,15 +123,15 @@ void ClearTerminal(uint8_t tab_widget)
 
     if(tab_widget == 0)
     {
-        GLB_WinObj.GLB_WindowsPlainTextEdit[2]->clear();
+        GLB_ui->plainTextEdit_3->clear();
     }
     else if(tab_widget == 1)
     {
-        GLB_WinObj.GLB_WindowsPlainTextEdit[1]->clear();
+        GLB_ui->plainTextEdit_2->clear();
     }
     else if(tab_widget == 2)
     {
-        GLB_WinObj.GLB_WindowsPlainTextEdit[0]->clear();
+        GLB_ui->plainTextEdit->clear();
     }
 }
 /********************************/
@@ -238,7 +255,7 @@ void MainWindow::PaintGraph()
 
         }
 
-        if (GLB_WinObj.GLB_WindowsCheckBox[28]->isChecked())
+        if (GLB_ui->checkBox_29->isChecked())
         {
             int fileIndex = 1;
             QString fileName;
@@ -246,8 +263,8 @@ void MainWindow::PaintGraph()
 
             // Ищем первый свободный номер файла
             do {
-                fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/" + GLB_WinObj.GLB_WindowsLineEdit[45]->text()
-                                  + "_N" + "1" + "P" + GLB_WinObj.GLB_WindowsLineEdit[1]->text() + "_%1" + ".txt").arg(fileIndex);
+                fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/" + GLB_ui->lineEdit_18->text()
+                                   + "_N" + "1" + "P" + GLB_ui->lineEdit->text() + "_%1" + ".txt").arg(fileIndex);
                 // fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/file.txt");
 
                 file.setFileName(fileName);
@@ -387,522 +404,243 @@ void MainWindow::PaintGraph()
 
 void SetStartGUISettings()
 {
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsButton[0] = GLB_ui->SearchButton;     // Tab 0 - Search Button
-    GLB_WinObj.GLB_WindowsButton[1] = GLB_ui->pushButton_13;    // Tab 0 - File Repository Button
-
-
-    GLB_WinObj.GLB_WindowsButton[2] = GLB_ui->pushButton;       // Tab 1 - Compres 0
-    GLB_WinObj.GLB_WindowsButton[3] = GLB_ui->pushButton_3;     // Tab 1 - Compres 1
-    GLB_WinObj.GLB_WindowsButton[4] = GLB_ui->pushButton_5;     // Tab 1 - Compres 2
-    GLB_WinObj.GLB_WindowsButton[5] = GLB_ui->pushButton_7;     // Tab 1 - Compres 3
-    GLB_WinObj.GLB_WindowsButton[6] = GLB_ui->pushButton_9;     // Tab 1 - Compres 4
-    GLB_WinObj.GLB_WindowsButton[7] = GLB_ui->pushButton_30;    // Tab 1 - Left 5
-
-    GLB_WinObj.GLB_WindowsButton[8] = GLB_ui->pushButton_21;    // Tab 1 - Hold 0
-    GLB_WinObj.GLB_WindowsButton[9] = GLB_ui->pushButton_23;    // Tab 1 - Hold 1
-    GLB_WinObj.GLB_WindowsButton[10] = GLB_ui->pushButton_19;   // Tab 1 - Hold 2
-    GLB_WinObj.GLB_WindowsButton[11] = GLB_ui->pushButton_22;   // Tab 1 - Hold 3
-    GLB_WinObj.GLB_WindowsButton[12] = GLB_ui->pushButton_20;   // Tab 1 - Hold 4
-    GLB_WinObj.GLB_WindowsButton[13] = GLB_ui->pushButton_32;   // Tab 1 - Hold 5
-
-    GLB_WinObj.GLB_WindowsButton[14] = GLB_ui->pushButton_27;   // Tab 1 - Free 0
-    GLB_WinObj.GLB_WindowsButton[15] = GLB_ui->pushButton_28;   // Tab 1 - Free 1
-    GLB_WinObj.GLB_WindowsButton[16] = GLB_ui->pushButton_26;   // Tab 1 - Free 2
-    GLB_WinObj.GLB_WindowsButton[17] = GLB_ui->pushButton_24;   // Tab 1 - Free 3
-    GLB_WinObj.GLB_WindowsButton[18] = GLB_ui->pushButton_25;   // Tab 1 - Free 4
-    GLB_WinObj.GLB_WindowsButton[19] = GLB_ui->pushButton_33;   // Tab 1 - Free 5
-
-    GLB_WinObj.GLB_WindowsButton[20] = GLB_ui->pushButton_2;    // Tab 1 - Decompress 0
-    GLB_WinObj.GLB_WindowsButton[21] = GLB_ui->pushButton_4;    // Tab 1 - Decompress 1
-    GLB_WinObj.GLB_WindowsButton[22] = GLB_ui->pushButton_6;    // Tab 1 - Decompress 2
-    GLB_WinObj.GLB_WindowsButton[23] = GLB_ui->pushButton_8;    // Tab 1 - Decompress 3
-    GLB_WinObj.GLB_WindowsButton[24] = GLB_ui->pushButton_10;   // Tab 1 - Decompress 4
-    GLB_WinObj.GLB_WindowsButton[25] = GLB_ui->pushButton_31;   // Tab 1 - Right 5
-
-    GLB_WinObj.GLB_WindowsButton[27] = GLB_ui->pushButton_29;   // Tab 1 - Configurate
-    GLB_WinObj.GLB_WindowsButton[28] = GLB_ui->pushButton_34;   // Tab 1 - Start Instruct
-
-
-    GLB_WinObj.GLB_WindowsButton[29] = GLB_ui->pushButton_14;   // Tab 2 - Thrumb
-    GLB_WinObj.GLB_WindowsButton[30] = GLB_ui->pushButton_15;   // Tab 2 - Index
-    GLB_WinObj.GLB_WindowsButton[31] = GLB_ui->pushButton_16;   // Tab 2 - Middle
-    GLB_WinObj.GLB_WindowsButton[32] = GLB_ui->pushButton_17;   // Tab 2 - Ring
-    GLB_WinObj.GLB_WindowsButton[33] = GLB_ui->pushButton_18;   // Tab 2 - Pinkie
-
-    GLB_WinObj.GLB_WindowsButton[34] = GLB_ui->pushButton_36;   // Tab 2 - Configurate
-    GLB_WinObj.GLB_WindowsButton[35] = GLB_ui->pushButton_35;   // Tab 2 - Start Instruct
-
-    GLB_WinObj.GLB_WindowsButton[36] = GLB_ui->pushButton_37;   // Tab 2 - Clear Terminal
-
-    GLB_WinObj.GLB_WindowsButton[37] = GLB_ui->pushButton_11;   // Tab 0 - Debug Mode Start motor
-
-    GLB_WinObj.GLB_WindowsButton[38] = GLB_ui->pushButton_40;   // Tab 2 - Hand rotate
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsComboBox[0] = GLB_ui->comboBox;       // Tab 0 - Select Comport
-    GLB_WinObj.GLB_WindowsComboBox[1] = GLB_ui->comboBox_2;     // Tab 0 - Debug Mode select motor
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsCheckBox[0] = GLB_ui->checkBox_11;    // Tab 0 - Enable Receive ComPort 1
-
-    GLB_WinObj.GLB_WindowsCheckBox[1] = GLB_ui->checkBox;       // Tab 1 - ADC_CH_0
-    GLB_WinObj.GLB_WindowsCheckBox[2] = GLB_ui->checkBox_2;     // Tab 1 - ADC_CH_1
-    GLB_WinObj.GLB_WindowsCheckBox[3] = GLB_ui->checkBox_3;     // Tab 1 - ADC_CH_2
-    GLB_WinObj.GLB_WindowsCheckBox[4] = GLB_ui->checkBox_4;     // Tab 1 - ADC_CH_3
-    GLB_WinObj.GLB_WindowsCheckBox[5] = GLB_ui->checkBox_5;     // Tab 1 - ADC_CH_4
-    GLB_WinObj.GLB_WindowsCheckBox[6] = GLB_ui->checkBox_13;    // Tab 1 - ADC_CH_5
-
-
-    GLB_WinObj.GLB_WindowsCheckBox[7] = GLB_ui->checkBox_6;     // Tab 2 - Enable Angle HalfMode
-    GLB_WinObj.GLB_WindowsCheckBox[8] = GLB_ui->checkBox_7;     // Tab 2 - Enable Time HalfMode
-    GLB_WinObj.GLB_WindowsCheckBox[9] = GLB_ui->checkBox_8;     // Tab 2 - Enable Speed HalfMode
-
-    GLB_WinObj.GLB_WindowsCheckBox[10] = GLB_ui->checkBox_9;    // Tab 0 - Debug Mode Enable
-    GLB_WinObj.GLB_WindowsCheckBox[11] = GLB_ui->checkBox_12;    // Tab 0 - Debug Mode Reverse direction
-    GLB_WinObj.GLB_WindowsCheckBox[12] = GLB_ui->checkBox_10;    // Tab 0 - Auto-connect Comport
-
-    GLB_WinObj.GLB_WindowsCheckBox[13] = GLB_ui->checkBox_14;    // Tab 1 - The back of the hand
-    GLB_WinObj.GLB_WindowsCheckBox[14] = GLB_ui->checkBox_15;    // Tab 1 - Enable auto currect PWM for the back of the hand
-
-    GLB_WinObj.GLB_WindowsCheckBox[15] = GLB_ui->checkBox_16;    // Tab 2 - CH1
-
-    GLB_WinObj.GLB_WindowsCheckBox[16] = GLB_ui->checkBox_17;    // Tab 2 - CH2
-    GLB_WinObj.GLB_WindowsCheckBox[17] = GLB_ui->checkBox_18;    // Tab 2 - CH3
-    GLB_WinObj.GLB_WindowsCheckBox[18] = GLB_ui->checkBox_19;    // Tab 2 - CH4
-    GLB_WinObj.GLB_WindowsCheckBox[19] = GLB_ui->checkBox_20;    // Tab 2 - CH5
-    GLB_WinObj.GLB_WindowsCheckBox[20] = GLB_ui->checkBox_21;    // Tab 2 - CH6
-
-    GLB_WinObj.GLB_WindowsCheckBox[21] = GLB_ui->checkBox_22;    // Tab 2 - The back of the hand
-
-    GLB_WinObj.GLB_WindowsCheckBox[22] = GLB_ui->checkBox_23;    // Tab 2 - CH1 Reverse
-    GLB_WinObj.GLB_WindowsCheckBox[23] = GLB_ui->checkBox_24;    // Tab 2 - CH2 Reverse
-    GLB_WinObj.GLB_WindowsCheckBox[24] = GLB_ui->checkBox_25;    // Tab 2 - CH3 Reverse
-    GLB_WinObj.GLB_WindowsCheckBox[25] = GLB_ui->checkBox_26;    // Tab 2 - CH4 Reverse
-    GLB_WinObj.GLB_WindowsCheckBox[26] = GLB_ui->checkBox_27;    // Tab 2 - CH5 Reverse
-    GLB_WinObj.GLB_WindowsCheckBox[27] = GLB_ui->checkBox_28;    // Tab 2 - CH6 Reverse
-
-    GLB_WinObj.GLB_WindowsCheckBox[28] = GLB_ui->checkBox_29;    // Tab 1 - CheckBox save file
-    GLB_WinObj.GLB_WindowsCheckBox[29] = GLB_ui->checkBox_31;    // Tab 2 - CheckBox save file
-
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsLineEdit[0] = GLB_ui->lineEdit_20;    // Tab 0 - File Repository
-
-    GLB_WinObj.GLB_WindowsLineEdit[1] = GLB_ui->lineEdit;       // Tab 1 - PWM 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[2] = GLB_ui->lineEdit_2;     // Tab 1 - PWM 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[3] = GLB_ui->lineEdit_3;     // Tab 1 - PWM 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[4] = GLB_ui->lineEdit_4;     // Tab 1 - PWM 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[5] = GLB_ui->lineEdit_5;     // Tab 1 - PWM 4 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[6] = GLB_ui->lineEdit_36;    // Tab 1 - PWM 5 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[7] = GLB_ui->lineEdit_6;     // Tab 1 - Time 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[8] = GLB_ui->lineEdit_7;     // Tab 1 - Time 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[9] = GLB_ui->lineEdit_10;    // Tab 1 - Time 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[10] = GLB_ui->lineEdit_9;    // Tab 1 - Time 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[11] = GLB_ui->lineEdit_8;    // Tab 1 - Time 4 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[12] = GLB_ui->lineEdit_37;   // Tab 1 - Time 5 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[13] = GLB_ui->lineEdit_11;   // Tab 1 - Delay 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[14] = GLB_ui->lineEdit_12;   // Tab 1 - Delay 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[15] = GLB_ui->lineEdit_15;   // Tab 1 - Delay 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[16] = GLB_ui->lineEdit_14;   // Tab 1 - Delay 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[17] = GLB_ui->lineEdit_13;   // Tab 1 - Delay 4 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[18] = GLB_ui->lineEdit_38;   // Tab 1 - Delay 5 Line Edit
-
-
-    GLB_WinObj.GLB_WindowsLineEdit[19] = GLB_ui->lineEdit_23;   // Tab 2 - Angle 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[20] = GLB_ui->lineEdit_22;   // Tab 2 - Angle 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[21] = GLB_ui->lineEdit_21;   // Tab 2 - Angle 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[22] = GLB_ui->lineEdit_24;   // Tab 2 - Angle 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[23] = GLB_ui->lineEdit_25;   // Tab 2 - Angle 4 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[24] = GLB_ui->lineEdit_28;   // Tab 2 - Time 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[25] = GLB_ui->lineEdit_27;   // Tab 2 - Time 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[26] = GLB_ui->lineEdit_26;   // Tab 2 - Time 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[27] = GLB_ui->lineEdit_29;   // Tab 2 - Time 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[28] = GLB_ui->lineEdit_30;   // Tab 2 - Time 4 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[29] = GLB_ui->lineEdit_33;   // Tab 2 - Speed 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[30] = GLB_ui->lineEdit_35;   // Tab 2 - Speed 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[31] = GLB_ui->lineEdit_34;   // Tab 2 - Speed 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[32] = GLB_ui->lineEdit_31;   // Tab 2 - Speed 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[33] = GLB_ui->lineEdit_32;   // Tab 2 - Speed 4 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[34] = GLB_ui->lineEdit_44;   // Tab 2 - Delay 0 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[35] = GLB_ui->lineEdit_41;   // Tab 2 - Delay 1 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[36] = GLB_ui->lineEdit_42;   // Tab 2 - Delay 2 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[37] = GLB_ui->lineEdit_43;   // Tab 2 - Delay 3 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[38] = GLB_ui->lineEdit_40;   // Tab 2 - Delay 4 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[39] = GLB_ui->lineEdit_16;   // Tab 0 - Debug Mode Time work
-    GLB_WinObj.GLB_WindowsLineEdit[40] = GLB_ui->lineEdit_17;   // Tab 0 - Baudrate lineEdit
-
-    GLB_WinObj.GLB_WindowsLineEdit[41] = GLB_ui->lineEdit_47;   // Tab 2 - Angle 5 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[42] = GLB_ui->lineEdit_39;   // Tab 2 - Time 5 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[43] = GLB_ui->lineEdit_45;   // Tab 2 - Speed 5 Line Edit
-    GLB_WinObj.GLB_WindowsLineEdit[44] = GLB_ui->lineEdit_46;   // Tab 2 - Delay 5 Line Edit
-
-    GLB_WinObj.GLB_WindowsLineEdit[45] = GLB_ui->lineEdit_18;   // Tab 1 - LineEdit save file name
-    GLB_WinObj.GLB_WindowsLineEdit[46] = GLB_ui->lineEdit_50;   // Tab 2 - LineEdit save file name
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsRadioButton[6] = GLB_ui->radioButton_2; // Tab 0 - Debug Mode Upper part
-    GLB_WinObj.GLB_WindowsRadioButton[7] = GLB_ui->radioButton_3; // Tab 0 - Debug Mode Lower part
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsCustomPlot[0] = GLB_ui->widget;         // Tab 1 -  ADC_Graph 0
-    GLB_WinObj.GLB_WindowsCustomPlot[1] = GLB_ui->widget_5;       // Tab 1 -  ADC_Graph 1
-    GLB_WinObj.GLB_WindowsCustomPlot[2] = GLB_ui->widget_4;       // Tab 1 -  ADC_Graph 2
-    GLB_WinObj.GLB_WindowsCustomPlot[3] = GLB_ui->widget_6;       // Tab 1 -  ADC_Graph 3
-    GLB_WinObj.GLB_WindowsCustomPlot[4] = GLB_ui->widget_7;       // Tab 1 -  ADC_Graph 4
-    GLB_WinObj.GLB_WindowsCustomPlot[5] = GLB_ui->widget_8;       // Tab 1 -  ADC_Graph 5
-
-    GLB_WinObj.GLB_WindowsCustomPlot[6] = GLB_ui->widget_2;       // Tab 2 -  FeedBack_Graph 0
-    GLB_WinObj.GLB_WindowsCustomPlot[7] = GLB_ui->widget_9;       // Tab 2 -  FeedBack_Graph 1
-    GLB_WinObj.GLB_WindowsCustomPlot[8] = GLB_ui->widget_3;       // Tab 2 -  FeedBack_Graph 2
-    GLB_WinObj.GLB_WindowsCustomPlot[9] = GLB_ui->widget_10;      // Tab 2 -  FeedBack_Graph 3
-    GLB_WinObj.GLB_WindowsCustomPlot[10] = GLB_ui->widget_11;      // Tab 2 - FeedBack_Graph 4
-    GLB_WinObj.GLB_WindowsCustomPlot[11] = GLB_ui->widget_12;      // Tab 2 - FeedBack_Graph 5
-
-    GLB_WinObj.GLB_WindowsCustomPlot[12] = GLB_ui->widget_52;       // Tab 2 -  FeedBack_Graph 0 Back
-    GLB_WinObj.GLB_WindowsCustomPlot[13] = GLB_ui->widget_49;       // Tab 2 -  FeedBack_Graph 1 Back
-    GLB_WinObj.GLB_WindowsCustomPlot[14] = GLB_ui->widget_51;       // Tab 2 -  FeedBack_Graph 2 Back
-    GLB_WinObj.GLB_WindowsCustomPlot[15] = GLB_ui->widget_54;      // Tab 2 -  FeedBack_Graph 3 Back
-    GLB_WinObj.GLB_WindowsCustomPlot[16] = GLB_ui->widget_50;      // Tab 2 - FeedBack_Graph 4 Back
-    GLB_WinObj.GLB_WindowsCustomPlot[17] = GLB_ui->widget_53;      // Tab 2 - FeedBack_Graph 5 Back
-
-    GLB_WinObj.GLB_WindowsCustomPlot[18] = GLB_ui->widget_24;       // Tab 2 -  BackFeedBack_Graph 0
-    GLB_WinObj.GLB_WindowsCustomPlot[19] = GLB_ui->widget_22;       // Tab 2 -  BackFeedBack_Graph 1
-    GLB_WinObj.GLB_WindowsCustomPlot[20] = GLB_ui->widget_21;       // Tab 2 -  BackFeedBack_Graph 2
-    GLB_WinObj.GLB_WindowsCustomPlot[21] = GLB_ui->widget_20;      // Tab 2 -  BackFeedBack_Graph 3
-    GLB_WinObj.GLB_WindowsCustomPlot[22] = GLB_ui->widget_19;      // Tab 2 - BackFeedBack_Graph 4
-    GLB_WinObj.GLB_WindowsCustomPlot[23] = GLB_ui->widget_23;      // Tab 2 - BackFeedBack_Graph 5
-
-
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsLabel[0] = GLB_ui->label_4;             // Tab 0 - Repository label
-    GLB_WinObj.GLB_WindowsLabel[1] = GLB_ui->label_13;            // Tab 1 - PWM label
-    GLB_WinObj.GLB_WindowsLabel[2] = GLB_ui->label_14;            // Tab 1 - Time work label
-    GLB_WinObj.GLB_WindowsLabel[3] = GLB_ui->label_15;            // Tab 1 - Delay label
-    GLB_WinObj.GLB_WindowsLabel[4] = GLB_ui->label_21;            // Tab 1 - ADC label
-
-
-    GLB_WinObj.GLB_WindowsLabel[5] = GLB_ui->label_5;            // Tab 2 - Angle label
-    GLB_WinObj.GLB_WindowsLabel[6] = GLB_ui->label_8;            // Tab 2 - Time work label
-    GLB_WinObj.GLB_WindowsLabel[7] = GLB_ui->label_9;            // Tab 2 - Speed label
-    GLB_WinObj.GLB_WindowsLabel[8] = GLB_ui->label_10;           // Tab 2 - Delay label
-
-    GLB_WinObj.GLB_WindowsLabel[9] = GLB_ui->label;              // Tab 0 - Debug Mode Title
-    GLB_WinObj.GLB_WindowsLabel[10] = GLB_ui->label_2;           // Tab 0 - Baudrate label
-
-    GLB_WinObj.GLB_WindowsLabel[11] = GLB_ui->label_23;           // Tab 1 - M1#
-    GLB_WinObj.GLB_WindowsLabel[12] = GLB_ui->label_24;           // Tab 1 - M2#
-    GLB_WinObj.GLB_WindowsLabel[13] = GLB_ui->label_25;           // Tab 1 - M3#
-    GLB_WinObj.GLB_WindowsLabel[14] = GLB_ui->label_26;           // Tab 1 - M4#
-    GLB_WinObj.GLB_WindowsLabel[15] = GLB_ui->label_27;           // Tab 1 - M5#
-    GLB_WinObj.GLB_WindowsLabel[16] = GLB_ui->label_28;           // Tab 1 - M6#
-
-    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_35;           // Tab 1 - Graph M1
-    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_36;           // Tab 1 - Graph M2
-    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_37;           // Tab 1 - Graph M3
-    GLB_WinObj.GLB_WindowsLabel[17] = GLB_ui->label_38;           // Tab 1 - Graph M4
-    GLB_WinObj.GLB_WindowsLabel[18] = GLB_ui->label_39;           // Tab 1 - Graph M5
-    GLB_WinObj.GLB_WindowsLabel[19] = GLB_ui->label_40;           // Tab 1 - Graph M6
-
-    GLB_WinObj.GLB_WindowsLabel[20] = GLB_ui->label_34;           // Tab 2 - Graph Thumb
-    GLB_WinObj.GLB_WindowsLabel[21] = GLB_ui->label_32;           // Tab 2 - Graph Index
-    GLB_WinObj.GLB_WindowsLabel[22] = GLB_ui->label_29;           // Tab 2 - Graph Middle
-    GLB_WinObj.GLB_WindowsLabel[23] = GLB_ui->label_30;           // Tab 2 - Graph Ring
-    GLB_WinObj.GLB_WindowsLabel[24] = GLB_ui->label_31;           // Tab 2 - Graph Pinkie
-    GLB_WinObj.GLB_WindowsLabel[25] = GLB_ui->label_33;           // Tab 2 - Graph Hand
-
-    GLB_WinObj.GLB_WindowsLabel[26] = GLB_ui->label_3;           // Tab 1 - Graph title
-    GLB_WinObj.GLB_WindowsLabel[27] = GLB_ui->label_18;           // Tab 1 - Graph title
-
-    GLB_WinObj.GLB_WindowsLabel[28] = GLB_ui->label_82;           // Tab 1 - Graph M1 Back
-    GLB_WinObj.GLB_WindowsLabel[29] = GLB_ui->label_79;           // Tab 1 - Graph M2 Back
-    GLB_WinObj.GLB_WindowsLabel[30] = GLB_ui->label_78;           // Tab 1 - Graph M3 Back
-    GLB_WinObj.GLB_WindowsLabel[31] = GLB_ui->label_80;           // Tab 1 - Graph M4 Back
-    GLB_WinObj.GLB_WindowsLabel[32] = GLB_ui->label_77;           // Tab 1 - Graph M5 Back
-    GLB_WinObj.GLB_WindowsLabel[33] = GLB_ui->label_81;           // Tab 1 - Graph M6 Back
-
-    GLB_WinObj.GLB_WindowsLabel[34] = GLB_ui->label_6;           // Tab 2 - Graph Grapgh title
-    GLB_WinObj.GLB_WindowsLabel[35] = GLB_ui->label_11;           // Tab 2 - Graph Grapgh title
-
-    GLB_WinObj.GLB_WindowsLabel[36] = GLB_ui->label_50;           // Tab 2 - Graph Thumb Back
-    GLB_WinObj.GLB_WindowsLabel[37] = GLB_ui->label_49;           // Tab 2 - Graph Index Back
-    GLB_WinObj.GLB_WindowsLabel[38] = GLB_ui->label_48;           // Tab 2 - Graph Middle Back
-    GLB_WinObj.GLB_WindowsLabel[39] = GLB_ui->label_51;           // Tab 2 - Graph Ring Back
-    GLB_WinObj.GLB_WindowsLabel[40] = GLB_ui->label_47;           // Tab 2 - Graph Pinkie Back
-    GLB_WinObj.GLB_WindowsLabel[41] = GLB_ui->label_52;           // Tab 2 - Graph Hand Back
-
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsSlider[0] = GLB_ui->horizontalSlider;            // Tab 1 - PWM 0 value Slider
-    GLB_WinObj.GLB_WindowsSlider[1] = GLB_ui->horizontalSlider_2;          // Tab 1 - PWM 1 value Slider
-    GLB_WinObj.GLB_WindowsSlider[2] = GLB_ui->horizontalSlider_3;          // Tab 1 - PWM 2 value Slider
-    GLB_WinObj.GLB_WindowsSlider[3] = GLB_ui->horizontalSlider_4;          // Tab 1 - PWM 3 value Slider
-    GLB_WinObj.GLB_WindowsSlider[4] = GLB_ui->horizontalSlider_5;          // Tab 1 - PWM 4 value Slider
-    GLB_WinObj.GLB_WindowsSlider[5] = GLB_ui->horizontalSlider_6;          // Tab 1 - PWM 5 value Slider
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsPlainTextEdit[0] = GLB_ui->plainTextEdit;        // Tab 0 - Terminal Line Edit
-    GLB_WinObj.GLB_WindowsPlainTextEdit[1] = GLB_ui->plainTextEdit_2;      // Tab 1 - Terminal Line Edit
-    GLB_WinObj.GLB_WindowsPlainTextEdit[2] = GLB_ui->plainTextEdit_3;      // Tab 2 - Terminal Line Edit
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsFrame[0] = GLB_ui->frame;                        // Tab 0 - Debug Mode frame
-    GLB_WinObj.GLB_WindowsFrame[1] = GLB_ui->frame_2;                      // Tab 0 - Debug Mode frame Motor check
-    GLB_WinObj.GLB_WindowsFrame[2] = GLB_ui->frame_4;                      // Tab 1 - Frame Graph internal side
-    GLB_WinObj.GLB_WindowsFrame[3] = GLB_ui->frame_5;                      // Tab 1 - Frame Graph external side
-    GLB_WinObj.GLB_WindowsFrame[4] = GLB_ui->frame_6;                      // Tab 2 - Frame Graph external side
-
-    GLB_WinObj.GLB_WindowsFrame[5] = GLB_ui->frame_8;                      // Tab 1 - Frame save file
-    GLB_WinObj.GLB_WindowsFrame[6] = GLB_ui->frame_9;                      // Tab 2 - Frame save file
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsTab[0] = GLB_ui->tabWidget;                      // Tab self
-    /****************************************************************************************/
-    GLB_WinObj.GLB_WindowsTabWidget[0] = GLB_ui->tab_3;                    // Tab widget 0
-    GLB_WinObj.GLB_WindowsTabWidget[1] = GLB_ui->tab;                      // Tab widget 1
-    GLB_WinObj.GLB_WindowsTabWidget[2] = GLB_ui->tab_2;                    // Tab widget 2
-    /****************************************************************************************/
-
-
-
-
-
     /*****************************************/
-    MotorDefStruct[0].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[2];
-    MotorDefStruct[0].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[20];
-    MotorDefStruct[0].TAB1_HoldButton = GLB_WinObj.GLB_WindowsButton[8];
-    MotorDefStruct[0].TAB1_FreeButton = GLB_WinObj.GLB_WindowsButton[14];
+    MotorDefStruct[0].TAB1_ComporessButton = GLB_ui->pushButton;
+    MotorDefStruct[0].TAB1_DecompressButton = GLB_ui->pushButton_2;
+    MotorDefStruct[0].TAB1_HoldButton = GLB_ui->pushButton_21;
+    MotorDefStruct[0].TAB1_FreeButton = GLB_ui->pushButton_27;
 
-    MotorDefStruct[0].TAB1_LineEditPWM = GLB_WinObj.GLB_WindowsLineEdit[1];
-    MotorDefStruct[0].TAB1_LineEditWorkTime = GLB_WinObj.GLB_WindowsLineEdit[7];
-    MotorDefStruct[0].TAB1_LineEditDelayTime = GLB_WinObj.GLB_WindowsLineEdit[13];
-    MotorDefStruct[0].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[0];
-    MotorDefStruct[0].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[1];
-    MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
-    MotorDefStruct[0].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
-    MotorDefStruct[0].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[0];
-    MotorDefStruct[0].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[12];
+    MotorDefStruct[0].TAB1_LineEditPWM = GLB_ui->lineEdit;
+    MotorDefStruct[0].TAB1_LineEditWorkTime = GLB_ui->lineEdit_6;
+    MotorDefStruct[0].TAB1_LineEditDelayTime = GLB_ui->lineEdit_11;
+    MotorDefStruct[0].TAB1_SliderPWM = GLB_ui->horizontalSlider;
+    MotorDefStruct[0].TAB1_CheckBoxADC = GLB_ui->checkBox;
+    MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
+    MotorDefStruct[0].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
+    MotorDefStruct[0].TAB1_ADCPlot = GLB_ui->widget;
+    MotorDefStruct[0].TAB1_ADCPlotBack = GLB_ui->widget_52;
     MotorDefStruct[0].TAB1GraphPen = QPen(Qt::red);
-    MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+    MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
 
-    MotorDefStruct[0].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[29];
-    MotorDefStruct[0].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[19];
-    MotorDefStruct[0].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[24];
-    MotorDefStruct[0].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[29];
-    MotorDefStruct[0].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[34];
-    MotorDefStruct[0].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[15];
-    MotorDefStruct[0].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[6];
-    MotorDefStruct[0].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[22];
+    MotorDefStruct[0].TAB2_FingerButton = GLB_ui->pushButton_14;
+    MotorDefStruct[0].TAB2_LineEditAngle = GLB_ui->lineEdit_23;
+    MotorDefStruct[0].TAB2_LineEditTime = GLB_ui->lineEdit_28;
+    MotorDefStruct[0].TAB2_LineEditSpeed = GLB_ui->lineEdit_33;
+    MotorDefStruct[0].TAB2_LineEditDelay = GLB_ui->lineEdit_44;
+    MotorDefStruct[0].TAB2_CheckBoxCH = GLB_ui->checkBox_16;
+    MotorDefStruct[0].TAB2_FeedBackPlot = GLB_ui->widget_2;
+    MotorDefStruct[0].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_23;
 
-    MotorDefStruct[0].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[6];
-    MotorDefStruct[0].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[18];
+    MotorDefStruct[0].TAB2_FeedBackPlot = GLB_ui->widget_2;
+    MotorDefStruct[0].TAB2_FeedBackPlotBack = GLB_ui->widget_24;
 
 
     /*****************************************/
-    MotorDefStruct[1].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[3];
-    MotorDefStruct[1].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[21];
-    MotorDefStruct[1].TAB1_HoldButton = GLB_WinObj.GLB_WindowsButton[9];
-    MotorDefStruct[1].TAB1_FreeButton = GLB_WinObj.GLB_WindowsButton[15];
+    MotorDefStruct[1].TAB1_ComporessButton = GLB_ui->pushButton_3;
+    MotorDefStruct[1].TAB1_DecompressButton = GLB_ui->pushButton_4;
+    MotorDefStruct[1].TAB1_HoldButton = GLB_ui->pushButton_23;
+    MotorDefStruct[1].TAB1_FreeButton = GLB_ui->pushButton_28;
 
-    MotorDefStruct[1].TAB1_LineEditPWM = GLB_WinObj.GLB_WindowsLineEdit[2];
-    MotorDefStruct[1].TAB1_LineEditWorkTime = GLB_WinObj.GLB_WindowsLineEdit[8];
-    MotorDefStruct[1].TAB1_LineEditDelayTime = GLB_WinObj.GLB_WindowsLineEdit[14];
-    MotorDefStruct[1].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[1];
-    MotorDefStruct[1].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[2];
-    MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
-    MotorDefStruct[1].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
-    MotorDefStruct[1].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[1];
-    MotorDefStruct[1].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[13];
+    MotorDefStruct[1].TAB1_LineEditPWM = GLB_ui->lineEdit_2;
+    MotorDefStruct[1].TAB1_LineEditWorkTime = GLB_ui->lineEdit_7;
+    MotorDefStruct[1].TAB1_LineEditDelayTime = GLB_ui->lineEdit_12;
+    MotorDefStruct[1].TAB1_SliderPWM = GLB_ui->horizontalSlider_2;
+    MotorDefStruct[1].TAB1_CheckBoxADC = GLB_ui->checkBox_2;
+    MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
+    MotorDefStruct[1].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
+    MotorDefStruct[1].TAB1_ADCPlot = GLB_ui->widget_5;
+    MotorDefStruct[1].TAB1_ADCPlotBack = GLB_ui->widget_49;
     MotorDefStruct[1].TAB1GraphPen = QPen(Qt::red);
-    MotorDefStruct[1].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+    MotorDefStruct[1].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
-    MotorDefStruct[1].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[30];
-    MotorDefStruct[1].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[20];
-    MotorDefStruct[1].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[25];
-    MotorDefStruct[1].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[30];
-    MotorDefStruct[1].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[35];
-    MotorDefStruct[1].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[16];
-    MotorDefStruct[1].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[7];
-    MotorDefStruct[1].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[23];
+    MotorDefStruct[1].TAB2_FingerButton = GLB_ui->pushButton_15;
+    MotorDefStruct[1].TAB2_LineEditAngle = GLB_ui->lineEdit_22;
+    MotorDefStruct[1].TAB2_LineEditTime = GLB_ui->lineEdit_27;
+    MotorDefStruct[1].TAB2_LineEditSpeed = GLB_ui->lineEdit_35;
+    MotorDefStruct[1].TAB2_LineEditDelay = GLB_ui->lineEdit_41;
+    MotorDefStruct[1].TAB2_CheckBoxCH = GLB_ui->checkBox_17;
+    MotorDefStruct[1].TAB2_FeedBackPlot = GLB_ui->widget_9;
+    MotorDefStruct[1].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_24;
 
-    MotorDefStruct[1].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[7];
-    MotorDefStruct[1].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[19];
+    MotorDefStruct[1].TAB2_FeedBackPlot = GLB_ui->widget_9;
+    MotorDefStruct[1].TAB2_FeedBackPlotBack = GLB_ui->widget_22;
 
 
 
     /*****************************************/
-    MotorDefStruct[2].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[4];
-    MotorDefStruct[2].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[22];
-    MotorDefStruct[2].TAB1_HoldButton = GLB_WinObj.GLB_WindowsButton[10];
-    MotorDefStruct[2].TAB1_FreeButton = GLB_WinObj.GLB_WindowsButton[16];
+    MotorDefStruct[2].TAB1_ComporessButton = GLB_ui->pushButton_5;
+    MotorDefStruct[2].TAB1_DecompressButton = GLB_ui->pushButton_6;
+    MotorDefStruct[2].TAB1_HoldButton = GLB_ui->pushButton_19;
+    MotorDefStruct[2].TAB1_FreeButton = GLB_ui->pushButton_26;
 
 
-    MotorDefStruct[2].TAB1_LineEditPWM = GLB_WinObj.GLB_WindowsLineEdit[3];
-    MotorDefStruct[2].TAB1_LineEditWorkTime = GLB_WinObj.GLB_WindowsLineEdit[9];
-    MotorDefStruct[2].TAB1_LineEditDelayTime = GLB_WinObj.GLB_WindowsLineEdit[15];
-    MotorDefStruct[2].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[2];
-    MotorDefStruct[2].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[3];
-    MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
-    MotorDefStruct[2].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
-    MotorDefStruct[2].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[2];
-    MotorDefStruct[2].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[14];
+    MotorDefStruct[2].TAB1_LineEditPWM = GLB_ui->lineEdit_3;
+    MotorDefStruct[2].TAB1_LineEditWorkTime = GLB_ui->lineEdit_10;
+    MotorDefStruct[2].TAB1_LineEditDelayTime = GLB_ui->lineEdit_15;
+    MotorDefStruct[2].TAB1_SliderPWM = GLB_ui->horizontalSlider_3;
+    MotorDefStruct[2].TAB1_CheckBoxADC = GLB_ui->checkBox_3;
+    MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
+    MotorDefStruct[2].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
+    MotorDefStruct[2].TAB1_ADCPlot = GLB_ui->widget_4;
+    MotorDefStruct[2].TAB1_ADCPlotBack = GLB_ui->widget_51;
     MotorDefStruct[2].TAB1GraphPen = QPen(Qt::red);
-    MotorDefStruct[2].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+    MotorDefStruct[2].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
-    MotorDefStruct[2].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[31];
-    MotorDefStruct[2].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[21];
-    MotorDefStruct[2].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[26];
-    MotorDefStruct[2].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[31];
-    MotorDefStruct[2].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[36];
-    MotorDefStruct[2].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[17];
-    MotorDefStruct[2].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[8];
-    MotorDefStruct[2].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[24];
+    MotorDefStruct[2].TAB2_FingerButton = GLB_ui->pushButton_16;
+    MotorDefStruct[2].TAB2_LineEditAngle = GLB_ui->lineEdit_21;
+    MotorDefStruct[2].TAB2_LineEditTime = GLB_ui->lineEdit_26;
+    MotorDefStruct[2].TAB2_LineEditSpeed = GLB_ui->lineEdit_34;
+    MotorDefStruct[2].TAB2_LineEditDelay = GLB_ui->lineEdit_42;
+    MotorDefStruct[2].TAB2_CheckBoxCH = GLB_ui->checkBox_18;
+    MotorDefStruct[2].TAB2_FeedBackPlot = GLB_ui->widget_3;
+    MotorDefStruct[2].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_25;
 
-    MotorDefStruct[2].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[8];
-    MotorDefStruct[2].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[20];
+    MotorDefStruct[2].TAB2_FeedBackPlot = GLB_ui->widget_3;
+    MotorDefStruct[2].TAB2_FeedBackPlotBack = GLB_ui->widget_21;
 
 
 
 
 
     /*****************************************/
-    MotorDefStruct[3].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[5];
-    MotorDefStruct[3].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[23];
-    MotorDefStruct[3].TAB1_HoldButton = GLB_WinObj.GLB_WindowsButton[11];
-    MotorDefStruct[3].TAB1_FreeButton = GLB_WinObj.GLB_WindowsButton[17];
+    MotorDefStruct[3].TAB1_ComporessButton = GLB_ui->pushButton_7;
+    MotorDefStruct[3].TAB1_DecompressButton = GLB_ui->pushButton_8;
+    MotorDefStruct[3].TAB1_HoldButton = GLB_ui->pushButton_22;
+    MotorDefStruct[3].TAB1_FreeButton = GLB_ui->pushButton_24;
 
 
-    MotorDefStruct[3].TAB1_LineEditPWM = GLB_WinObj.GLB_WindowsLineEdit[4];
-    MotorDefStruct[3].TAB1_LineEditWorkTime = GLB_WinObj.GLB_WindowsLineEdit[10];
-    MotorDefStruct[3].TAB1_LineEditDelayTime = GLB_WinObj.GLB_WindowsLineEdit[16];
-    MotorDefStruct[3].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[3];
-    MotorDefStruct[3].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[4];
-    MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
-    MotorDefStruct[3].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
-    MotorDefStruct[3].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[3];
-    MotorDefStruct[3].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[15];
+    MotorDefStruct[3].TAB1_LineEditPWM =  GLB_ui->lineEdit_4;
+    MotorDefStruct[3].TAB1_LineEditWorkTime = GLB_ui->lineEdit_9;
+    MotorDefStruct[3].TAB1_LineEditDelayTime = GLB_ui->lineEdit_14;
+    MotorDefStruct[3].TAB1_SliderPWM = GLB_ui->horizontalSlider_4;
+    MotorDefStruct[3].TAB1_CheckBoxADC = GLB_ui->checkBox_4;
+    MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
+    MotorDefStruct[3].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
+    MotorDefStruct[3].TAB1_ADCPlot = GLB_ui->widget_6;
+    MotorDefStruct[3].TAB1_ADCPlotBack = GLB_ui->widget_54;
     MotorDefStruct[3].TAB1GraphPen = QPen(Qt::red);
-    MotorDefStruct[3].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+    MotorDefStruct[3].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
-    MotorDefStruct[3].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[32];
-    MotorDefStruct[3].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[22];
-    MotorDefStruct[3].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[27];
-    MotorDefStruct[3].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[32];
-    MotorDefStruct[3].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[37];
-    MotorDefStruct[3].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[18];
-    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9]; 
-    MotorDefStruct[3].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[25];
+    MotorDefStruct[3].TAB2_FingerButton = GLB_ui->pushButton_17;
+    MotorDefStruct[3].TAB2_LineEditAngle = GLB_ui->lineEdit_24;
+    MotorDefStruct[3].TAB2_LineEditTime = GLB_ui->lineEdit_29;
+    MotorDefStruct[3].TAB2_LineEditSpeed = GLB_ui->lineEdit_31;
+    MotorDefStruct[3].TAB2_LineEditDelay = GLB_ui->lineEdit_43;
+    MotorDefStruct[3].TAB2_CheckBoxCH = GLB_ui->checkBox_19;
+    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_ui->widget_10;
+    MotorDefStruct[3].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_26;
 
-    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[9];
-    MotorDefStruct[3].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[21];
+    MotorDefStruct[3].TAB2_FeedBackPlot = GLB_ui->widget_10;
+    MotorDefStruct[3].TAB2_FeedBackPlotBack = GLB_ui->widget_20;
 
 
 
     /*****************************************/
-    MotorDefStruct[4].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[6];
-    MotorDefStruct[4].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[24];
-    MotorDefStruct[4].TAB1_HoldButton = GLB_WinObj.GLB_WindowsButton[12];
-    MotorDefStruct[4].TAB1_FreeButton = GLB_WinObj.GLB_WindowsButton[18];
+    MotorDefStruct[4].TAB1_ComporessButton = GLB_ui->pushButton_9;
+    MotorDefStruct[4].TAB1_DecompressButton = GLB_ui->pushButton_10;
+    MotorDefStruct[4].TAB1_HoldButton = GLB_ui->pushButton_20;
+    MotorDefStruct[4].TAB1_FreeButton = GLB_ui->pushButton_25;
 
-    MotorDefStruct[4].TAB1_LineEditPWM = GLB_WinObj.GLB_WindowsLineEdit[5];
-    MotorDefStruct[4].TAB1_LineEditWorkTime = GLB_WinObj.GLB_WindowsLineEdit[11];
-    MotorDefStruct[4].TAB1_LineEditDelayTime = GLB_WinObj.GLB_WindowsLineEdit[17];
-    MotorDefStruct[4].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[4];
-    MotorDefStruct[4].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[5];
-    MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
-    MotorDefStruct[4].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
-    MotorDefStruct[4].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[4];
-    MotorDefStruct[4].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[16];
+    MotorDefStruct[4].TAB1_LineEditPWM = GLB_ui->lineEdit_5;
+    MotorDefStruct[4].TAB1_LineEditWorkTime = GLB_ui->lineEdit_8;
+    MotorDefStruct[4].TAB1_LineEditDelayTime = GLB_ui->lineEdit_13;
+    MotorDefStruct[4].TAB1_SliderPWM = GLB_ui->horizontalSlider_5;
+    MotorDefStruct[4].TAB1_CheckBoxADC = GLB_ui->checkBox_5;
+    MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
+    MotorDefStruct[4].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
+    MotorDefStruct[4].TAB1_ADCPlot = GLB_ui->widget_7;
+    MotorDefStruct[4].TAB1_ADCPlotBack = GLB_ui->widget_50;
     MotorDefStruct[4].TAB1GraphPen = QPen(Qt::red);
-    MotorDefStruct[4].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+    MotorDefStruct[4].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
-    MotorDefStruct[4].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[33];
-    MotorDefStruct[4].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[23];
-    MotorDefStruct[4].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[28];
-    MotorDefStruct[4].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[33];
-    MotorDefStruct[4].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[38];
-    MotorDefStruct[4].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[19];
-    MotorDefStruct[4].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[10];
-    MotorDefStruct[4].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[26];
+    MotorDefStruct[4].TAB2_FingerButton = GLB_ui->pushButton_18;
+    MotorDefStruct[4].TAB2_LineEditAngle = GLB_ui->lineEdit_25;
+    MotorDefStruct[4].TAB2_LineEditTime = GLB_ui->lineEdit_30;
+    MotorDefStruct[4].TAB2_LineEditSpeed = GLB_ui->lineEdit_32;
+    MotorDefStruct[4].TAB2_LineEditDelay = GLB_ui->lineEdit_40;
+    MotorDefStruct[4].TAB2_CheckBoxCH = GLB_ui->checkBox_20;
+    MotorDefStruct[4].TAB2_FeedBackPlot = GLB_ui->widget_11;
+    MotorDefStruct[4].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_27;
 
-    MotorDefStruct[4].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[10];
-    MotorDefStruct[4].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[22];
+    MotorDefStruct[4].TAB2_FeedBackPlot = GLB_ui->widget_11;
+    MotorDefStruct[4].TAB2_FeedBackPlotBack = GLB_ui->widget_19;
 
     /*****************************************/
-    MotorDefStruct[5].TAB1_ComporessButton = GLB_WinObj.GLB_WindowsButton[7];
-    MotorDefStruct[5].TAB1_DecompressButton = GLB_WinObj.GLB_WindowsButton[25];
-    MotorDefStruct[5].TAB1_HoldButton = GLB_WinObj.GLB_WindowsButton[13];
-    MotorDefStruct[5].TAB1_FreeButton = GLB_WinObj.GLB_WindowsButton[19];
+    MotorDefStruct[5].TAB1_ComporessButton = GLB_ui->pushButton_30;
+    MotorDefStruct[5].TAB1_DecompressButton = GLB_ui->pushButton_31;
+    MotorDefStruct[5].TAB1_HoldButton = GLB_ui->pushButton_32;
+    MotorDefStruct[5].TAB1_FreeButton = GLB_ui->pushButton_33;
 
-    MotorDefStruct[5].TAB1_LineEditPWM = GLB_WinObj.GLB_WindowsLineEdit[6];
-    MotorDefStruct[5].TAB1_LineEditWorkTime = GLB_WinObj.GLB_WindowsLineEdit[12];
-    MotorDefStruct[5].TAB1_LineEditDelayTime = GLB_WinObj.GLB_WindowsLineEdit[18];
-    MotorDefStruct[5].TAB1_SliderPWM = GLB_WinObj.GLB_WindowsSlider[5];
-    MotorDefStruct[5].TAB1_CheckBoxADC = GLB_WinObj.GLB_WindowsCheckBox[6];
-    MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[13];
-    MotorDefStruct[5].TAB2_CheckBoxBackSide = GLB_WinObj.GLB_WindowsCheckBox[21];
-    MotorDefStruct[5].TAB1_ADCPlot = GLB_WinObj.GLB_WindowsCustomPlot[5];
-    MotorDefStruct[5].TAB1_ADCPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[17];
+    MotorDefStruct[5].TAB1_LineEditPWM = GLB_ui->lineEdit_36;
+    MotorDefStruct[5].TAB1_LineEditWorkTime = GLB_ui->lineEdit_37;
+    MotorDefStruct[5].TAB1_LineEditDelayTime = GLB_ui->lineEdit_38;
+    MotorDefStruct[5].TAB1_SliderPWM = GLB_ui->horizontalSlider_6;
+    MotorDefStruct[5].TAB1_CheckBoxADC = GLB_ui->checkBox_13;
+    MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
+    MotorDefStruct[5].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
+    MotorDefStruct[5].TAB1_ADCPlot = GLB_ui->widget_8;
+    MotorDefStruct[5].TAB1_ADCPlotBack = GLB_ui->widget_53;
     MotorDefStruct[5].TAB1GraphPen = QPen(Qt::red);
-    MotorDefStruct[5].TAB1_CheckBoxAutoCurrectBackPower = GLB_WinObj.GLB_WindowsCheckBox[14];
+    MotorDefStruct[5].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
-    MotorDefStruct[5].TAB2_FingerButton = GLB_WinObj.GLB_WindowsButton[38];
-    MotorDefStruct[5].TAB2_LineEditAngle = GLB_WinObj.GLB_WindowsLineEdit[41];
-    MotorDefStruct[5].TAB2_LineEditTime = GLB_WinObj.GLB_WindowsLineEdit[42];
-    MotorDefStruct[5].TAB2_LineEditSpeed = GLB_WinObj.GLB_WindowsLineEdit[43];
-    MotorDefStruct[5].TAB2_LineEditDelay = GLB_WinObj.GLB_WindowsLineEdit[44];
-    MotorDefStruct[5].TAB2_CheckBoxCH = GLB_WinObj.GLB_WindowsCheckBox[20];
-    MotorDefStruct[5].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[11];
-    MotorDefStruct[5].TAB2_CheckBoxBackReverse = GLB_WinObj.GLB_WindowsCheckBox[27];
+    MotorDefStruct[5].TAB2_FingerButton = GLB_ui->pushButton_40;
+    MotorDefStruct[5].TAB2_LineEditAngle = GLB_ui->lineEdit_47;
+    MotorDefStruct[5].TAB2_LineEditTime = GLB_ui->lineEdit_39;
+    MotorDefStruct[5].TAB2_LineEditSpeed = GLB_ui->lineEdit_45;
+    MotorDefStruct[5].TAB2_LineEditDelay = GLB_ui->lineEdit_46;
+    MotorDefStruct[5].TAB2_CheckBoxCH = GLB_ui->checkBox_21;
+    MotorDefStruct[5].TAB2_FeedBackPlot = GLB_ui->widget_12;
+    MotorDefStruct[5].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_28;
 
-    MotorDefStruct[5].TAB2_FeedBackPlot = GLB_WinObj.GLB_WindowsCustomPlot[11];
-    MotorDefStruct[5].TAB2_FeedBackPlotBack = GLB_WinObj.GLB_WindowsCustomPlot[23];
-
+    MotorDefStruct[5].TAB2_FeedBackPlot = GLB_ui->widget_12;
+    MotorDefStruct[5].TAB2_FeedBackPlotBack = GLB_ui->widget_23;
     /*****************************************/
-
 
 
     /****************************************************************************************/
     /*****************************************/
     /*Set validator for Line Edit*/
-    QDoubleValidator *validator = new QDoubleValidator(0, 100, 2, GLB_mainwindowWidget);
-    validator->setNotation(QDoubleValidator::StandardNotation);
-    validator->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
+    // QDoubleValidator *validator = new QDoubleValidator(0, 100, 2, GLB_mainwindowWidget);
+    // validator->setNotation(QDoubleValidator::StandardNotation);
+    // validator->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
 
-    QList<QLineEdit*> lineEdits;
-    lineEdits = GLB_WinObj.GLB_WindowsTabWidget[1]->findChildren<QLineEdit*>();
+    // QList<QLineEdit*> lineEdits;
+    // lineEdits = GLB_ui->tab_1->findChildren<QLineEdit*>();
 
-    for (QLineEdit *lineEdit : lineEdits)
-    {
-        if (lineEdit != GLB_WinObj.GLB_WindowsLineEdit[45])
-        {
-            lineEdit->setValidator(validator);
-        }
-    }
-    lineEdits = GLB_WinObj.GLB_WindowsTabWidget[2]->findChildren<QLineEdit*>();
-    for (QLineEdit *lineEdit : lineEdits)
-    {
-        if (lineEdit != GLB_WinObj.GLB_WindowsLineEdit[47])
-        {
-            lineEdit->setValidator(validator);
-        }
-    }
+    // for (QLineEdit *lineEdit : lineEdits)
+    // {
+    //     if (lineEdit != GLB_ui->lineEdit_18)
+    //     {
+    //         lineEdit->setValidator(validator);
+    //     }
+    // }
+    // lineEdits = GLB_ui->tab_2->findChildren<QLineEdit*>();
+    // for (QLineEdit *lineEdit : lineEdits)
+    // {
+    //     if (lineEdit != GLB_WinObj.GLB_WindowsLineEdit[47])
+    //     {
+    //         lineEdit->setValidator(validator);
+    //     }
+    // }
     /*****************************************/
     /*Set background for buttons*/
     const QList<QPushButton*> PushButtons = GLB_mainwindowWidget->findChildren<QPushButton*>();
     for(QPushButton *pushbutton : PushButtons) pushbutton->setStyleSheet("background-color: rgb(150, 200, 250);");
     /*****************************************/
     // Set motor def
-    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Thumb");
-    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Index");
-    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Middle");
-    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Ring");
-    GLB_WinObj.GLB_WindowsComboBox[1]->addItem("Pinkie");
+    GLB_ui->comboBox_2->addItem("Thumb");
+    GLB_ui->comboBox_2->addItem("Index");
+    GLB_ui->comboBox_2->addItem("Middle");
+    GLB_ui->comboBox_2->addItem("Ring");
+    GLB_ui->comboBox_2->addItem("Pinkie");
     /*****************************************/
     /*Enable Debug panel*/
-    GLB_WinObj.GLB_WindowsCheckBox[10]->setChecked(false);
-    GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(false);
+    // GLB_ui->checkBox_9->setChecked(false);
+    // GLB_WinObj.GLB_WindowsFrame[1]->setEnabled(false);
     /*Enable SaveFile lineEdits*/
-    GLB_WinObj.GLB_WindowsLineEdit[45]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(false);
+    // GLB_ui->lineEdit_18->setEnabled(false);
+    // GLB_ui->lineEdit_50->setEnabled(false);
 }
 
 
@@ -927,146 +665,148 @@ void SetStartVariables()
     }
 
 }
-void MainWindow::ComPortSearch(uint32_t boudrate)
+
+
+void MainWindow::on_ComportSearchBack(QList<QString> list)
 {
-    GLB_WinObj.GLB_WindowsComboBox[0]->setEnabled(true);
-    NowComBoxItem[0] = "Select comport...";
-    TypeThreadInterrupt = 1;
-    if(GLB_WinObj.GLB_WindowsCheckBox[12]->isChecked()) ThreadAutoConnectState = true;
-    else ThreadAutoConnectState = false;
-    CurrentBoundRate = boudrate;
-
-    // thread_1->start();
-    // while(!thread_1->isRunning()) {}
-    if(!ThreadAutoConnectState) SendToTerminal("Thread#1: search.", true, 0);
-    else if(ThreadAutoConnectState) SendToTerminal("Thread#1: search with auto-connect.", true, 0);
-
-    GLB_WinObj.GLB_WindowsComboBox[0]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsCheckBox[12]->setEnabled(false);
-    GLB_WinObj.GLB_WindowsButton[0]->setEnabled(false);
+    GLB_ui->comboBox->clear();
+    qInfo() << list;
+    GLB_ui->comboBox->addItems(list);
 }
-
-void MainWindow::ComPortOpen(QString com, uint32_t boudrate)
+void MainWindow::on_ComportConnectBack(QString portName)
 {
-    CurrentComPort = com;
-    CurrentBoundRate = boudrate;
-
-    TypeThreadInterrupt = 2;
-    // thread_1->start();
-    // while(!thread_1->isRunning()) {}
-}
-void MainWindow::ComPortWrite(uint8_t *datatosend, uint32_t cntdata)
-{
-
-    // for (uint32_t i = 0; i < cntdata; i++)
-    // {
-    //     ComportDataToSend[ComportCountDataIndexCnt][i] = datatosend[i];
-    // }
-    // ComportCountDataToSend[ComportCountDataIndexCnt] = cntdata;
-    // ComportCountDataIndexCnt++;
-
-
-    for (uint32_t i = 0; i < cntdata; i++)
+    if (portName != "Select comport...")
     {
-        ComportDataToSend[i] = datatosend[i];
+        qInfo() << "Connect to " + portName;
+        SendToTerminal("Connect to " + portName, true, 0);
+        SendToTerminal("Connect to " + portName, true, 1);
+        SendToTerminal("Connect to " + portName, true, 2);
     }
-    ComportCountDataToSend = cntdata;
+    QStandardItemModel* model = (QStandardItemModel*) GLB_ui->comboBox->model();
+    if (!model) return;
 
-    TypeThreadInterrupt = 4;
+    int count = model->rowCount();
+    for (int i = 0; i < count; ++i) {
+        QStandardItem* item = model->item(i);
+        if (!item) continue;
 
-    // thread_1->start();
-    // while(!thread_1->isRunning()) {}
-    SendToTerminal("Thread#1: sending...", true, 1);
-    SendToTerminal("Thread#1: sending...", true, 2);
-}
-void MainWindow::ComPortRead()
-{
-    TypeThreadInterrupt = 5;
-
-    // thread_1->start();
-    // while(!thread_1->isRunning()) {}
-    SendToTerminal("Thread#1: reading...", true, 0);
-}
-
-
-void MainWindow::ComportDataUpdate_slot()
-{
-    GLB_WinObj.GLB_WindowsComboBox[0]->clear();
-    GLB_WinObj.GLB_WindowsComboBox[0]->addItems(GLB_Comports);
-
-    if(GLB_WinObj.GLB_WindowsCheckBox[12]->isChecked())
-    {
-        uint8_t index = GLB_WinObj.GLB_WindowsComboBox[0]->findText(CurrentComPort);
-        QStandardItemModel* model = (QStandardItemModel*) GLB_WinObj.GLB_WindowsComboBox[0]->model();
-        model->item(index)->setEnabled(false);
-        NowComBoxItem[0] = CurrentComPort;
-    }
-    GLB_WinObj.GLB_WindowsComboBox[0]->setCurrentText(CurrentComPort);
-
-    SendToTerminal("Thread#1: data update.", true, 0);
-    GLB_WinObj.GLB_WindowsComboBox[0]->setEnabled(true);
-    GLB_WinObj.GLB_WindowsCheckBox[12]->setEnabled(true);
-    GLB_WinObj.GLB_WindowsButton[0]->setEnabled(true);
-
-}
-void MainWindow::ComportConnect_slot()
-{
-    uint8_t index = GLB_WinObj.GLB_WindowsComboBox[0]->findText(CurrentComPort);
-    QStandardItemModel* model = (QStandardItemModel*) GLB_WinObj.GLB_WindowsComboBox[0]->model();
-    model->item(index)->setEnabled(false);
-    NowComBoxItem[0] = CurrentComPort;
-
-    if(CurrentComPort != "Select comport...")
-        SendToTerminal("Thread#1: open port " + CurrentComPort + " with speed: " + QString::number(CurrentBoundRate, 10) + ".", true, 0);
-}
-void MainWindow::ComportClose_slot()
-{
-    uint8_t index = GLB_WinObj.GLB_WindowsComboBox[0]->findText(NowComBoxItem[0]);
-    QStandardItemModel* model = (QStandardItemModel*) GLB_WinObj.GLB_WindowsComboBox[0]->model();
-    model->item(index)->setEnabled(true);
-
-    if(NowComBoxItem[0] != "Select comport...") SendToTerminal("Thread#1: close port " + NowComBoxItem[0] + ".", true, 0);
-}
-void MainWindow::ComportRead_slot()
-{
-    SendToTerminal("Number of received data: " + QString::number(ComportCountdataRecv, 10) + "bytes.", true, 0);
-}
-void MainWindow::ComportWrite_slot(QString back)
-{
-    SendToTerminal("Feedback: " + back, true, 1);
-
-    if(Instruct_FLAG)
-    {
-        if(LTC == Last_PWM_MODE)
-        {
-            for(uint8_t i = 0; i < 6; i++)
-            {
-                if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
-                {
-                    ComPortRead();
-                    break;
-                }
-            }
+        if (model->item(i)->text() == portName) {
+            item->setEnabled(false);
+        } else {
+            item->setEnabled(true);
         }
-        else if(LTC == Last_ANGLE_MODE)
-        {
-            for(uint8_t i = 0; i < 6; i++)
-            {
-                if(MotorDefStruct[i].MD2_FeedBack == 0x01)
-                {
-                    ComPortRead();
-                    break;
-                }
-            }
-        }
-        Instruct_FLAG = false;
     }
+
 }
+void MainWindow::on_ComportCloseBack(QString)
+{
+
+}
+
+// void MainWindow::ComPortWrite(uint8_t *datatosend, uint32_t cntdata)
+// {
+//     for (uint32_t i = 0; i < cntdata; i++)
+//     {
+//         ComportDataToSend[i] = datatosend[i];
+//     }
+//     ComportCountDataToSend = cntdata;
+
+//     TypeThreadInterrupt = 4;
+
+//     // thread_1->start();
+//     // while(!thread_1->isRunning()) {}
+//     SendToTerminal("Thread#1: sending...", true, 1);
+//     SendToTerminal("Thread#1: sending...", true, 2);
+// }
+// void MainWindow::ComPortRead()
+// {
+//     TypeThreadInterrupt = 5;
+
+//     // thread_1->start();
+//     // while(!thread_1->isRunning()) {}
+//     SendToTerminal("Thread#1: reading...", true, 0);
+// }
+
+
+// void MainWindow::ComportDataUpdate_slot()
+// {
+//     GLB_ui->comboBox->clear();
+//     GLB_ui->comboBox->addItems(GLB_Comports);
+
+//     if(GLB_ui->checkBox_10->isChecked())
+//     {
+//         uint8_t index = GLB_ui->comboBox->findText(CurrentComPort);
+//         QStandardItemModel* model = (QStandardItemModel*) GLB_ui->comboBox->model();
+//         model->item(index)->setEnabled(false);
+//         NowComBoxItem[0] = CurrentComPort;
+//     }
+//     GLB_ui->comboBox->setCurrentText(CurrentComPort);
+
+//     SendToTerminal("Thread#1: data update.", true, 0);
+//     GLB_ui->comboBox->setEnabled(true);
+//     GLB_ui->checkBox_10->setEnabled(true);
+//     GLB_ui->SearchButton->setEnabled(true);
+
+// }
+// void MainWindow::ComportConnect_slot()
+// {
+//     uint8_t index = GLB_ui->comboBox->findText(CurrentComPort);
+//     QStandardItemModel* model = (QStandardItemModel*) GLB_ui->comboBox->model();
+//     model->item(index)->setEnabled(false);
+//     NowComBoxItem[0] = CurrentComPort;
+
+//     if(CurrentComPort != "Select comport...")
+//         SendToTerminal("Thread#1: open port " + CurrentComPort + " with speed: " + QString::number(CurrentBoundRate, 10) + ".", true, 0);
+// }
+// void MainWindow::ComportClose_slot()
+// {
+//     uint8_t index = GLB_ui->comboBox->findText(NowComBoxItem[0]);
+//     QStandardItemModel* model = (QStandardItemModel*) GLB_ui->comboBox->model();
+//     model->item(index)->setEnabled(true);
+
+//     if(NowComBoxItem[0] != "Select comport...") SendToTerminal("Thread#1: close port " + NowComBoxItem[0] + ".", true, 0);
+// }
+// void MainWindow::ComportRead_slot()
+// {
+//     // SendToTerminal("Number of received data: " + QString::number(ComportCountdataRecv, 10) + "bytes.", true, 0);
+// }
+// void MainWindow::ComportWrite_slot(QString back)
+// {
+//     SendToTerminal("Feedback: " + back, true, 1);
+
+//     if(Instruct_FLAG)
+//     {
+//         if(LTC == Last_PWM_MODE)
+//         {
+//             for(uint8_t i = 0; i < 6; i++)
+//             {
+//                 if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
+//                 {
+//                     ComPortRead();
+//                     break;
+//                 }
+//             }
+//         }
+//         else if(LTC == Last_ANGLE_MODE)
+//         {
+//             for(uint8_t i = 0; i < 6; i++)
+//             {
+//                 if(MotorDefStruct[i].MD2_FeedBack == 0x01)
+//                 {
+//                     ComPortRead();
+//                     break;
+//                 }
+//             }
+//         }
+//         Instruct_FLAG = false;
+//     }
+// }
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
 
     std::string ver;
     switch (__cplusplus){
@@ -1095,30 +835,106 @@ MainWindow::MainWindow(QWidget *parent)
         ver = "Unknown";
     }
     std::cout << "Your standard is " << ver << '\n' << "__cplusplus = " << __cplusplus << std::endl;
-
-
-
-
-    ui->setupUi(this);
     GLB_ui = ui;
     GLB_mainwindowWidget = this;
     showMaximized();
 
-    thread_1 = new MyThread_1(GLB_mainwindow);
 
-    connect(thread_1, &MyThread_1::PaintGraph_signal, this, &MainWindow::PaintGraph);
+    thread_1 = new MyThread_1(this);
 
-    connect(thread_1, &MyThread_1::ComportDataUpdate_signal, this, &MainWindow::ComportDataUpdate_slot);
-    connect(thread_1, &MyThread_1::ComportConnect_signal, this, &MainWindow::ComportConnect_slot);
-    connect(thread_1, &MyThread_1::ComportClose_signal, this, &MainWindow::ComportClose_slot);
-    connect(thread_1, &MyThread_1::ComportRead_signal, this, &MainWindow::ComportRead_slot);
-    connect(thread_1, &MyThread_1::ComPortWrite_signal, this, &MainWindow::ComportWrite_slot);
+    QObject::connect(this, &MainWindow::signal_ComportSearch, thread_1, &MyThread_1::on_ComPortSearch);
+    QObject::connect(this, &MainWindow::signal_ComportConnect, thread_1, &MyThread_1::on_ComPortConnect);
+
+    QObject::connect(thread_1, &MyThread_1::signal_ComportSearchBack, this, &MainWindow::on_ComportSearchBack);
+    QObject::connect(thread_1, &MyThread_1::signal_ComportConnectBack, this, &MainWindow::on_ComportConnectBack);
+
+
+
+    // void signal_ComportCloseBack(QString);
+    // void on_ComportCloseBack(QString);
+
 
     thread_1->start();
     while(!thread_1->isRunning()) {}
 
+
     SetStartGUISettings();
     SetStartVariables();
+
+
+
+
+    Motor[0].MANUAL_Button_compress = GLB_ui->pushButton;
+    Motor[0].MANUAL_Button_decompress = GLB_ui->pushButton_2;
+    Motor[0].MANUAL_Button_hold = GLB_ui->pushButton_21;
+    Motor[0].MANUAL_Button_stop = GLB_ui->pushButton_27;
+    Motor[0].MANUAL_LineEdit_PWM = GLB_ui->lineEdit;
+    Motor[0].MANUAL_LineEdit_WorkTime = GLB_ui->lineEdit_6;
+    Motor[0].MANUAL_LineEdit_WorkDelay = GLB_ui->lineEdit_11;
+    Motor[0].MANUAL_CheckBox_ADC = GLB_ui->checkBox;
+    Motor[0].MANUAL_CheckBox_FeedBack = GLB_ui->checkBox_16;
+    Motor[0].MANUAL_CheckBox_SidePlate = GLB_ui->checkBox_14;
+    Motor[0].ANGLE_CheckBox_SidePlate = GLB_ui->checkBox_22;
+
+    Motor[1].MANUAL_Button_compress = GLB_ui->pushButton_3;
+    Motor[1].MANUAL_Button_decompress = GLB_ui->pushButton_23;
+    Motor[1].MANUAL_Button_hold = GLB_ui->pushButton_4;
+    Motor[1].MANUAL_Button_stop = GLB_ui->pushButton_28;
+    Motor[1].MANUAL_LineEdit_PWM = GLB_ui->lineEdit_2;
+    Motor[1].MANUAL_LineEdit_WorkTime = GLB_ui->lineEdit_7;
+    Motor[1].MANUAL_LineEdit_WorkDelay = GLB_ui->lineEdit_12;
+    Motor[1].MANUAL_CheckBox_ADC = GLB_ui->checkBox_2;
+    Motor[1].MANUAL_CheckBox_FeedBack = GLB_ui->checkBox_17;
+    Motor[1].MANUAL_CheckBox_SidePlate = GLB_ui->checkBox_14;
+    Motor[1].ANGLE_CheckBox_SidePlate = GLB_ui->checkBox_22;
+
+    Motor[2].MANUAL_Button_compress = GLB_ui->pushButton_5;
+    Motor[2].MANUAL_Button_decompress = GLB_ui->pushButton_6;
+    Motor[2].MANUAL_Button_hold = GLB_ui->pushButton_19;
+    Motor[2].MANUAL_Button_stop = GLB_ui->pushButton_26;
+    Motor[2].MANUAL_LineEdit_PWM = GLB_ui->lineEdit_3;
+    Motor[2].MANUAL_LineEdit_WorkTime = GLB_ui->lineEdit_10;
+    Motor[2].MANUAL_LineEdit_WorkDelay = GLB_ui->lineEdit_15;
+    Motor[2].MANUAL_CheckBox_ADC = GLB_ui->checkBox_3;
+    Motor[2].MANUAL_CheckBox_FeedBack = GLB_ui->checkBox_18;
+    Motor[2].MANUAL_CheckBox_SidePlate = GLB_ui->checkBox_14;
+    Motor[2].ANGLE_CheckBox_SidePlate = GLB_ui->checkBox_22;
+
+    Motor[3].MANUAL_Button_compress = GLB_ui->pushButton_7;
+    Motor[3].MANUAL_Button_decompress = GLB_ui->pushButton_22;
+    Motor[3].MANUAL_Button_hold = GLB_ui->pushButton_24;
+    Motor[3].MANUAL_Button_stop = GLB_ui->pushButton_8;
+    Motor[3].MANUAL_LineEdit_PWM = GLB_ui->lineEdit_4;
+    Motor[3].MANUAL_LineEdit_WorkTime = GLB_ui->lineEdit_9;
+    Motor[3].MANUAL_LineEdit_WorkDelay = GLB_ui->lineEdit_14;
+    Motor[3].MANUAL_CheckBox_ADC = GLB_ui->checkBox_4;
+    Motor[3].MANUAL_CheckBox_FeedBack = GLB_ui->checkBox_19;
+    Motor[3].MANUAL_CheckBox_SidePlate = GLB_ui->checkBox_14;
+    Motor[3].ANGLE_CheckBox_SidePlate = GLB_ui->checkBox_22;
+
+    Motor[4].MANUAL_Button_compress = GLB_ui->pushButton_9;
+    Motor[4].MANUAL_Button_decompress = GLB_ui->pushButton_10;
+    Motor[4].MANUAL_Button_hold = GLB_ui->pushButton_20;
+    Motor[4].MANUAL_Button_stop = GLB_ui->pushButton_25;
+    Motor[4].MANUAL_LineEdit_PWM = GLB_ui->lineEdit_5;
+    Motor[4].MANUAL_LineEdit_WorkTime = GLB_ui->lineEdit_8;
+    Motor[4].MANUAL_LineEdit_WorkDelay = GLB_ui->lineEdit_13;
+    Motor[4].MANUAL_CheckBox_ADC = GLB_ui->checkBox_5;
+    Motor[4].MANUAL_CheckBox_FeedBack = GLB_ui->checkBox_20;
+    Motor[4].MANUAL_CheckBox_SidePlate = GLB_ui->checkBox_14;
+    Motor[4].ANGLE_CheckBox_SidePlate = GLB_ui->checkBox_22;
+
+    Motor[5].MANUAL_Button_compress = GLB_ui->pushButton_30;
+    Motor[5].MANUAL_Button_decompress = GLB_ui->pushButton_31;
+    Motor[5].MANUAL_Button_hold = GLB_ui->pushButton_32;
+    Motor[5].MANUAL_Button_stop = GLB_ui->pushButton_33;
+    Motor[5].MANUAL_LineEdit_PWM = GLB_ui->lineEdit_36;
+    Motor[5].MANUAL_LineEdit_WorkTime = GLB_ui->lineEdit_37;
+    Motor[5].MANUAL_LineEdit_WorkDelay = GLB_ui->lineEdit_38;
+    Motor[5].MANUAL_CheckBox_ADC = GLB_ui->checkBox_13;
+    Motor[5].MANUAL_CheckBox_FeedBack = GLB_ui->checkBox_21;
+    Motor[5].MANUAL_CheckBox_SidePlate = GLB_ui->checkBox_14;
+    Motor[5].ANGLE_CheckBox_SidePlate = GLB_ui->checkBox_22;
 
 }
 
@@ -1129,9 +945,6 @@ MainWindow::~MainWindow()
 
     ConfigFile.open(QFile::WriteOnly);
     IOFile.setDevice(&ConfigFile);
-
-    // IOFile << GLB_ui->lineEdit_20->text();
-
     ConfigFile.close();
 
     delete ui;
@@ -1139,49 +952,44 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_12_clicked()
 {
-    // uint8_t data[10];
-    // for(uint8_t i = 0; i < 10; i++)
-    // {
-    //     data[i] = i + 1;
-    // }
-
     uint8_t data[100] =
         {
-        0xEA, 0xBC,
-        0xDE, 0xAD,
+            0xEA, 0xBC,
+            0xDE, 0xAD,
 
-        0x21, 0x00,
-        0x22, 0x01,
-        0x24, 0x00,
-        0x25, 0x01,
-        0x26, 0x64,
-        0x27, 0x64,
-        0x2A, 0x64,
+            0x21, 0x00,
+            0x22, 0x01,
+            0x24, 0x00,
+            0x25, 0x01,
+            0x26, 0x64,
+            0x27, 0x64,
+            0x2A, 0x64,
 
-        0xBE, 0xEF,
-        0xBC, 0xAE,
+            0xBE, 0xEF,
+            0xBC, 0xAE,
         };
 
 
-    ComPortWrite((unsigned char *)data, 22);
+    // ComPortWrite((unsigned char *)data, 22);
 }
 void MainWindow::on_pushButton_41_clicked()
 {
     uint8_t data[100] =
-    {
-        0xEA, 0xBC,
-        0xDE, 0xAD,
+        {
+            0xEA, 0xBC,
+            0xDE, 0xAD,
 
-        0x21, 0x00,
-        0x22, 0x01,
-        0x24, 0x00,
-        0x2D, 0x01,
+            0x21, 0x00,
+            0x22, 0x01,
+            0x24, 0x00,
+            0x2D, 0x01,
 
-        0xBE, 0xEF,
-        0xBC, 0xAE,
-    };
-    ComPortWrite((unsigned char *)data, 16);
+            0xBE, 0xEF,
+            0xBC, 0xAE,
+        };
+    // ComPortWrite((unsigned char *)data, 16);
 }
+
 
 
 
@@ -1243,338 +1051,92 @@ void MainWindow::on_lineEdit_36_textEdited(const QString &arg1)
     }
 }
 /* TIME LineEdit */
-void MainWindow::on_lineEdit_7_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_10_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_9_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_8_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
+void MainWindow::on_lineEdit_7_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_10_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_9_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_8_textEdited(const QString &arg1){}
 /* DELAY LineEdit */
-void MainWindow::on_lineEdit_11_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_12_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_15_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_14_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-void MainWindow::on_lineEdit_13_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
+void MainWindow::on_lineEdit_11_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_12_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_15_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_14_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_13_textEdited(const QString &arg1){}
 /* Operation */
 void MainWindow::on_SearchButton_clicked()
 {
     SendToTerminal("Seacrhing Comports...", true, 0);
-    ComPortSearch(std::stof(GLB_WinObj.GLB_WindowsLineEdit[40]->text().toStdString()));
+
+    emit signal_ComportSearch();
+
+
 }
 
 void MainWindow::on_comboBox_textActivated(const QString &arg1)
 {
-    ComPortOpen(arg1, std::stof(GLB_WinObj.GLB_WindowsLineEdit[40]->text().toStdString()));
+    // ComPortOpen(arg1, std::stof(GLB_ui->lineEdit_17->text().toStdString()));
 }
 void MainWindow::on_pushButton_13_clicked()
 {
-    QString directory = QFileDialog::getExistingDirectory(nullptr, "Выберите папку", "",
-                                                          QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks); // Опции диалога
+    QString directory =
+        QFileDialog::getExistingDirectory(nullptr, "Выберите папку", "",
+                                          QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks); // Опции диалога
     GLB_ui->lineEdit_20->setText(directory);
 }
-
-
 //////* Angle Mode *//////
-void MainWindow::on_lineEdit_23_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_22_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_21_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_24_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_25_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_28_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_27_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_26_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_29_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_30_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_33_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_35_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_34_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_31_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
-void MainWindow::on_lineEdit_32_textEdited(const QString &arg1)
-{
-    if(arg1 > 0)
-    {
-        std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
-    }
-}
-
-
+void MainWindow::on_lineEdit_23_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_22_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_21_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_24_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_25_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_28_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_27_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_26_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_29_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_30_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_33_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_35_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_34_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_31_textEdited(const QString &arg1){}
+void MainWindow::on_lineEdit_32_textEdited(const QString &arg1){}
 void MainWindow::on_checkBox_11_toggled(bool checked)
 {
-    if(checked)
-    {
-        SendToTerminal("Thread #1 enable.", true, 0);
-    }
-    else if(!checked)
-    {
-        SendToTerminal("Thread #1 disable.", true, 0);
-    }
+    if(checked) SendToTerminal("Thread #1 enable.", true, 0);
+    else if(!checked) SendToTerminal("Thread #1 disable.", true, 0);
 }
-
-// СОЗДАТЬ ЧЕКБОКС ЕСЛИ ТРЕБУЕТСЯ ЗАПУСК ВТОРОГО ПОТОКА (НАСТРОЙКА)
-//     if(checked)
-//     {
-//         GLB_Thread_Flag[1] = true;
-//         thread_2 = new MyThread_2(GLB_mainwindow);
-//         thread_2->start();
-//         while(!thread_2->isRunning()) {}
-//         std::cout << "Thread #2 is started!" << std::endl;
-//     }
-//     else if(!checked)
-//     {
-//         GLB_Thread_Flag[1] = false;
-//         while(!thread_2->isFinished()) {}
-//         delete thread_2;
-//         std::cout << "Thread #2 disable!" << std::endl;
-//     }
-
-
-
-
-
-
-
-
 // MOTOR 0
 void MainWindow::on_pushButton_clicked()
 {
-
     GLB_ui->pushButton_2->setChecked(false);
     GLB_ui->pushButton_21->setChecked(false);
     GLB_ui->pushButton_27->setChecked(false);
-
-    MotorDefStruct[0].MD1_MoveType = LEFT;
-
 }
 void MainWindow::on_pushButton_2_clicked()
 {
-
     GLB_ui->pushButton->setChecked(false);
     GLB_ui->pushButton_21->setChecked(false);
     GLB_ui->pushButton_27->setChecked(false);
-
-    MotorDefStruct[0].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_21_clicked()
 {
-
     GLB_ui->pushButton->setChecked(false);
     GLB_ui->pushButton_2->setChecked(false);
     GLB_ui->pushButton_27->setChecked(false);
-
-    MotorDefStruct[0].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_27_clicked()
 {
-
     GLB_ui->pushButton->setChecked(false);
     GLB_ui->pushButton_2->setChecked(false);
     GLB_ui->pushButton_21->setChecked(false);
-
-    MotorDefStruct[0].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    uint8_t numMotor = 0;
-
-    GLB_SliderValue[0] = value;
-    GLB_ui->lineEdit->setText(QString::number(GLB_SliderValue[0]));
-
-    MotorInstr[numMotor].PWM = value;
+    GLB_ui->lineEdit->setText(QString::number(value));
 }
 void MainWindow::on_lineEdit_6_textEdited(const QString &arg1)
 {
     if(arg1 > 0)
     {
         std::string str = arg1.toStdString();
-        // float value = std::stof(arg1.toStdString());
     }
 }
 // MOTOR 1
@@ -1583,16 +1145,12 @@ void MainWindow::on_pushButton_3_clicked()
     GLB_ui->pushButton_23->setChecked(false);
     GLB_ui->pushButton_4->setChecked(false);
     GLB_ui->pushButton_28->setChecked(false);
-
-    MotorDefStruct[1].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_4_clicked()
 {
     GLB_ui->pushButton_23->setChecked(false);
     GLB_ui->pushButton_3->setChecked(false);
     GLB_ui->pushButton_28->setChecked(false);
-
-    MotorDefStruct[1].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_23_clicked()
 {
@@ -1600,27 +1158,16 @@ void MainWindow::on_pushButton_23_clicked()
     GLB_ui->pushButton_3->setChecked(false);
     GLB_ui->pushButton_4->setChecked(false);
     GLB_ui->pushButton_28->setChecked(false);
-
-    MotorDefStruct[1].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_28_clicked()
 {
     GLB_ui->pushButton_23->setChecked(false);
     GLB_ui->pushButton_4->setChecked(false);
     GLB_ui->pushButton_3->setChecked(false);
-
-    MotorDefStruct[1].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_2_valueChanged(int value)
 {
-    uint8_t numMotor = 1;
-
-    GLB_SliderValue[1] = value;
-    GLB_ui->lineEdit_2->setText(QString::number(GLB_SliderValue[1]));
-
-    // MotorInstr[numMotor].Flags.FL_PWMByte = true;
-    // if(value != 0) MotorInstr[numMotor].configHalfWord |= COM1_PWM;
-    MotorInstr[numMotor].PWM = value;
+    GLB_ui->lineEdit_2->setText(QString::number(value));
 }
 // MOTOR 2
 void MainWindow::on_pushButton_5_clicked()
@@ -1628,64 +1175,41 @@ void MainWindow::on_pushButton_5_clicked()
     GLB_ui->pushButton_6->setChecked(false);
     GLB_ui->pushButton_19->setChecked(false);
     GLB_ui->pushButton_26->setChecked(false);
-
-    MotorDefStruct[2].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_6_clicked()
 {
     GLB_ui->pushButton_5->setChecked(false);
     GLB_ui->pushButton_19->setChecked(false);
     GLB_ui->pushButton_26->setChecked(false);
-
-    MotorDefStruct[2].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_19_clicked()
 {
-
     GLB_ui->pushButton_5->setChecked(false);
     GLB_ui->pushButton_6->setChecked(false);
     GLB_ui->pushButton_26->setChecked(false);
-
-    MotorDefStruct[2].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_26_clicked()
 {
     GLB_ui->pushButton_5->setChecked(false);
     GLB_ui->pushButton_6->setChecked(false);
     GLB_ui->pushButton_19->setChecked(false);
-
-    MotorDefStruct[2].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
 {
-    uint8_t numMotor = 2;
-
-    GLB_SliderValue[2] = value;
-    GLB_ui->lineEdit_3->setText(QString::number(GLB_SliderValue[2]));
-
-    // MotorInstr[numMotor].Flags.FL_PWMByte = true;
-    // if(value != 0) MotorInstr[numMotor].configHalfWord |= COM1_PWM;
-    MotorInstr[numMotor].PWM = value;
+    GLB_ui->lineEdit_3->setText(QString::number(value));
 }
 // MOTOR 3
 void MainWindow::on_pushButton_7_clicked()
 {
-
-
     GLB_ui->pushButton_22->setChecked(false);
     GLB_ui->pushButton_24->setChecked(false);
     GLB_ui->pushButton_8->setChecked(false);
-
-    MotorDefStruct[3].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_8_clicked()
 {
-
     GLB_ui->pushButton_22->setChecked(false);
     GLB_ui->pushButton_24->setChecked(false);
     GLB_ui->pushButton_7->setChecked(false);
-
-    MotorDefStruct[3].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_22_clicked()
 {
@@ -1693,46 +1217,29 @@ void MainWindow::on_pushButton_22_clicked()
     GLB_ui->pushButton_8->setChecked(false);
     GLB_ui->pushButton_24->setChecked(false);
     GLB_ui->pushButton_7->setChecked(false);
-
-    MotorDefStruct[3].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_24_clicked()
 {
-
     GLB_ui->pushButton_8->setChecked(false);
     GLB_ui->pushButton_22->setChecked(false);
     GLB_ui->pushButton_7->setChecked(false);
-
-    MotorDefStruct[3].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_4_valueChanged(int value)
 {
-    uint8_t numMotor = 3;
-
-    GLB_SliderValue[3] = value;
-    GLB_ui->lineEdit_4->setText(QString::number(GLB_SliderValue[3]));
-
-    // MotorInstr[numMotor].Flags.FL_PWMByte = true;
-    // if(value != 0) MotorInstr[numMotor].configHalfWord |= COM1_PWM;
-    MotorInstr[numMotor].PWM = value;
+    GLB_ui->lineEdit_4->setText(QString::number(value));
 }
 // MOTOR 4
 void MainWindow::on_pushButton_9_clicked()
 {
-
     GLB_ui->pushButton_10->setChecked(false);
     GLB_ui->pushButton_20->setChecked(false);
     GLB_ui->pushButton_25->setChecked(false);
-
-    MotorDefStruct[4].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_10_clicked()
 {
     GLB_ui->pushButton_9->setChecked(false);
     GLB_ui->pushButton_20->setChecked(false);
     GLB_ui->pushButton_25->setChecked(false);
-
-    MotorDefStruct[4].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_20_clicked()
 {
@@ -1740,8 +1247,6 @@ void MainWindow::on_pushButton_20_clicked()
     GLB_ui->pushButton_9->setChecked(false);
     GLB_ui->pushButton_10->setChecked(false);
     GLB_ui->pushButton_25->setChecked(false);
-
-    MotorDefStruct[4].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_25_clicked()
 {
@@ -1749,67 +1254,39 @@ void MainWindow::on_pushButton_25_clicked()
     GLB_ui->pushButton_9->setChecked(false);
     GLB_ui->pushButton_10->setChecked(false);
     GLB_ui->pushButton_20->setChecked(false);
-
-    MotorDefStruct[4].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_5_valueChanged(int value)
 {
-    uint8_t numMotor = 4;
-
-    GLB_SliderValue[4] = value;
-    GLB_ui->lineEdit_5->setText(QString::number(GLB_SliderValue[4]));
-
-    // MotorInstr[numMotor].Flags.FL_PWMByte = true;
-    // if(value != 0) MotorInstr[numMotor].configHalfWord |= COM1_PWM;
-    MotorInstr[numMotor].PWM = value;
+    GLB_ui->lineEdit_5->setText(QString::number(value));
 }
 // MOTOR 5
 void MainWindow::on_pushButton_30_clicked()
 {
-
     GLB_ui->pushButton_31->setChecked(false);
     GLB_ui->pushButton_32->setChecked(false);
     GLB_ui->pushButton_33->setChecked(false);
-
-    MotorDefStruct[5].MD1_MoveType = LEFT;
 }
 void MainWindow::on_pushButton_31_clicked()
 {
-
     GLB_ui->pushButton_30->setChecked(false);
     GLB_ui->pushButton_32->setChecked(false);
     GLB_ui->pushButton_33->setChecked(false);
-
-    MotorDefStruct[5].MD1_MoveType = RIGHT;
 }
 void MainWindow::on_pushButton_32_clicked()
 {
-
     GLB_ui->pushButton_30->setChecked(false);
     GLB_ui->pushButton_31->setChecked(false);
     GLB_ui->pushButton_33->setChecked(false);
-
-    MotorDefStruct[5].MD1_MoveType = HOLD;
 }
 void MainWindow::on_pushButton_33_clicked()
 {
-
     GLB_ui->pushButton_30->setChecked(false);
     GLB_ui->pushButton_31->setChecked(false);
     GLB_ui->pushButton_32->setChecked(false);
-
-    MotorDefStruct[5].MD1_MoveType = FREE;
 }
 void MainWindow::on_horizontalSlider_6_valueChanged(int value)
 {
-    uint8_t numMotor = 5;
-
-    GLB_SliderValue[5] = value;
-    GLB_ui->lineEdit_36->setText(QString::number(GLB_SliderValue[5]));
-
-    // MotorInstr[numMotor].Flags.FL_PWMByte = true;
-    // if(value != 0) MotorInstr[numMotor].configHalfWord |= COM1_PWM;
-    MotorInstr[numMotor].PWM = value;
+    GLB_ui->lineEdit_36->setText(QString::number(value));
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1821,181 +1298,84 @@ void MainWindow::on_horizontalSlider_6_valueChanged(int value)
 // Configurate
 void MainWindow::on_pushButton_29_clicked()
 {
-    LNCM = 0;
-    LNCMAN = 0;
+    /*Получение значений*/
 
 
-    SendToTerminal("Configurate", true, 1);
-
-    bool flags_Enable[6] = {false, };       // Is it enabled?
-    uint8_t DataToSend[6][100] = {{0, }, };
-    uint8_t DataToSendALL[100] = {0, };
-    uint32_t CountData = 0;
-
-    for(uint8_t i = 0; i < 6; i++)
+    /*Установка значений в команду*/
+    std::vector<std::map<uint8_t, std::vector<uint8_t>>> tempMap;
+    for (auto &mot : Motor)
     {
-        MotorDefStruct[i].MD_SidePlate = (NumPlate)MotorDefStruct[i].TAB1_CheckBoxBackSide->isChecked();
-        // if(MotorDefStruct[i].MD_SidePlate > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM_SIDEPLATE;
+        std::map<uint8_t, std::vector<uint8_t>> t_mp;
 
-        // }
+        /*Проверка стороны платы на которую отправляем.*/
+        t_mp[PR_PROTOCOL_CODE_SIDEPLATE] = (std::vector<uint8_t>)mot.getSidePlate();
 
-        MotorDefStruct[i].MD_WorkMode = WRM_PWM_MODE;
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM_WORKMODE;
 
-        MotorDefStruct[i].MD1_SelMotor = i;
-        // if(MotorDefStruct[i].MD_SelMotor > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_SELMOTOR;
+        /*Проверка на режим работы ШИМ, УГЛЫ, СТАТУС...*/
+        /*Режим ШИМ*/
 
-        // }
+        // mot.getWorkMode()
+        if (GLB_ui->tab_1->isActiveWindow())
+            t_mp[PR_PROTOCOL_CODE_WORKMODE] = (std::vector<uint8_t>)PR_VAL_WORKMODE_MANUAL;
+        /*Режим углов*/
+        else if (GLB_ui->tab_2->isActiveWindow())
+            t_mp[PR_PROTOCOL_CODE_WORKMODE] = (std::vector<uint8_t>)PR_VAL_WORKMODE_ANGLE;
+        /******************/
+        /*Проверка на команду конфиуграции*/
+        /*
+         *
+         *
+         *
+         *
+         */
 
-        if((!MotorDefStruct[i].TAB1_ComporessButton->isChecked()) &&
-            (!MotorDefStruct[i].TAB1_DecompressButton->isChecked()) &&
-            (!MotorDefStruct[i].TAB1_FreeButton->isChecked()) &&
-            (!MotorDefStruct[i].TAB1_HoldButton->isChecked())) flags_Enable[i] = false;
+        /*Устанавливаем номер двигателя*/
+        t_mp[PR_PROTOCOL_CODE_NUMMOTOR] = (std::vector<uint8_t>)mot.getID();
+        /*Устанавливаем направление*/
+        t_mp[PR_PROTOCOL_CODE_DIRECTION] = (std::vector<uint8_t>)mot.getDirection();
+        /*Устанавливаем PWM*/
+        t_mp[PR_PROTOCOL_CODE_PWM] = (std::vector<uint8_t>)mot.getPWM();
+        /*Устанавливаем WorkTime*/
+        {
+            std::vector<uint8_t> temp;
+            temp.push_back(mot.getWorkTime() & 0x00FF);
+            temp.push_back((mot.getWorkTime() & 0xFF) >> 8);
+            t_mp[PR_PROTOCOL_CODE_TIME] = temp;
+        }
+        /*Устанавливаем WorkDelay*/
+        {
+            std::vector<uint8_t> temp;
+            temp.push_back(mot.getWorkDelay() & 0x00FF);
+            temp.push_back((mot.getWorkDelay()& 0xFF) >> 8);
+            t_mp[PR_PROTOCOL_CODE_DELAY] = temp;
+        }
+        /*Устанавливаем ADC*/
+        t_mp[PR_PROTOCOL_CODE_ADC] = (std::vector<uint8_t>)mot.getADC_State();
+        /*Устанавливаем FeedBack*/
+        t_mp[PR_PROTOCOL_CODE_FEEDBACK] = (std::vector<uint8_t>)mot.getFeedBack();
+        /*Устанавливаем Running*/
+        // t_mp[PR_PROTOCOL_CODE_RUNNING] = (std::vector<uint8_t>)mot.getRunning();
+
+
+
+
+
+
+
+        if (((mot.getPWM() > 0) && (mot.getWorkTime() > 0)) || (mot.getAngle() > 0) || (mot.getSpeed() > 0))
+        {
+            tempMap.push_back(t_mp);
+        }
         else
         {
-            MotorDefStruct[i].MD1_MoveType;
-            flags_Enable[i] = true;
+            // qInfo() << "Please select parameters to move";
         }
-        // if(MotorDefStruct[i].MD_MoveType > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TYPEMOVE;
-
-        // }
-
-        MotorDefStruct[i].MD1_PWM = std::stof(MotorDefStruct[i].TAB1_LineEditPWM->text().toStdString());
-        // if(MotorDefStruct[i].MD_PWM > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_PWM;
-
-        // }
-
-        MotorDefStruct[i].MD1_TimeWork = std::stof(MotorDefStruct[i].TAB1_LineEditWorkTime->text().toStdString()) * 100;
-        // if(MotorDefStruct[i].MD_TimeWork > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_TIMEWORK;
-
-        // }
-
-        MotorDefStruct[i].MD1_TimeDelay = std::stof(MotorDefStruct[i].TAB1_LineEditDelayTime->text().toStdString()) * 100;
-        // if(MotorDefStruct[i].MD_TimeDelay > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_DELAY;
-        // }
-
-        MotorDefStruct[i].MD1_ADC_CH = MotorDefStruct[i].TAB1_CheckBoxADC->isChecked();
-        // if(MotorDefStruct[i].MD_ADC_CH > 0)
-        // {
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM1_ADC;
-        // }
-
-        MotorDefStruct[i].MD_Config_2 |= MASK_COM1_START_INSTR >> 8;
-        if(MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower->isChecked()) MotorDefStruct[i].MD1_StartInstr |= (1 << 1);
-        else MotorDefStruct[i].MD1_StartInstr &= ~(1 << 1);
     }
-
-    uint8_t del_mot = 0;
-    uint8_t nowCnt = 0;
-    for(uint8_t i = 0; i < 6; i++)
-    {
-        if(!flags_Enable[i])
-        {
-            del_mot++;
-            continue;
-        }
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_1;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_2;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_SidePlate;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_WorkMode;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_SelMotor;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_MoveType;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_PWM;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_TimeWork & 0x00FF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD1_TimeWork & 0xFF00) >> 8;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_TimeDelay & 0x00FF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD1_TimeDelay & 0xFF00) >> 8;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_ADC_CH;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD1_StartInstr;
-
-        if(MotorDefStruct[i].MD1_ADC_CH == 0x01)
-        {
-            if(MotorDefStruct[i].MD_SidePlate == EXTERN_PLATE) LNCMAN_Indexes[i + 6] = true;
-            else if(MotorDefStruct[i].MD_SidePlate == INTERN_PLATE) LNCMAN_Indexes[i] = true;
-        }
-        nowCnt++;
-
-        DataToSend[i][nowCnt] = 0xFF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = 0xDD;
-        nowCnt++;
-
-        for(uint8_t t = 0; t < nowCnt; t++)
-        {
-            DataToSendALL[((i - del_mot) * nowCnt) + t] = DataToSend[i][t];
-        }
-
-        CountData += nowCnt;
-        nowCnt = 0;
-        LNCM++;
-
-        LNCMAN.append(i);
-    }
-
-
-    ComPortWrite(DataToSendALL, CountData);
-    CountData = 0;
-
-    memset(&DataToSend, 0, sizeof(DataToSend));
-    memset(&DataToSendALL, 0, sizeof(DataToSendALL));
-
 }
 // Start insturction
 void MainWindow::on_pushButton_34_clicked()
 {
-    uint8_t DataToSendALL[100] = {0, };
-    uint8_t nowCnt = 0;
 
-    SendToTerminal("Start instruction", true, 1);
-
-    DataToSendALL[nowCnt] |= MASK_COM_SIDEPLATE | MASK_COM_WORKMODE;    // config_1
-    nowCnt++;
-    DataToSendALL[nowCnt] |= MASK_COM1_START_INSTR >> 8;                 // config_2
-    nowCnt++;
-    DataToSendALL[nowCnt] |= (NumPlate)MotorDefStruct[0].TAB1_CheckBoxBackSide->isChecked();   // select plate
-    nowCnt++;
-    DataToSendALL[nowCnt] |= WRM_PWM_MODE;                              // select workmode
-    nowCnt++;
-    DataToSendALL[nowCnt] = 0x01;                                       // start instruct byte
-    if(MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower->isChecked()) DataToSendALL[nowCnt] |= (1 << 1);
-    else DataToSendALL[nowCnt] &= ~(1 << 1);
-    nowCnt++;
-
-
-
-
-    DataToSendALL[nowCnt] = 0xFF;
-    nowCnt++;
-    DataToSendALL[nowCnt] = 0xDD;
-    nowCnt++;
-
-    LTC = (LastTypeCommand)WRM_PWM_MODE;
-    Instruct_FLAG = true;
-    ComPortWrite(DataToSendALL, nowCnt);
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -2008,170 +1388,13 @@ void MainWindow::on_pushButton_34_clicked()
 /*Configuration*/
 void MainWindow::on_pushButton_36_clicked()
 {
-    LNCM = 0;
-    LNCMAN = 0;
-
-    SendToTerminal("Configurate", true, 1);
-
-    bool flags_Enable[6] = {false, };       // Is it enabled?
-    uint8_t DataToSend[6][100] = {{0, }, };
-    uint8_t DataToSendALL[100] = {0, };
-    uint32_t CountData = 0;
-
-
-
-
-    for(uint8_t i = 0; i < 6; i++)
-    {
-        MotorDefStruct[i].MD_SidePlate = (NumPlate)MotorDefStruct[i].TAB2_CheckBoxBackSide->isChecked();
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM_SIDEPLATE;
-
-        MotorDefStruct[i].MD_WorkMode = WRM_ANGLE_MODE;
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM_WORKMODE;
-
-        MotorDefStruct[i].MD2_SelMotor = i;
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_SELMOTOR;
-
-        if(!MotorDefStruct[i].TAB2_FingerButton->isChecked()) flags_Enable[i] = false;
-        else
-        {
-            if(MotorDefStruct[i].TAB2_CheckBoxBackReverse->isChecked()) MotorDefStruct[i].MD2_MoveType = RIGHT;
-            else MotorDefStruct[i].MD2_MoveType = LEFT;
-            // MotorDefStruct[i].MD2_MoveType = ANGLE_MODE; // This descrip. for old angle mode
-            flags_Enable[i] = true;
-        }
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_TYPEMOVE;
-
-        MotorDefStruct[i].MD2_Angle = std::stof(MotorDefStruct[i].TAB2_LineEditAngle->text().toStdString());
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_ANGLE;
-
-        MotorDefStruct[i].MD2_Time = std::stof(MotorDefStruct[i].TAB2_LineEditTime->text().toStdString()) * 100;
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_TIME;
-
-        MotorDefStruct[i].MD2_Speed = std::stof(MotorDefStruct[i].TAB2_LineEditSpeed->text().toStdString()) * 100;
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_SPEED;
-
-        MotorDefStruct[i].MD2_Delay = std::stof(MotorDefStruct[i].TAB2_LineEditDelay->text().toStdString()) * 100;
-        MotorDefStruct[i].MD_Config_1 |= MASK_COM2_DELAY;
-
-        MotorDefStruct[i].MD2_FeedBack = MotorDefStruct[i].TAB2_CheckBoxCH->isChecked();
-        MotorDefStruct[i].MD_Config_2 |= MASK_COM2_FEEDBACK >> 8;
-    }
-
-    uint8_t nowCnt = 0;
-    uint8_t del_mot = 0;
-    for(uint8_t i = 0; i < 6; i++)
-    {
-        if(!flags_Enable[i])
-        {
-            del_mot++;
-            continue;
-        }
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_1;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_Config_2;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_SidePlate;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD_WorkMode;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_SelMotor;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_MoveType;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Angle & 0x00FF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Angle & 0xFF00) >> 8;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Time & 0x00FF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Time & 0xFF00) >> 8;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Speed & 0x00FF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Speed & 0xFF00) >> 8;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_Delay & 0x00FF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = (MotorDefStruct[i].MD2_Delay & 0xFF00) >> 8;
-        nowCnt++;
-        DataToSend[i][nowCnt] = MotorDefStruct[i].MD2_FeedBack;
-
-        if(MotorDefStruct[i].MD2_FeedBack == 0x01)
-        {
-            if(MotorDefStruct[i].MD_SidePlate == EXTERN_PLATE) LNCMAN_Indexes[i + 6] = true;
-            else if(MotorDefStruct[i].MD_SidePlate == INTERN_PLATE) LNCMAN_Indexes[i] = true;
-        }
-        nowCnt++;
-
-        DataToSend[i][nowCnt] = 0xFF;
-        nowCnt++;
-        DataToSend[i][nowCnt] = 0xDD;
-        nowCnt++;
-
-        for(uint8_t t = 0; t < nowCnt; t++)
-        {
-            DataToSendALL[((i - del_mot) * nowCnt) + t] = DataToSend[i][t];
-        }
-
-        CountData += nowCnt;
-        nowCnt = 0;
-        LNCM++;
-    }
-
-    ComPortWrite(DataToSendALL, CountData);
-    CountData = 0;
-
-    memset(&DataToSend, 0, sizeof(DataToSend));
-    memset(&DataToSendALL, 0, sizeof(DataToSendALL));
 
 }
 /*Start Instuction 2*/
 void MainWindow::on_pushButton_35_clicked()
 {
-    uint8_t DataToSendALL[100] = {0, };
-    uint8_t nowCnt = 0;
-
-    SendToTerminal("Start instruction", true, 1);
-
-    DataToSendALL[nowCnt] |= MASK_COM_SIDEPLATE | MASK_COM_WORKMODE;    // config_1
-    nowCnt++;
-    DataToSendALL[nowCnt] |= MASK_COM2_START_INSTR >> 8;                // config_2
-    nowCnt++;
-    DataToSendALL[nowCnt] |= (NumPlate)MotorDefStruct[0].TAB2_CheckBoxBackSide->isChecked();   // select plate
-    nowCnt++;
-    DataToSendALL[nowCnt] |= WRM_ANGLE_MODE;                            // select workmode
-    nowCnt++;
-    DataToSendALL[nowCnt] = 0x01;                                       // start instruct byte
-    nowCnt++;
-
-    DataToSendALL[nowCnt] = 0xFF;
-    nowCnt++;
-    DataToSendALL[nowCnt] = 0xDD;
-    nowCnt++;
-
-
-    Instruct_FLAG = true;
-    LTC = (LastTypeCommand)WRM_ANGLE_MODE;
-
-    ComPortWrite(DataToSendALL, nowCnt);
 
 }
-
-
-/*Channels ADC*/
-// Channel_1
-
-// Channel_2
-
-// Channel_3
-
-// Channel_4
-
-// Channel_5
-
-// Channel_None
-
 
 /*TypeControl*/
 //Angle
@@ -2404,65 +1627,7 @@ void MainWindow::on_checkBox_9_toggled(bool checked)
 }
 void MainWindow::on_pushButton_11_clicked()
 {
-    // CheckGlobalStateMotorVariables();
 
-    // for(uint8_t i = 0; i < 6; i++) memset(&MotorInstr[i].Flags, 0, sizeof(MotorInstr[i]));
-    // /**/
-    // uint8_t DataToSend[10] = {0, };
-    // uint8_t cnt = 0;
-    // uint16_t newConf = COM2_START_INSTR | COM_WORKMODE;
-    // DataToSend[cnt] = newConf & 0x00FF;
-    // cnt++;
-    // DataToSend[cnt] = (newConf & 0xFF00) >> 8;
-    // cnt++;
-    // DataToSend[cnt] = GLB_Command.ModeWorkByte;
-    // cnt++;
-
-    // if(MotorInstr[i].Flags.FL_SelMotByte)
-    // {
-    //     DataToSend[i][cnt[i]] = MotorInstr[i].SelMotor;
-    //     cnt[i]++;
-    // }
-    // if(MotorInstr[i].Flags.FL_TypeMoveByte)
-    // {
-    //     DataToSend[i][cnt[i]] = MotorInstr[i].TypeMove;
-    //     cnt[i]++;
-    // }
-    // if(MotorInstr[i].Flags.FL_PWMByte)
-    // {
-    //     DataToSend[i][cnt[i]] = MotorInstr[i].PWM;
-    //     cnt[i]++;
-    // }
-    // if(MotorInstr[i].Flags.FL_TimeWorkByte)
-    // {
-    //     DataToSend[i][cnt[i]] = MotorInstr[i].TimeWork & 0x00FF;
-    //     cnt[i]++;
-    //     DataToSend[i][cnt[i]] = (MotorInstr[i].TimeWork & 0xFF00) >> 8;
-    //     cnt[i]++;
-    // }
-    // if(MotorInstr[i].Flags.FL_DelayWorkByte)
-    // {
-    //     DataToSend[i][cnt[i]] = MotorInstr[i].DelayWork & 0x00FF;
-    //     cnt[i]++;
-    //     DataToSend[i][cnt[i]] = (MotorInstr[i].DelayWork & 0xFF00) >> 8;
-    //     cnt[i]++;
-    // }
-    // if(MotorInstr[i].Flags.FL_ADC_EnByte)
-    // {
-    //     DataToSend[i][cnt[i]] = MotorInstr[i].ADC_En;
-    //     cnt[i]++;
-    // }
-    // DataToSend[i][cnt[i]] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ
-
-
-    // DataToSend[cnt] = GLB_Command.StartInstruct;
-    // cnt++;
-    // DataToSend[cnt] = 0xFF;           ///////////// БАЙТ РАЗДЕЛИТЕЛЬ / УКАЗАТЕЛЬ
-    // cnt++;
-    // ComPortWrite(0, (unsigned char*)DataToSend, cnt);
-
-
-    // !!! CHECK CHECBOX   GLB_WinObj.GLB_WindowsCheckBox[11]
 }
 
 // Auto-Detect CheckBox
@@ -2476,11 +1641,11 @@ void MainWindow::on_checkBox_29_clicked(bool checked)
 {
     if (checked)
     {
-        GLB_WinObj.GLB_WindowsLineEdit[45]->setEnabled(true);
+        GLB_ui->lineEdit_18->setEnabled(true);
     }
     else
     {
-        GLB_WinObj.GLB_WindowsLineEdit[45]->setEnabled(false);
+        GLB_ui->lineEdit_18->setEnabled(false);
     }
 }
 
@@ -2488,14 +1653,16 @@ void MainWindow::on_checkBox_31_clicked(bool checked)
 {
     if (checked)
     {
-        GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(true);
+        GLB_ui->lineEdit_50->setEnabled(true);
     }
     else
     {
-        GLB_WinObj.GLB_WindowsLineEdit[46]->setEnabled(false);
+        GLB_ui->lineEdit_50->setEnabled(false);
     }
 }
 
-
-
+void MainWindow::on_comboBox_currentIndexChanged(int index)
+{
+   emit signal_ComportConnect(GLB_ui->comboBox->itemText(index), GLB_ui->lineEdit_17->text().toInt());
+}
 
