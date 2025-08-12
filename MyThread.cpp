@@ -248,6 +248,7 @@ void MyThread_1::ComPortRead()
             while(serialPort->waitForReadyRead(500))
             {
                 newData += serialPort->readAll();
+                lastTime = QDateTime::currentMSecsSinceEpoch();
             }
             for (auto &byte : newData)
             {
@@ -261,43 +262,61 @@ void MyThread_1::ComPortRead()
             GLB_RecvData.clear();
             newData.clear();
         }
-        if(QDateTime::currentMSecsSinceEpoch() - lastTime > 10000)
+        if(QDateTime::currentMSecsSinceEpoch() - lastTime > 2000)
         {
             break;
         }
     }
 
-    if(GLB_RecvData.isEmpty())
-    {
-        return /*QVector<uint8_t>()*/;
-    }
-    else
-    {
+    if(GLB_RecvData.isEmpty()) return;
+    else {
         bool find_exit = false;
         uint8_t last_byte = 0;
         GLB_Graph_y.clear();
-        for (auto &dat : GLB_RecvData)
-        {
-            if (last_byte == PR_PROTOCOL_ADC_PACK_START.first && dat == PR_PROTOCOL_ADC_PACK_START.second)
-            {
+        for (auto &dat : GLB_RecvData) {
+            if (last_byte == PR_PROTOCOL_PACK_DATA_RECV_START.first && dat == PR_PROTOCOL_PACK_DATA_RECV_START.second) {
                 find_exit = true;
                 qInfo() << "Find start in pack";
             }
-            else if (last_byte == PR_PROTOCOL_ADC_PACK_STOP.first && dat == PR_PROTOCOL_ADC_PACK_STOP.second)
-            {
+            else if (last_byte == PR_PROTOCOL_PACK_DATA_RECV_STOP.first && dat == PR_PROTOCOL_PACK_DATA_RECV_STOP.second) {
                 find_exit = false;
                 qInfo() << "Find stop in pack";
             }
-            else if (find_exit)
-            {
+            else if (find_exit) {
                 GLB_Graph_y.push_back(dat);
+
+                if ()
+                {
+
+                }
+                else if ()
+                {
+
+                }
+
+
+
+
             }
             last_byte = dat;
         }
-        if (!GLB_Graph_y.empty())
-        {
+        if (!GLB_Graph_y.empty()) {
             GLB_Graph_y.pop_back();
-            emit signal_PaintGraph();
+
+            /*РАЗБИВАЕМ НА ДАННЫЕ ПО ТОКУ И УГЛУ*/
+
+
+
+
+
+
+
+
+
+        emit signal_PaintGraph();
+
+
+
         }
         qInfo() << "Count data: " << c_data;
     }
