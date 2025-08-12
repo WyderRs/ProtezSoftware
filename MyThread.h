@@ -3,6 +3,8 @@
 #include <QSerialPortInfo>
 #include <QDebug>
 #include <QWaitCondition>
+#include <QTimer>
+#include <QDateTime>
 
 class MyThread_1 : public QThread
 {
@@ -15,10 +17,10 @@ public:
     bool ComPortConnect(const QString &portName, qint32 baudRate = QSerialPort::Baud115200);
     void ComPortClose();
 
-    QString ComPortWrite(const uint8_t *data, uint32_t cntdata);
-
+    QString ComPortWrite(std::vector<uint8_t>);
+    void ComPortRead();
 signals:
-    void dataReceived(const QByteArray &data);
+    void dataReceived(const std::vector<uint8_t> &data);
     void portClosed();
     void errorOccurred(const QString &error);
 
@@ -30,16 +32,19 @@ signals:
     void signal_ComportSearchBack(QList<QString>);
     void signal_ComportConnectBack(QString);
     void signal_ComportCloseBack(QString);
+    void signal_ComportWriteBack();
+    void signal_ComportReadBack();
+
+    void signal_PaintGraph();
 public slots:
-    void on_ComPortSearch();
-    void on_ComPortConnect(QString, qint32 baudRate);
+    void on_ComportSearch();
+    void on_ComportConnect(QString, qint32 baudRate);
+    void on_ComportClose();
+    void on_ComportWrite(std::vector<uint8_t>);
+    void on_ComportStartRead();
 
 protected:
     void run() override;
-
-private slots:
-    void onReadyRead();
-
 private:
     QSerialPort *serialPort = nullptr;
     bool stopThread = false;

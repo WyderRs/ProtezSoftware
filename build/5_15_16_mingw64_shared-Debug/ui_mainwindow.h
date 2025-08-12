@@ -168,6 +168,9 @@ public:
     QCheckBox *checkBox_29;
     QLineEdit *lineEdit_18;
     QPushButton *pushButton_41;
+    QFrame *frame_10;
+    QLabel *label_7;
+    QLabel *label_12;
     QWidget *tab_2;
     QPushButton *pushButton_14;
     QPushButton *pushButton_15;
@@ -855,6 +858,23 @@ public:
         pushButton_41 = new QPushButton(tab_1);
         pushButton_41->setObjectName(QString::fromUtf8("pushButton_41"));
         pushButton_41->setGeometry(QRect(80, 530, 61, 21));
+        frame_10 = new QFrame(tab_1);
+        frame_10->setObjectName(QString::fromUtf8("frame_10"));
+        frame_10->setGeometry(QRect(450, 380, 281, 211));
+        frame_10->setFrameShape(QFrame::Box);
+        frame_10->setFrameShadow(QFrame::Raised);
+        label_7 = new QLabel(frame_10);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+        label_7->setGeometry(QRect(10, 10, 261, 16));
+        QFont font;
+        font.setBold(true);
+        label_7->setFont(font);
+        label_7->setAlignment(Qt::AlignCenter);
+        label_12 = new QLabel(frame_10);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+        label_12->setGeometry(QRect(200, 30, 61, 20));
+        label_12->setFont(font);
+        label_12->setAlignment(Qt::AlignCenter);
         tabWidget->addTab(tab_1, QString());
         frame_4->raise();
         checkBox_4->raise();
@@ -934,6 +954,7 @@ public:
         frame_5->raise();
         frame_8->raise();
         pushButton_41->raise();
+        frame_10->raise();
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
         pushButton_14 = new QPushButton(tab_2);
@@ -1438,7 +1459,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
         pushButton->setDefault(false);
 
 
@@ -1549,6 +1570,8 @@ public:
         lineEdit_18->setText(QString());
         lineEdit_18->setPlaceholderText(QCoreApplication::translate("MainWindow", "NameFile", nullptr));
         pushButton_41->setText(QCoreApplication::translate("MainWindow", "TEST", nullptr));
+        label_7->setText(QCoreApplication::translate("MainWindow", "Operation", nullptr));
+        label_12->setText(QCoreApplication::translate("MainWindow", "Interval", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_1), QCoreApplication::translate("MainWindow", "PWM Mode", nullptr));
         pushButton_14->setText(QCoreApplication::translate("MainWindow", "Thumb", nullptr));
         pushButton_15->setText(QCoreApplication::translate("MainWindow", "Index", nullptr));

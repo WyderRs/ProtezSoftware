@@ -6,6 +6,8 @@
 ProtezCommand::ProtezCommand() {}
 ProtezCommand::~ProtezCommand() {}
 
+std::vector<uint8_t> ProtezCommand::GlobalDataRecv;
+bool ProtezCommand::packetStarted;
 
 void ProtezCommand::add(std::map<uint8_t, std::vector<uint8_t>> com)
 {
@@ -23,9 +25,8 @@ void ProtezCommand::setCommand(std::vector<std::map<uint8_t, std::vector<uint8_t
 {
     Commands = data;
 }
-std::vector<std::vector<uint8_t>> ProtezCommand::existCollectData()
+std::vector<uint8_t> ProtezCommand::existCollectData()
 {
-    std::vector<std::vector<uint8_t>> colDat;
     std::vector<uint8_t> colCom;
 
     colCom.push_back(PR_PROTOCOL_START_PACK.first);
@@ -52,12 +53,6 @@ std::vector<std::vector<uint8_t>> ProtezCommand::existCollectData()
     colCom.push_back(PR_PROTOCOL_STOP_PACK.first);
     colCom.push_back(PR_PROTOCOL_STOP_PACK.second);
 
-    return colDat;
+    Commands.clear();
+    return colCom;
 }
-
-
-
-
-
-
-

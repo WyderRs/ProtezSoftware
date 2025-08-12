@@ -42,11 +42,11 @@ Protez_WorkMode ProtezMotor::getWorkMode()
 
 Protez_TypeMove ProtezMotor::getDirection()
 {
-    if (MANUAL_Button_compress) return Compress;
-    else if (MANUAL_Button_decompress) return Decompress;
-    else if (MANUAL_Button_hold) return Hold;
-    else if (MANUAL_Button_stop) return Stop;
-    else return MoveNone;
+    if (MANUAL_Button_compress->isChecked()) return Compress;
+    else if (MANUAL_Button_decompress->isChecked()) return Decompress;
+    else if (MANUAL_Button_hold->isChecked()) return Hold;
+    else if (MANUAL_Button_stop->isChecked()) return Stop;
+    else return Stop;
 }
 // void ProtezMotor::setPWM(uint8_t pwm)
 // {
@@ -62,7 +62,7 @@ uint8_t ProtezMotor::getPWM()
 // }
 uint16_t ProtezMotor::getWorkTime()
 {
-    return MANUAL_LineEdit_WorkTime->text().toInt();
+    return (uint16_t)(MANUAL_LineEdit_WorkTime->text().toDouble() * 100);
     // return WorkTime;
 }
 // void ProtezMotor::setAngle(uint16_t agl)
@@ -88,7 +88,7 @@ uint16_t ProtezMotor::getSpeed()
 // }
 uint16_t ProtezMotor::getWorkDelay()
 {
-    return MANUAL_LineEdit_WorkDelay->text().toInt();
+    return (uint16_t)(MANUAL_LineEdit_WorkDelay->text().toDouble() * 100);
     // return WorkDelay;
 }
 // void ProtezMotor::setADC_State(Protez_ADCState st)
@@ -116,6 +116,7 @@ Protez_FeedBack ProtezMotor::getFeedBack()
 Protez_Running ProtezMotor::getRunning()
 {
     // return Running;
+    return Run_Start;
 }
 
 

@@ -54,7 +54,9 @@ class ProtezCommand
 {
 private:
     std::vector<std::map<uint8_t, std::vector<uint8_t>>> Commands;
-
+public:
+    static std::vector<uint8_t> GlobalDataRecv;
+    static bool packetStarted;
 public:
     ProtezCommand();
     ~ProtezCommand();
@@ -62,10 +64,10 @@ public:
     void add(std::map<uint8_t, std::vector<uint8_t>>);
     void clear();
 
-    std::map<uint8_t, std::vector<uint8_t>>  getCommand(uint8_t);
+    std::map<uint8_t, std::vector<uint8_t>> getCommand(uint8_t);
     void setCommand(std::vector<std::map<uint8_t, std::vector<uint8_t>>>);
 
-    std::vector<std::vector<uint8_t>> existCollectData();
+    std::vector<uint8_t> existCollectData();
 };
 
 #endif // PROTEZCOMMAND_H

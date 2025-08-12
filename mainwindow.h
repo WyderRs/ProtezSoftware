@@ -232,7 +232,7 @@ public:
 
 public slots:
 
-    void PaintGraph();
+    void on_PaintGraph();
 
 private slots:
 
@@ -421,13 +421,17 @@ signals:
 
     void signal_ComportSearch();
     void signal_ComportConnect(QString, qint32 baudRate);
-
+    void signal_ComportClose();
+    void signal_ComportWrite(std::vector<uint8_t>);
+    void signal_ComportStartRead();
 
 
 public slots:
     void on_ComportSearchBack(QList<QString>);
     void on_ComportConnectBack(QString);
     void on_ComportCloseBack(QString);
+    void on_ComportWriteBack();
+    void on_ComportReadBack();
 
 };
 
