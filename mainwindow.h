@@ -232,7 +232,8 @@ public:
 
 public slots:
 
-    void on_PaintGraph();
+    void on_PaintGraphADC();
+    void on_PaintGraphFeedBack();
 
 private slots:
 

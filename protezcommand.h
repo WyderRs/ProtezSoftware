@@ -38,17 +38,14 @@
 
 
 /*FOR SEND*/
-#define PR_PROTOCOL_START_PACK      std::pair<uint8_t, uint8_t>(0xEA, 0xBC)
-#define PR_PROTOCOL_STOP_PACK       std::pair<uint8_t, uint8_t>(0xBC, 0xAE)
+#define PR_PROTOCOL_START_PACK              std::pair<uint8_t, uint8_t>(0xEA, 0xBC)
+#define PR_PROTOCOL_STOP_PACK               std::pair<uint8_t, uint8_t>(0xBC, 0xAE)
 
-#define PR_PROTOCOL_START           std::pair<uint8_t, uint8_t>(0xDE, 0xAD)
-#define PR_PROTOCOL_STOP            std::pair<uint8_t, uint8_t>(0xBE, 0xEF)
+#define PR_PROTOCOL_START                   std::pair<uint8_t, uint8_t>(0xDE, 0xAD)
+#define PR_PROTOCOL_STOP                    std::pair<uint8_t, uint8_t>(0xBE, 0xEF)
 /*FOR RECV*/
-#define PR_PROTOCOL_PACK_DATA_RECV_START	std::pair<uint8_t, uint8_t>(0xAA, 0x55)
-#define PR_PROTOCOL_PACK_DATA_RECV_STOP     std::pair<uint8_t, uint8_t>(0x66, 0x11)
 
-
-#define PR_PROTOCOL_PACK_ADC_START          std::pair<uint8_t, uint8_t>(0xAA, 0xDD)
+#define PR_PROTOCOL_PACK_ADC_START          std::pair<uint8_t, uint8_t>(0xEE, 0xDD)
 #define PR_PROTOCOL_PACK_ADC_STOP           std::pair<uint8_t, uint8_t>(0xCC, 0xBB)
 
 #define PR_PROTOCOL_PACK_FEEDBACK_START     std::pair<uint8_t, uint8_t>(0x44, 0xDD)

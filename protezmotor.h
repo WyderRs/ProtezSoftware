@@ -146,6 +146,8 @@ public:
     void setID(uint8_t);
     uint8_t getID();
 
+    // void clearAllParam();
+
     // void setSidePlate(Protez_SideType);
     Protez_SideType getSidePlate();
 
@@ -178,6 +180,8 @@ public:
 
     // void setRunning(Protez_Running);
     Protez_Running getRunning();
+
+
 
     /**********/
 

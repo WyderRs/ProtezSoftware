@@ -36,7 +36,7 @@ uint16_t ComportCountDataIndexCnt;
 
 /*Graph variables*/
 QVector<uint8_t> GLB_Graph_x;
-QVector<uint8_t> GLB_Graph_y;
+QVector<uint8_t> GLB_RecvRowData;
 
 /*File variables*/
 QString RepositoryURL;
@@ -143,250 +143,261 @@ double _2ByteTo_1Byte(uint16_t halfWorld)
 {
     return halfWorld;
 }
-void MainWindow::on_PaintGraph()
+
+
+void MainWindow::on_PaintGraphADC()
 {
-    LTC = Last_PWM_MODE;
-    if(LTC == Last_PWM_MODE)
+    QVector<double> DataMotor_x[12], DataMotor_y[12];
+    QVector<double> AllDataToGraph;
+    if ((GLB_RecvRowData.size() % 2) == 1)
     {
-        QVector<double> DataMotor_x[12], DataMotor_y[12];
-        QVector<double> AllDataToGraph;
-        for(uint32_t i = 0; i < (uint32_t)(GLB_Graph_y.size()); i = i + 2) {
-            AllDataToGraph.append(FormulaADC((GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8)));
-        }
-        QByteArray TempIndexes;
-        uint8_t countEnabled = 0;
-        bool IndexEnabled[12];
-
-        uint8_t index = 0;
-        for (auto &mot : Motor) {
-            if (mot.getADC_State() == ADC_Enable) {
-                IndexEnabled[index] = true;
-                countEnabled++;
-            }
-            index++;
-        }
-        for(uint8_t i = 0; i < 12; i++) {
-            if(IndexEnabled[i]) {
-                for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - countEnabled); j = j + countEnabled) {
-                    DataMotor_y[i].append(AllDataToGraph[j]);
-                }
-                TempIndexes.append(i);
-            }
-        }
-
-        // for(uint8_t i = 0; i < LNCMAN_len; i++)
-        // {
-        //     for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
-        //     {
-        //         DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
-        //     }
-        // }
-
-
-        double cf_mid = 0.2;
-        for(uint8_t i = 0; i < countEnabled; i++) {
-            for(uint16_t j = 1; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++) {
-                DataMotor_y[(uint16_t)TempIndexes[i]][j] =
-                    cf_mid * DataMotor_y[(uint16_t)TempIndexes[i]][j] + (1 - cf_mid) * DataMotor_y[(uint16_t)TempIndexes[i]][j - 1];
-            }
-        }
-
-        for(uint8_t i = 0; i < countEnabled; i++)
-        {
-            double MaxVal_x = 0;
-            double MaxVal_y = 0;
-            double MinVal_x = 0;
-            double MinVal_y = 0;
-            float value_time = 0;
-
-            if((uint16_t)TempIndexes[i] < 6)
-                value_time = MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toFloat();
-            else if((uint16_t)TempIndexes[i] >= 6)
-                value_time = MotorDefStruct[(uint16_t)TempIndexes[i - 6]].TAB1_LineEditWorkTime->text().toFloat();
-
-            double Step = value_time / DataMotor_y[(uint16_t)TempIndexes[i]].size();
-
-
-            for(double j = 0; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++) {
-                DataMotor_x[(uint16_t)TempIndexes[i]].append(Step * j);
-                if(MaxVal_x < DataMotor_x[(uint16_t)TempIndexes[i]][j]) MaxVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
-                if(MinVal_x > DataMotor_x[(uint16_t)TempIndexes[i]][j]) MinVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
-                if(MaxVal_y < DataMotor_y[(uint16_t)TempIndexes[i]][j]) MaxVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
-                if(MinVal_y > DataMotor_y[(uint16_t)TempIndexes[i]][j]) MinVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
-            }
-
-            qDebug().nospace() << "CH #" << i << " NumPack: " <<
-                DataMotor_y[(uint8_t)IndexEnabled[i]].size() << " ==> "
-                               << "MaxX: " << MaxVal_x << ", "
-                               << "MaxY: " << MaxVal_y << ", "
-                               << "MinX: " << MinVal_x << ", "
-                               << "MinY: " << MinVal_y;
-
-            // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
-
-            if((uint16_t)TempIndexes[i] < 6) {
-                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
-                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
-                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->addGraph();
-                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1GraphPen);
-                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
-                MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->replot();
-            }
-            if((uint16_t)TempIndexes[i] >= 6) {
-                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->xAxis->setRange(MinVal_x, MaxVal_x);
-                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->yAxis->setRange(MinVal_y, MaxVal_y);
-                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->addGraph();
-                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1GraphPen);
-                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
-                MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->replot();
-            }
-
-        }
-
-        if (GLB_ui->checkBox_29->isChecked()) {
-            int fileIndex = 1;
-            QString fileName;
-            QFile file;
-
-            // Ищем первый свободный номер файла
-            do {
-                fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/" + GLB_ui->lineEdit_18->text()
-                                   + "_N" + "1" + "P" + GLB_ui->lineEdit->text() + "_%1" + ".txt").arg(fileIndex);
-                // fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/file.txt");
-
-                file.setFileName(fileName);
-                fileIndex++;
-            } while (file.exists());
-
-            // Открываем файл для записи
-            if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-            {
-                QTextStream out(&file);
-
-                int size = DataMotor_x[0].size();
-                for (int i = 0; i < size; ++i)
-                {
-                    out << DataMotor_x[0][i] << '\t' << DataMotor_y[0][i] << "\n";
-                }
-
-                file.close();
-                qDebug() << "Data is saved to file:" << fileName;
-            }
-            else
-            {
-                qWarning() << "Data don`t save to file" << fileName;
-            }
-            file.close();
-        }
-
-        LNCM = 0;
-        memset(IndexEnabled, '\0', 12);
+        qInfo() << "======ERROR: data more on 1======";
+        return;
     }
-    // else if(LTC == Last_ANGLE_MODE)
+    for(uint32_t i = 0; i < (uint32_t)(GLB_RecvRowData.size()); i = i + 2) {
+        AllDataToGraph.append(FormulaADC((GLB_RecvRowData[i]) | (GLB_RecvRowData[i + 1] << 8)));
+    }
+    QByteArray TempIndexes = 0;
+    uint8_t countEnabled = 0;
+    bool IndexEnabled[12] = {0, };
+
+    uint8_t index = 0;
+    for (auto &mot : Motor) {
+        if ((mot.getADC_State() == ADC_Enable) && (mot.getDirection() != MoveNone)) {
+            IndexEnabled[index] = true;
+            countEnabled++;
+        }
+        index++;
+    }
+    uint8_t i_2 = 0;
+    for(uint8_t i = 0; i < 12; i++) {
+        if(IndexEnabled[i]) {
+            for(uint32_t j = i_2; j < (uint32_t)(AllDataToGraph.size() - countEnabled); j = j + countEnabled) {
+                DataMotor_y[i].append(AllDataToGraph[j]);
+            }
+            TempIndexes.append(i);
+            i_2++;
+        }
+    }
+
+    // for(uint8_t i = 0; i < LNCMAN_len; i++)
     // {
-    //     QVector<double> DataMotor_x[12], DataMotor_y[12];
-    //     // Собираем все данные по парам байт
-    //     QVector<double> AllDataToGraph;
-    //     for(uint32_t i = 0; i < (uint32_t)(GLB_Graph_y.size()); i = i + 2)
+    //     for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
     //     {
-    //         AllDataToGraph.append((GLB_Graph_y[i]) | (GLB_Graph_y[i + 1] << 8));
+    //         DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
     //     }
-
-
-    //     // uint8_t LNCMAN_len = LNCMAN.length();
-    //     uint8_t LNCMAN_len = 0;
-    //     QByteArray TempIndexes;
-    //     for(auto item : LNCMAN_Indexes)
-    //     {
-    //         if(item) LNCMAN_len++;
-    //     }
-
-    //     for(uint8_t i = 0; i < 12; i++)
-    //     {
-    //         if(LNCMAN_Indexes[i])
-    //         {
-    //             for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
-    //             {
-    //                 DataMotor_y[i].append(AllDataToGraph[j]);
-    //             }
-    //             TempIndexes.append(i);
-    //         }
-    //     }
-
-
-    //     // for(uint8_t i = 0; i < LNCMAN_len; i++)
-    //     // {
-    //     //     for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
-    //     //     {
-    //     //         DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
-    //     //     }
-    //     // }
-    //     // Скользящяя средняя 2 варианта
-    //     // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
-    //     //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
-
-    //     double cf_mid = 0.2;
-    //     for(uint8_t i = 0; i < LNCMAN_len; i++)
-    //     {
-    //         for(uint16_t j = 1; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
-    //         {
-    //             DataMotor_y[(uint16_t)TempIndexes[i]][j] =
-    //                 cf_mid * DataMotor_y[(uint16_t)TempIndexes[i]][j] + (1 - cf_mid) * DataMotor_y[(uint16_t)TempIndexes[i]][j - 1];
-    //         }
-    //     }
-
-    //     for(uint8_t i = 0; i < LNCMAN_len; i++)
-    //     {
-    //         double MaxVal_x = 0;
-    //         double MaxVal_y = 0;
-    //         double MinVal_x = 0;
-    //         double MinVal_y = 0;
-
-    //         float value_time = 0;
-
-    //         // if(TempIndexes[i] < 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toStdString());
-    //         // else if(TempIndexes[i] >= 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_LineEditWorkTime->text().toStdString());
-
-
-    //         double Step = 1.0 / DataMotor_y[(uint16_t)TempIndexes[i]].size();
-
-
-    //         for(double j = 0; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
-    //         {
-    //             DataMotor_x[(uint16_t)TempIndexes[i]].append(Step * j);
-    //             if(MaxVal_x < DataMotor_x[(uint16_t)TempIndexes[i]][j]) MaxVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
-    //             if(MinVal_x > DataMotor_x[(uint16_t)TempIndexes[i]][j]) MinVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
-    //             if(MaxVal_y < DataMotor_y[(uint16_t)TempIndexes[i]][j]) MaxVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
-    //             if(MinVal_y > DataMotor_y[(uint16_t)TempIndexes[i]][j]) MinVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
-    //         }
-
-    //         qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[(uint8_t)LNCMAN[i]].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
-
-    //         // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
-
-    //         if((uint16_t)TempIndexes[i] < 6)
-    //         {
-    //             MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->xAxis->setRange(MinVal_x, MaxVal_x);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->yAxis->setRange(MinVal_y, MaxVal_y);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->addGraph();
-    //             MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1GraphPen);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->replot();
-    //         }
-    //         if((uint16_t)TempIndexes[i] >= 6)
-    //         {
-    //             MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->xAxis->setRange(MinVal_x, MaxVal_x);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->yAxis->setRange(MinVal_y, MaxVal_y);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->addGraph();
-    //             MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1GraphPen);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
-    //             MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->replot();
-    //         }
-    //     }
-    //     LNCM = 0;
-    //     memset(LNCMAN_Indexes, '\0', 12);
     // }
+
+
+    double cf_mid = 0.2;
+    for(uint8_t i = 0; i < countEnabled; i++) {
+        for(uint16_t j = 1; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++) {
+            DataMotor_y[(uint16_t)TempIndexes[i]][j] =
+                cf_mid * DataMotor_y[(uint16_t)TempIndexes[i]][j] + (1 - cf_mid) * DataMotor_y[(uint16_t)TempIndexes[i]][j - 1];
+        }
+    }
+
+    for(uint8_t i = 0; i < countEnabled; i++)
+    {
+        double MaxVal_x = 0;
+        double MaxVal_y = 0;
+        double MinVal_x = 0;
+        double MinVal_y = 0;
+        float value_time = 0;
+
+        if((uint16_t)TempIndexes[i] < 6)
+            value_time = MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toFloat();
+        else if((uint16_t)TempIndexes[i] >= 6)
+            value_time = MotorDefStruct[(uint16_t)TempIndexes[i - 6]].TAB1_LineEditWorkTime->text().toFloat();
+
+        double Step = value_time / DataMotor_y[(uint16_t)TempIndexes[i]].size();
+
+
+        for(uint16_t j = 0; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++) {
+            DataMotor_x[(uint16_t)TempIndexes[i]].append(Step * j);
+            if(MaxVal_x < DataMotor_x[(uint16_t)TempIndexes[i]][j]) MaxVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+            if(MinVal_x > DataMotor_x[(uint16_t)TempIndexes[i]][j]) MinVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+            if(MaxVal_y < DataMotor_y[(uint16_t)TempIndexes[i]][j]) MaxVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+            if(MinVal_y > DataMotor_y[(uint16_t)TempIndexes[i]][j]) MinVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+        }
+
+        qDebug().nospace() << "CH #" << i << " NumPack: " <<
+            DataMotor_y[(uint8_t)IndexEnabled[i]].size() << " ==> "
+                           << "MaxX: " << MaxVal_x << ", "
+                           << "MaxY: " << MaxVal_y << ", "
+                           << "MinX: " << MinVal_x << ", "
+                           << "MinY: " << MinVal_y;
+
+        // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
+
+        if((uint16_t)TempIndexes[i] < 6) {
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->xAxis->setRange(MinVal_x, MaxVal_x);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->yAxis->setRange(MinVal_y, MaxVal_y);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->addGraph();
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1GraphPen);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_ADCPlot->replot();
+        }
+        if((uint16_t)TempIndexes[i] >= 6) {
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->xAxis->setRange(MinVal_x, MaxVal_x);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->yAxis->setRange(MinVal_y, MaxVal_y);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->addGraph();
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1GraphPen);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_ADCPlotBack->replot();
+        }
+
+    }
+
+    if (GLB_ui->checkBox_29->isChecked()) {
+        int fileIndex = 1;
+        QString fileName;
+        QFile file;
+
+        // Ищем первый свободный номер файла
+        do {
+            fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/" + GLB_ui->lineEdit_18->text()
+                               + "_N" + "1" + "P" + GLB_ui->lineEdit->text() + "_%1" + ".txt").arg(fileIndex);
+            // fileName = QString("C:/Users/Roman/Desktop/ProtezHolder/Current/file.txt");
+
+            file.setFileName(fileName);
+            fileIndex++;
+        } while (file.exists());
+
+        // Открываем файл для записи
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream out(&file);
+
+            int size = DataMotor_x[0].size();
+            for (int i = 0; i < size; ++i)
+            {
+                out << DataMotor_x[0][i] << '\t' << DataMotor_y[0][i] << "\n";
+            }
+
+            file.close();
+            qDebug() << "Data is saved to file:" << fileName;
+        }
+        else
+        {
+            qWarning() << "Data don`t save to file" << fileName;
+        }
+        file.close();
+    }
+
+    LNCM = 0;
+    memset(IndexEnabled, '\0', 12);
+    GLB_RecvRowData.clear();
 }
+
+void MainWindow::on_PaintGraphFeedBack()
+{
+    QVector<double> DataMotor_x[12], DataMotor_y[12];
+    // Собираем все данные по парам байт
+    QVector<double> AllDataToGraph;
+    for(uint32_t i = 0; i < (uint32_t)(GLB_RecvRowData.size()); i = i + 2) {
+        AllDataToGraph.append((GLB_RecvRowData[i]) | (GLB_RecvRowData[i + 1] << 8));
+    }
+
+    QByteArray TempIndexes;
+    uint8_t countEnabled = 0;
+    bool IndexEnabled[12];
+
+    uint8_t index = 0;
+    for (auto &mot : Motor) {
+        if ((mot.getADC_State() == ADC_Enable) && (mot.getDirection() != MoveNone)) {
+            IndexEnabled[index] = true;
+            countEnabled++;
+        }
+        index++;
+    }
+    for(uint8_t i = 0; i < 12; i++) {
+        if(IndexEnabled[i]) {
+            for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - countEnabled); j = j + countEnabled) {
+                DataMotor_y[i].append(AllDataToGraph[j]);
+            }
+            TempIndexes.append(i);
+        }
+    }
+
+
+    // for(uint8_t i = 0; i < LNCMAN_len; i++)
+    // {
+    //     for(uint32_t j = i; j < (uint32_t)(AllDataToGraph.size() - LNCMAN_len); j = j + LNCMAN_len)
+    //     {
+    //         DataMotor_y[(uint8_t)LNCMAN[i]].append(AllDataToGraph[j]);
+    //     }
+    // }
+    // Скользящяя средняя 2 варианта
+    // for(uint16_t i = 5; i < NewGraph_y.size(); i++)
+    //     NewGraph_y[i] = (NewGraph_y[i] + NewGraph_y[i - 1] + NewGraph_y[i - 2] + NewGraph_y[i - 3] + NewGraph_y[i - 4] + NewGraph_y[i - 5]) / 6.0;
+
+    double cf_mid = 0.2;
+    for(uint8_t i = 0; i < countEnabled; i++)
+    {
+        for(uint16_t j = 1; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
+        {
+            DataMotor_y[(uint16_t)TempIndexes[i]][j] =
+                cf_mid * DataMotor_y[(uint16_t)TempIndexes[i]][j] + (1 - cf_mid) * DataMotor_y[(uint16_t)TempIndexes[i]][j - 1];
+        }
+    }
+
+    for(uint8_t i = 0; i < countEnabled; i++)
+    {
+        double MaxVal_x = 0;
+        double MaxVal_y = 0;
+        double MinVal_x = 0;
+        double MinVal_y = 0;
+
+        float value_time = 0;
+
+        // if(TempIndexes[i] < 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1_LineEditWorkTime->text().toStdString());
+        // else if(TempIndexes[i] >= 6) value_time = std::stof(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1_LineEditWorkTime->text().toStdString());
+
+
+        double Step = 1.0 / DataMotor_y[(uint16_t)TempIndexes[i]].size();
+
+
+        for(double j = 0; j < DataMotor_y[(uint16_t)TempIndexes[i]].size(); j++)
+        {
+            DataMotor_x[(uint16_t)TempIndexes[i]].append(Step * j);
+            if(MaxVal_x < DataMotor_x[(uint16_t)TempIndexes[i]][j]) MaxVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+            if(MinVal_x > DataMotor_x[(uint16_t)TempIndexes[i]][j]) MinVal_x = DataMotor_x[(uint16_t)TempIndexes[i]][j];
+            if(MaxVal_y < DataMotor_y[(uint16_t)TempIndexes[i]][j]) MaxVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+            if(MinVal_y > DataMotor_y[(uint16_t)TempIndexes[i]][j]) MinVal_y = DataMotor_y[(uint16_t)TempIndexes[i]][j];
+        }
+
+        qDebug().nospace() << "CH #" << i << " NumPack: " << DataMotor_y[(uint8_t)IndexEnabled[i]].size() << " ==> "<< "MaxX: " << MaxVal_x << ", " << "MaxY: " << MaxVal_y << ", " << "MinX: " << MinVal_x << ", " << "MinY: " << MinVal_y;
+
+        // qDebug() << QString("%1%2%3%4").arg("CH #", i).arg("MaxX:", MaxVal_x).arg("MaxY:", MaxVal_y).arg("MinX:", MinVal_x).arg("MinY:", MinVal_y);
+
+        if((uint16_t)TempIndexes[i] < 6)
+        {
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->xAxis->setRange(MinVal_x, MaxVal_x);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->yAxis->setRange(MinVal_y, MaxVal_y);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->addGraph();
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i]].TAB1GraphPen);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+            MotorDefStruct[(uint16_t)TempIndexes[i]].TAB2_FeedBackPlot->replot();
+        }
+        if((uint16_t)TempIndexes[i] >= 6)
+        {
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->xAxis->setRange(MinVal_x, MaxVal_x);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->yAxis->setRange(MinVal_y, MaxVal_y);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->addGraph();
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->graph(0)->setPen(MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB1GraphPen);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->graph(0)->setData(DataMotor_x[(uint16_t)TempIndexes[i]], DataMotor_y[(uint16_t)TempIndexes[i]]);
+            MotorDefStruct[(uint16_t)TempIndexes[i] - 6].TAB2_FeedBackPlotBack->replot();
+        }
+    }
+    LNCM = 0;
+    memset(IndexEnabled, '\0', 12);
+    GLB_RecvRowData.clear();
+}
+
+
+
+
 
 
 void SetStartGUISettings()
@@ -405,7 +416,6 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
     MotorDefStruct[0].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
     MotorDefStruct[0].TAB1_ADCPlot = GLB_ui->widget;
-    MotorDefStruct[0].TAB1_ADCPlotBack = GLB_ui->widget_52;
     MotorDefStruct[0].TAB1GraphPen = QPen(Qt::red);
     MotorDefStruct[0].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
@@ -420,7 +430,6 @@ void SetStartGUISettings()
     MotorDefStruct[0].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_23;
 
     MotorDefStruct[0].TAB2_FeedBackPlot = GLB_ui->widget_2;
-    MotorDefStruct[0].TAB2_FeedBackPlotBack = GLB_ui->widget_24;
 
 
     /*****************************************/
@@ -437,7 +446,6 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
     MotorDefStruct[1].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
     MotorDefStruct[1].TAB1_ADCPlot = GLB_ui->widget_5;
-    MotorDefStruct[1].TAB1_ADCPlotBack = GLB_ui->widget_49;
     MotorDefStruct[1].TAB1GraphPen = QPen(Qt::red);
     MotorDefStruct[1].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
@@ -451,7 +459,6 @@ void SetStartGUISettings()
     MotorDefStruct[1].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_24;
 
     MotorDefStruct[1].TAB2_FeedBackPlot = GLB_ui->widget_9;
-    MotorDefStruct[1].TAB2_FeedBackPlotBack = GLB_ui->widget_22;
 
 
 
@@ -470,7 +477,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
     MotorDefStruct[2].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
     MotorDefStruct[2].TAB1_ADCPlot = GLB_ui->widget_4;
-    MotorDefStruct[2].TAB1_ADCPlotBack = GLB_ui->widget_51;
+
     MotorDefStruct[2].TAB1GraphPen = QPen(Qt::red);
     MotorDefStruct[2].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
@@ -484,7 +491,7 @@ void SetStartGUISettings()
     MotorDefStruct[2].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_25;
 
     MotorDefStruct[2].TAB2_FeedBackPlot = GLB_ui->widget_3;
-    MotorDefStruct[2].TAB2_FeedBackPlotBack = GLB_ui->widget_21;
+
 
 
 
@@ -505,7 +512,6 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
     MotorDefStruct[3].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
     MotorDefStruct[3].TAB1_ADCPlot = GLB_ui->widget_6;
-    MotorDefStruct[3].TAB1_ADCPlotBack = GLB_ui->widget_54;
     MotorDefStruct[3].TAB1GraphPen = QPen(Qt::red);
     MotorDefStruct[3].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
@@ -519,7 +525,6 @@ void SetStartGUISettings()
     MotorDefStruct[3].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_26;
 
     MotorDefStruct[3].TAB2_FeedBackPlot = GLB_ui->widget_10;
-    MotorDefStruct[3].TAB2_FeedBackPlotBack = GLB_ui->widget_20;
 
 
 
@@ -537,7 +542,6 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
     MotorDefStruct[4].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
     MotorDefStruct[4].TAB1_ADCPlot = GLB_ui->widget_7;
-    MotorDefStruct[4].TAB1_ADCPlotBack = GLB_ui->widget_50;
     MotorDefStruct[4].TAB1GraphPen = QPen(Qt::red);
     MotorDefStruct[4].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
@@ -551,7 +555,6 @@ void SetStartGUISettings()
     MotorDefStruct[4].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_27;
 
     MotorDefStruct[4].TAB2_FeedBackPlot = GLB_ui->widget_11;
-    MotorDefStruct[4].TAB2_FeedBackPlotBack = GLB_ui->widget_19;
 
     /*****************************************/
     MotorDefStruct[5].TAB1_ComporessButton = GLB_ui->pushButton_30;
@@ -567,7 +570,6 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB1_CheckBoxBackSide = GLB_ui->checkBox_14;
     MotorDefStruct[5].TAB2_CheckBoxBackSide = GLB_ui->checkBox_22;
     MotorDefStruct[5].TAB1_ADCPlot = GLB_ui->widget_8;
-    MotorDefStruct[5].TAB1_ADCPlotBack = GLB_ui->widget_53;
     MotorDefStruct[5].TAB1GraphPen = QPen(Qt::red);
     MotorDefStruct[5].TAB1_CheckBoxAutoCurrectBackPower = GLB_ui->checkBox_15;
 
@@ -581,7 +583,6 @@ void SetStartGUISettings()
     MotorDefStruct[5].TAB2_CheckBoxBackReverse = GLB_ui->checkBox_28;
 
     MotorDefStruct[5].TAB2_FeedBackPlot = GLB_ui->widget_12;
-    MotorDefStruct[5].TAB2_FeedBackPlotBack = GLB_ui->widget_23;
     /*****************************************/
 
 
@@ -854,7 +855,9 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(thread_1, &MyThread_1::signal_ComportWriteBack, this, &MainWindow::on_ComportWriteBack);
     QObject::connect(thread_1, &MyThread_1::signal_ComportReadBack, this, &MainWindow::on_ComportReadBack);
 
-    QObject::connect(thread_1, &MyThread_1::signal_PaintGraph, this, &MainWindow::on_PaintGraph);
+    QObject::connect(thread_1, &::MyThread_1::signal_PaintADC, this, &MainWindow::on_PaintGraphADC);
+    QObject::connect(thread_1, &::MyThread_1::signal_PaintFeedBack, this, &MainWindow::on_PaintGraphFeedBack);
+
 
     // void signal_ComportCloseBack(QString);
     // void on_ComportCloseBack(QString);
@@ -1309,6 +1312,7 @@ void MainWindow::on_pushButton_29_clicked()
 
     /*Установка значений в команду*/
     std::vector<std::map<uint8_t, std::vector<uint8_t>>> tempMap;
+    // for (auto &mot : Motor) mot.c
     for (auto &mot : Motor)
     {
         std::map<uint8_t, std::vector<uint8_t>> t_mp;
@@ -1389,7 +1393,7 @@ void MainWindow::on_pushButton_29_clicked()
         // }
 
 
-        if (((mot.getPWM() > 0) && (mot.getWorkTime() > 0)) || (mot.getAngle() > 0) || (mot.getSpeed() > 0))
+        if (((mot.getPWM() > 0) && (mot.getWorkTime() > 0) && (mot.getDirection() != MoveNone)) || (mot.getAngle() > 0) || (mot.getSpeed() > 0))
         {
             tempMap.push_back(t_mp);
         }
@@ -1417,7 +1421,7 @@ void MainWindow::on_pushButton_29_clicked()
     // qInfo() << temp_data;
     qInfo() << "============ ============ ============";
     emit signal_ComportWrite(temp_data);
-
+    Command.clear();
 }
 // Start insturction
 void MainWindow::on_pushButton_34_clicked()

@@ -6,7 +6,7 @@ bool FLAG_3;
 bool FLAG_4; std::vector<uint8_t> DataToSend;
 bool FLAG_5;
 
-extern QVector<uint8_t> GLB_Graph_y;
+extern QVector<uint8_t> GLB_RecvRowData;
 
 MyThread_1::MyThread_1(QObject *parent)
     : QThread(parent)
@@ -57,7 +57,13 @@ QList<QString> MyThread_1::ComPortSearch()
     /*Данный вариант быстрее работает так как выделяет сразу те порты, с которыми можно работать
       Но не все имеют возможность работать адекватно.
     */
-
+    if (serialPort) {
+        if (serialPort->isOpen())
+            emit signal_ComportCloseBack(serialPort->portName());
+        serialPort->close();
+        delete serialPort;
+        serialPort = nullptr;
+    }
     QList<QString> ComportList;
     ComportList.append("Select comport...");
     const auto ports = QSerialPortInfo::availablePorts();
@@ -270,53 +276,57 @@ void MyThread_1::ComPortRead()
 
     if(GLB_RecvData.isEmpty()) return;
     else {
-        bool find_exit = false;
+        bool find_ADC_data = false;
+        bool find_Feedback_data = false;
+
+
+
         uint8_t last_byte = 0;
-        GLB_Graph_y.clear();
+        GLB_RecvRowData.clear();
+
+
         for (auto &dat : GLB_RecvData) {
-            if (last_byte == PR_PROTOCOL_PACK_DATA_RECV_START.first && dat == PR_PROTOCOL_PACK_DATA_RECV_START.second) {
-                find_exit = true;
-                qInfo() << "Find start in pack";
-            }
-            else if (last_byte == PR_PROTOCOL_PACK_DATA_RECV_STOP.first && dat == PR_PROTOCOL_PACK_DATA_RECV_STOP.second) {
-                find_exit = false;
-                qInfo() << "Find stop in pack";
-            }
-            else if (find_exit) {
-                GLB_Graph_y.push_back(dat);
-
-                if ()
-                {
-
+            if (!find_Feedback_data)
+            {
+                if (last_byte == PR_PROTOCOL_PACK_ADC_START.first && dat == PR_PROTOCOL_PACK_ADC_START.second) {
+                    find_ADC_data = true;
+                    qInfo() << "start adc in pack";
                 }
-                else if ()
-                {
+                else if (last_byte == PR_PROTOCOL_PACK_ADC_STOP.first && dat == PR_PROTOCOL_PACK_ADC_STOP.second) {
+                    find_ADC_data = false;
+                    qInfo() << "stop adc in pack";
 
+                    if(!GLB_RecvRowData.isEmpty()) emit signal_PaintADC();
                 }
+                else if (find_ADC_data)
+                {
+                    GLB_RecvRowData.push_back(dat);
+                }
+            }
+            else if (!find_ADC_data)
+            {
+                if (last_byte == PR_PROTOCOL_PACK_FEEDBACK_START.first && dat == PR_PROTOCOL_PACK_FEEDBACK_START.second)
+                {
+                    find_Feedback_data = true;
+                    qInfo() << "Find start FeedBack Data";
+                }
+                else if (last_byte == PR_PROTOCOL_PACK_FEEDBACK_STOP.first && dat == PR_PROTOCOL_PACK_FEEDBACK_STOP.second)
+                {
+                    GLB_RecvRowData.pop_back();
+                    find_Feedback_data = false;
+                    qInfo() << "Find stop FeedBack Data";
 
-
-
-
+                    if(!GLB_RecvRowData.isEmpty()) emit signal_PaintFeedBack();
+                }
+                else if (find_Feedback_data)
+                {
+                    GLB_RecvRowData.push_back(dat);
+                }
             }
             last_byte = dat;
         }
-        if (!GLB_Graph_y.empty()) {
-            GLB_Graph_y.pop_back();
-
-            /*РАЗБИВАЕМ НА ДАННЫЕ ПО ТОКУ И УГЛУ*/
-
-
-
-
-
-
-
-
-
-        emit signal_PaintGraph();
-
-
-
+        if (!GLB_RecvRowData.empty()) {
+            GLB_RecvRowData.pop_back();
         }
         qInfo() << "Count data: " << c_data;
     }

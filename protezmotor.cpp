@@ -24,6 +24,12 @@ uint8_t ProtezMotor::getID()
 // {
 
 // }
+
+// void ProtezMotor::clearAllParam()
+// {
+
+// }
+
 Protez_SideType ProtezMotor::getSidePlate()
 {
     if ((MANUAL_CheckBox_SidePlate->isChecked()) || (ANGLE_CheckBox_SidePlate->isChecked()))
@@ -46,7 +52,7 @@ Protez_TypeMove ProtezMotor::getDirection()
     else if (MANUAL_Button_decompress->isChecked()) return Decompress;
     else if (MANUAL_Button_hold->isChecked()) return Hold;
     else if (MANUAL_Button_stop->isChecked()) return Stop;
-    else return Stop;
+    else return MoveNone;
 }
 // void ProtezMotor::setPWM(uint8_t pwm)
 // {
