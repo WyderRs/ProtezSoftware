@@ -24,7 +24,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MyThread_1_t {
     QByteArrayData data[22];
-    char stringdata0[352];
+    char stringdata0[349];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -47,14 +47,14 @@ QT_MOC_LITERAL(10, 122, 25), // "signal_ComportConnectBack"
 QT_MOC_LITERAL(11, 148, 23), // "signal_ComportCloseBack"
 QT_MOC_LITERAL(12, 172, 23), // "signal_ComportWriteBack"
 QT_MOC_LITERAL(13, 196, 22), // "signal_ComportReadBack"
-QT_MOC_LITERAL(14, 219, 15), // "signal_PaintADC"
-QT_MOC_LITERAL(15, 235, 20), // "signal_PaintFeedBack"
-QT_MOC_LITERAL(16, 256, 16), // "on_ComportSearch"
-QT_MOC_LITERAL(17, 273, 17), // "on_ComportConnect"
-QT_MOC_LITERAL(18, 291, 8), // "baudRate"
-QT_MOC_LITERAL(19, 300, 15), // "on_ComportClose"
-QT_MOC_LITERAL(20, 316, 15), // "on_ComportWrite"
-QT_MOC_LITERAL(21, 332, 19) // "on_ComportStartRead"
+QT_MOC_LITERAL(14, 219, 12), // "signal_Paint"
+QT_MOC_LITERAL(15, 232, 20), // "signal_PaintFeedBack"
+QT_MOC_LITERAL(16, 253, 16), // "on_ComportSearch"
+QT_MOC_LITERAL(17, 270, 17), // "on_ComportConnect"
+QT_MOC_LITERAL(18, 288, 8), // "baudRate"
+QT_MOC_LITERAL(19, 297, 15), // "on_ComportClose"
+QT_MOC_LITERAL(20, 313, 15), // "on_ComportWrite"
+QT_MOC_LITERAL(21, 329, 19) // "on_ComportStartRead"
 
     },
     "MyThread_1\0dataReceived\0\0std::vector<uint8_t>\0"
@@ -62,7 +62,7 @@ QT_MOC_LITERAL(21, 332, 19) // "on_ComportStartRead"
     "signal_ComportSearchBack\0QList<QString>\0"
     "signal_ComportConnectBack\0"
     "signal_ComportCloseBack\0signal_ComportWriteBack\0"
-    "signal_ComportReadBack\0signal_PaintADC\0"
+    "signal_ComportReadBack\0signal_Paint\0"
     "signal_PaintFeedBack\0on_ComportSearch\0"
     "on_ComportConnect\0baudRate\0on_ComportClose\0"
     "on_ComportWrite\0on_ComportStartRead"
@@ -137,7 +137,7 @@ void MyThread_1::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 5: _t->signal_ComportCloseBack((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 6: _t->signal_ComportWriteBack(); break;
         case 7: _t->signal_ComportReadBack(); break;
-        case 8: _t->signal_PaintADC(); break;
+        case 8: _t->signal_Paint(); break;
         case 9: _t->signal_PaintFeedBack(); break;
         case 10: _t->on_ComportSearch(); break;
         case 11: _t->on_ComportConnect((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< qint32(*)>(_a[2]))); break;
@@ -217,7 +217,7 @@ void MyThread_1::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         }
         {
             using _t = void (MyThread_1::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MyThread_1::signal_PaintADC)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MyThread_1::signal_Paint)) {
                 *result = 8;
                 return;
             }
@@ -326,7 +326,7 @@ void MyThread_1::signal_ComportReadBack()
 }
 
 // SIGNAL 8
-void MyThread_1::signal_PaintADC()
+void MyThread_1::signal_Paint()
 {
     QMetaObject::activate(this, &staticMetaObject, 8, nullptr);
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1385</width>
+    <width>1852</width>
     <height>765</height>
    </rect>
   </property>
@@ -25,7 +25,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>1291</width>
+      <width>1831</width>
       <height>651</height>
      </rect>
     </property>
@@ -74,8 +74,8 @@
      <widget class="QLineEdit" name="lineEdit_20">
       <property name="geometry">
        <rect>
-        <x>470</x>
-        <y>40</y>
+        <x>650</x>
+        <y>20</y>
         <width>391</width>
         <height>21</height>
        </rect>
@@ -84,14 +84,14 @@
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
-        <x>470</x>
-        <y>10</y>
-        <width>421</width>
+        <x>480</x>
+        <y>20</y>
+        <width>161</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Repository</string>
+       <string>Folder</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -100,8 +100,8 @@
      <widget class="QPushButton" name="pushButton_13">
       <property name="geometry">
        <rect>
-        <x>870</x>
-        <y>40</y>
+        <x>1050</x>
+        <y>20</y>
         <width>21</width>
         <height>21</height>
        </rect>
@@ -153,7 +153,7 @@
       <property name="geometry">
        <rect>
         <x>470</x>
-        <y>80</y>
+        <y>170</y>
         <width>561</width>
         <height>291</height>
        </rect>
@@ -368,6 +368,67 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_48">
+      <property name="geometry">
+       <rect>
+        <x>650</x>
+        <y>50</y>
+        <width>391</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_42">
+      <property name="geometry">
+       <rect>
+        <x>1050</x>
+        <y>50</y>
+        <width>21</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>///</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>50</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Feedback data repository</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="Line" name="line">
+      <property name="geometry">
+       <rect>
+        <x>460</x>
+        <y>10</y>
+        <width>21</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
      </widget>
     </widget>
@@ -1683,7 +1744,7 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text">
-        <string>Internal side of palm</string>
+        <string>Current</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -2001,6 +2062,233 @@
        </property>
       </widget>
      </widget>
+     <widget class="QFrame" name="frame_5">
+      <property name="geometry">
+       <rect>
+        <x>1290</x>
+        <y>10</y>
+        <width>530</width>
+        <height>591</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>510</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Encoder</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_53">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>400</y>
+         <width>250</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Motor #6</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_54">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>220</y>
+         <width>251</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Motor #3</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QCustomPlot" name="widget_25" native="true">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>64</y>
+         <width>250</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(179, 179, 179);</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_55">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>40</y>
+         <width>250</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Motor #2</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_56">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>220</y>
+         <width>250</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Motor #4</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QCustomPlot" name="widget_26" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>424</y>
+         <width>251</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(179, 179, 179);</string>
+       </property>
+      </widget>
+      <widget class="QCustomPlot" name="widget_27" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>244</y>
+         <width>251</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(179, 179, 179);</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_57">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>400</y>
+         <width>251</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Motor #5</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QCustomPlot" name="widget_28" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>64</y>
+         <width>251</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(179, 179, 179);</string>
+       </property>
+      </widget>
+      <widget class="QCustomPlot" name="widget_29" native="true">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>424</y>
+         <width>250</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(179, 179, 179);</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_58">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>251</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="text">
+        <string>Motor #1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QCustomPlot" name="widget_30" native="true">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>244</y>
+         <width>250</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(179, 179, 179);</string>
+       </property>
+      </widget>
+     </widget>
      <zorder>frame_4</zorder>
      <zorder>checkBox_4</zorder>
      <zorder>pushButton_2</zorder>
@@ -2079,6 +2367,7 @@
      <zorder>frame_8</zorder>
      <zorder>pushButton_41</zorder>
      <zorder>frame_10</zorder>
+     <zorder>frame_5</zorder>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -3455,7 +3744,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1385</width>
+     <width>1852</width>
      <height>21</height>
     </rect>
    </property>

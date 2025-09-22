@@ -44,9 +44,14 @@
 #define PR_PROTOCOL_START                   std::pair<uint8_t, uint8_t>(0xDE, 0xAD)
 #define PR_PROTOCOL_STOP                    std::pair<uint8_t, uint8_t>(0xBE, 0xEF)
 /*FOR RECV*/
+/* Маркеры старта, стопа, ограничителя пакетов (middle)*/
+#define PR_PROTOCOL_PACK_MODULE_START       std::pair<uint8_t, uint8_t>(0xEE, 0xDD)
+#define PR_PROTOCOL_PACK_MODULE_STOP        std::pair<uint8_t, uint8_t>(0xCC, 0xBB)
 
-#define PR_PROTOCOL_PACK_ADC_START          std::pair<uint8_t, uint8_t>(0xEE, 0xDD)
-#define PR_PROTOCOL_PACK_ADC_STOP           std::pair<uint8_t, uint8_t>(0xCC, 0xBB)
+#define PR_PROTOCOL_PACK_MODULE_MIDDLE      std::pair<uint8_t, uint8_t> (0x3F, 0x6F)
+#define PR_PROTOCOL_PACK_DATA_ADC_PTR       std::pair<uint8_t, uint8_t> (0xDD, 0x43)
+#define PR_PROTOCOL_PACK_DATA_ENC_PTR       std::pair<uint8_t, uint8_t> (0x1F, 0x78)
+
 
 #define PR_PROTOCOL_PACK_FEEDBACK_START     std::pair<uint8_t, uint8_t>(0x44, 0xDD)
 #define PR_PROTOCOL_PACK_FEEDBACK_STOP      std::pair<uint8_t, uint8_t>(0x77, 0xCC)

@@ -232,7 +232,7 @@ public:
 
 public slots:
 
-    void on_PaintGraphADC();
+    void on_PaintGraph();
     void on_PaintGraphFeedBack();
 
 private slots:
@@ -413,6 +413,8 @@ private slots:
     void on_pushButton_41_clicked();
 
     void on_comboBox_currentIndexChanged(int index);
+
+    void on_pushButton_42_clicked();
 
 public:
     Ui::MainWindow *ui;

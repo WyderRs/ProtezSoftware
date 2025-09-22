@@ -35,7 +35,7 @@ signals:
     void signal_ComportWriteBack();
     void signal_ComportReadBack();
 
-    void signal_PaintADC();
+    void signal_Paint();
     void signal_PaintFeedBack();
 public slots:
     void on_ComportSearch();

@@ -61,7 +61,10 @@ public:
     QCheckBox   *MANUAL_CheckBox_ADC;
     QCheckBox   *MANUAL_CheckBox_FeedBack;
     QCustomPlot *MANUAL_Plot_ADC;
-    QCustomPlot *MANUAL_Plot_ADCBack;
+    QCustomPlot *MANUAL_Plot_ENC;
+
+    QCheckBox   *MANUAL_CheckBoxBackSide;
+    QPen        GraphPen;
 private:
     /*Static*/
     static Protez_SideType SidePlate;
@@ -79,14 +82,6 @@ private:
     // Protez_Running Running;
 
 
-
-
-
-
-
-
-
-
     // QPushButton *TAB1_ComporessButton;
     // QPushButton *TAB1_DecompressButton;
     // QPushButton *TAB1_HoldButton;
@@ -96,10 +91,10 @@ private:
     // QLineEdit   *TAB1_LineEditWorkTime;
     // QLineEdit   *TAB1_LineEditDelayTime;
     // QCheckBox   *TAB1_CheckBoxADC;
-    // QCheckBox   *TAB1_CheckBoxBackSide;
+
     // QCustomPlot *TAB1_ADCPlot;
     // QCustomPlot *TAB1_ADCPlotBack;
-    // QPen        TAB1GraphPen;
+
     // QCheckBox   *TAB1_CheckBoxAutoCurrectBackPower;
 
     // QPushButton *TAB2_FingerButton;

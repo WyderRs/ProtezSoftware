@@ -1,0 +1,10 @@
+debug/MyThread.o
+debug/main.o
+debug/mainwindow.o
+debug/protezcommand.o
+debug/protezmotor.o
+debug/qcustomplot.o
+debug/protezsoftware_plugin_import.o
+debug/moc_MyThread.o
+debug/moc_mainwindow.o
+debug/moc_qcustomplot.o

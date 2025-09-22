@@ -1,0 +1,10 @@
+release/MyThread.o
+release/main.o
+release/mainwindow.o
+release/protezcommand.o
+release/protezmotor.o
+release/qcustomplot.o
+release/protezsoftware_plugin_import.o
+release/moc_MyThread.o
+release/moc_mainwindow.o
+release/moc_qcustomplot.o

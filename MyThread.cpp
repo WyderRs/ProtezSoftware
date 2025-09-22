@@ -280,7 +280,6 @@ void MyThread_1::ComPortRead()
         bool find_Feedback_data = false;
 
 
-
         uint8_t last_byte = 0;
         GLB_RecvRowData.clear();
 
@@ -288,37 +287,17 @@ void MyThread_1::ComPortRead()
         for (auto &dat : GLB_RecvData) {
             if (!find_Feedback_data)
             {
-                if (last_byte == PR_PROTOCOL_PACK_ADC_START.first && dat == PR_PROTOCOL_PACK_ADC_START.second) {
+                if (last_byte == PR_PROTOCOL_PACK_MODULE_START.first && dat == PR_PROTOCOL_PACK_MODULE_START.second) {
                     find_ADC_data = true;
                     qInfo() << "start adc in pack";
                 }
-                else if (last_byte == PR_PROTOCOL_PACK_ADC_STOP.first && dat == PR_PROTOCOL_PACK_ADC_STOP.second) {
+                else if (last_byte == PR_PROTOCOL_PACK_MODULE_STOP.first && dat == PR_PROTOCOL_PACK_MODULE_STOP.second) {
                     find_ADC_data = false;
                     qInfo() << "stop adc in pack";
 
-                    if(!GLB_RecvRowData.isEmpty()) emit signal_PaintADC();
+                    if(!GLB_RecvRowData.isEmpty()) emit signal_Paint();
                 }
                 else if (find_ADC_data)
-                {
-                    GLB_RecvRowData.push_back(dat);
-                }
-            }
-            else if (!find_ADC_data)
-            {
-                if (last_byte == PR_PROTOCOL_PACK_FEEDBACK_START.first && dat == PR_PROTOCOL_PACK_FEEDBACK_START.second)
-                {
-                    find_Feedback_data = true;
-                    qInfo() << "Find start FeedBack Data";
-                }
-                else if (last_byte == PR_PROTOCOL_PACK_FEEDBACK_STOP.first && dat == PR_PROTOCOL_PACK_FEEDBACK_STOP.second)
-                {
-                    GLB_RecvRowData.pop_back();
-                    find_Feedback_data = false;
-                    qInfo() << "Find stop FeedBack Data";
-
-                    if(!GLB_RecvRowData.isEmpty()) emit signal_PaintFeedBack();
-                }
-                else if (find_Feedback_data)
                 {
                     GLB_RecvRowData.push_back(dat);
                 }
